@@ -1,0 +1,14 @@
+﻿@model AuthService.Models.LoginModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using (Html.BeginForm("SignUp", "Account"))
+{
+    @Html.LabelFor(model => model.Name)
+    @Html.EditorFor(model => model.Name)
+    @Html.LabelFor(model => model.Password)
+    @Html.EditorFor(model => model.Password)
+    <button type="submit">login</button>
+}
