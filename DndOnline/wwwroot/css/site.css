@@ -1,15 +1,20 @@
+:root {
+  --font-ubuntu-regular: 'Ubuntu', sans-serif;
+  --font-ubuntu-medium: 'Ubuntu Medium', sans-serif;
+  --primary-dark: #4A3C46;
+  --secondary-dark: #b0acaf;
+}
+
 html {
-  font-size: 14px;
+  font-size: 16px;
+  font-family: var(--font-ubuntu-regular);
+  letter-spacing: 1px;
 }
 
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
@@ -19,4 +24,53 @@ html {
 
 body {
   margin-bottom: 60px;
+  color: var(--primary-dark);
+  background-color: #d3d1d2;
+}
+
+.header h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-ubuntu-medium) !important;
+}
+
+button {
+  border-radius: 8px;
+  width: auto;
+  padding: 5px 10px 5px 10px;
+  background-color: var(--primary-dark);
+  color:#C1BFB9;
+}
+
+button:hover {
+  transition: background-color 0.4s ease, color 0.4s ease;
+  background-color: #29292a;
+}
+
+.unset {
+  all: unset;
+}
+
+.asterisk:after {
+  content: '*';
+  margin-left: 1px;
+  color: var(--primary-dark);
+}
+
+.input-field {
+  height: 2.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--secondary-dark);
+  border-radius: 8px;
+  background-color: #d3d1d2;
+}
+
+.input-field:focus {
+  border-color: #ffffff;
+  outline: #ffffff thin;
+  box-shadow: 0 0 0 2px var(--secondary-dark);
+}
+
+.input-field:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
