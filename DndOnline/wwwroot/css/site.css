@@ -1,76 +1,88 @@
 :root {
-  --font-ubuntu-regular: 'Ubuntu', sans-serif;
-  --font-ubuntu-medium: 'Ubuntu Medium', sans-serif;
-  --primary-dark: #4A3C46;
-  --secondary-dark: #b0acaf;
+    --font-ubuntu-regular: 'Ubuntu', sans-serif;
+    --font-ubuntu-medium: 'Ubuntu Medium', sans-serif;
+    --primary-dark: #201f33;
+    --secondary-dark: #33314d;
+    --font-primary: #d1d0de;
+    --btn-primary: rgba(15, 15, 24, 0.56);
+    --btn-secondary: rgba(11, 12, 21, 0.84);
 }
 
 html {
-  font-size: 16px;
-  font-family: var(--font-ubuntu-regular);
-  letter-spacing: 1px;
+    font-size: 16px;
+    font-family: var(--font-ubuntu-regular);
+    letter-spacing: 1px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
-  color: var(--primary-dark);
-  background-color: #d3d1d2;
+    margin-bottom: 60px;
+    color: var(--font-primary);
+    background: radial-gradient(
+            ellipse farthest-side at 50% -150%,
+            var(--secondary-dark),
+            var(--primary-dark) 15%,
+            var(--secondary-dark) 0%,
+            var(--primary-dark)
+    );
 }
 
 .header h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-ubuntu-medium) !important;
+    font-family: var(--font-ubuntu-medium) !important;
 }
 
 button {
-  border-radius: 8px;
-  width: auto;
-  padding: 5px 10px 5px 10px;
-  background-color: var(--primary-dark);
-  color:#C1BFB9;
+    border: 1px solid var(--btn-primary);
+    border-radius: 8px;
+    padding: 7px 13px;
+    background-color: var(--btn-primary);
+    color: var(--font-primary);
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 button:hover {
-  transition: background-color 0.4s ease, color 0.4s ease;
-  background-color: #29292a;
+    border-color: var(--btn-secondary);
+    outline: #ffffff thin;
+    box-shadow: 0 0 0 2px var(--secondary-dark);
 }
 
 .unset {
-  all: unset;
+    all: unset;
 }
 
 .asterisk:after {
-  content: '*';
-  margin-left: 1px;
-  color: var(--primary-dark);
+    content: '*';
+    margin-left: 1px;
+    color: var(--primary-dark);
 }
 
 .input-field {
-  height: 2.5rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--secondary-dark);
-  border-radius: 8px;
-  background-color: #d3d1d2;
+    height: 2.5rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--secondary-dark);
+    border-radius: 8px;
+    background-color: var(--btn-primary);
 }
 
 .input-field:focus {
-  border-color: #ffffff;
-  outline: #ffffff thin;
-  box-shadow: 0 0 0 2px var(--secondary-dark);
+    border-color: var(--btn-secondary);
+    outline: #ffffff thin;
+    box-shadow: 0 0 0 2px var(--secondary-dark);
 }
 
 .input-field:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
