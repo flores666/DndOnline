@@ -8,4 +8,5 @@ public interface ITokenService
     public string GenerateJwt(string userName);
     public RefreshToken GenerateRefreshToken();
     public Response RefreshJwt(string jwt);
+    public string GetValueFromJwt(string jwt, string param);
 }

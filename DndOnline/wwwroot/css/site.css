@@ -37,7 +37,7 @@ body {
     );
 }
 
-.header h1, h2, h3, h4, h5, h6 {
+.header p, h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-ubuntu-medium) !important;
 }
 
@@ -74,6 +74,7 @@ button:hover {
     border: 1px solid var(--secondary-dark);
     border-radius: 8px;
     background-color: var(--btn-primary);
+    color: var(--font-primary)
 }
 
 .input-field:focus {
@@ -85,4 +86,21 @@ button:hover {
 .input-field:disabled {
     cursor: not-allowed;
     opacity: 0.5;
+}
+
+.card {
+    background-color: rgba(32, 31, 51, 0.66);
+    border-radius: 1rem;
+}
+
+a {
+    color: var(--font-primary);
+}
+
+a:hover {
+    color: var(--btn-secondary);
+}
+
+.error-span {
+    color: rgba(158, 157, 168, 0.87);
 }

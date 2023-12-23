@@ -34,7 +34,7 @@ public class TokenService : ITokenService
             {
                 new Claim(ClaimTypes.Name, userName),
             }),
-            Expires = DateTime.UtcNow.AddSeconds(double.Parse(_configuration["Jwt:LifetimeMinutes"])),
+            Expires = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:LifetimeMinutes"])),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Issuer = _configuration["Jwt:Issuer"],
@@ -60,7 +60,7 @@ public class TokenService : ITokenService
 
     public Response RefreshJwt(string jwt)
     {
-        var userName = GetUsernameFromJwt(jwt);
+        var userName = GetValueFromJwt(jwt, ClaimTypes.Name);
         var user = _db.Users
             .Include(u => u.RefreshToken)
             .FirstOrDefault(u => u.Name == userName);
@@ -87,14 +87,14 @@ public class TokenService : ITokenService
         return new Response(StatusCodes.Status200OK, tokenModel);
     }
 
-    private string GetUsernameFromJwt(string jwt)
+    public string GetValueFromJwt(string jwt, string param)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
         var token = tokenHandler.ReadJwtToken(jwt);
         var claims = token.Claims;
-        var username = claims?.FirstOrDefault(c => c.Type == "unique_name")?.Value;
+        var result = claims?.FirstOrDefault(c => c.Type == param)?.Value;
 
-        return username ?? null;
+        return result ?? null;
     }
 }

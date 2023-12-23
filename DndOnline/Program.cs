@@ -2,6 +2,8 @@ using System.Text;
 using AuthService.DataAccess;
 using AuthService.Services;
 using AuthService.Services.Interfaces;
+using DndOnline.Middlewares;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,6 +15,13 @@ builder.Services.AddDbContext<AuthServiceDbContext>(options =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+});
+
 builder.Services.AddSignalR();
 
 builder.Services.AddControllersWithViews();
@@ -34,6 +43,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 var app = builder.Build();
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -55,8 +65,16 @@ app.UseRouting();
 app.UseAuthorization();
 app.UseAuthentication();
 
+app.UseMiddleware<AuthMiddleware>();
+
+app.MapControllerRoute(
+    name: "auth",
+    pattern: "/auth/{action}",
+    defaults: new { controller = "Account", action = "SignIn" });
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=SignIn}/{id?}");
+    pattern: "{*path}",
+    defaults: new { controller = "Home", action = "Index" });
 
 app.Run();

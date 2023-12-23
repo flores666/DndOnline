@@ -1,10 +1,10 @@
-﻿@model AuthService.Models.LoginModel
+﻿@model AuthService.Models.RegisterModel
 
 <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true"/>
 
 <div class="container h-100">
     <div class="row justify-content-center align-items-center h-100">
-        @using (Html.BeginForm("SignIn", "Account", FormMethod.Post,
+        @using (Html.BeginForm("SignUp", "Account", FormMethod.Post,
                     new {@class = "card auth-form"}))
         {
             <div class="card-body p-5 text-center">
@@ -14,24 +14,26 @@
                 <div class="form-outline mb-4">
                     @Html.LabelFor(m => m.Name, new {@class = "form-label"})
                     @Html.TextBoxFor(m => m.Name, new {@class = "form-control-lg input-field"})
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "error-span" })
                 </div>
 
                 <div class="form-outline mb-4">
                     @Html.LabelFor(m => m.Password, new {@class = "form-label"})
                     @Html.TextBoxFor(m => m.Password, new {@class = "form-control-lg input-field"})
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "error-span" })
                 </div>
 
-                <!-- Checkbox -->
-                <div class="form-check d-flex justify-content-start mb-4">
-                    @Html.CheckBoxFor(m => m.RememberMe, new {@class = "form-check-input me-2"})
-                    @Html.LabelFor(m => m.RememberMe, new {@class = "form-check-label"})
+                <div class="form-outline mb-4">
+                    @Html.LabelFor(m => m.RepeatedPassword, new {@class = "form-label"})
+                    @Html.TextBoxFor(m => m.RepeatedPassword, new {@class = "form-control-lg input-field"})
+                    @Html.ValidationMessageFor(m => m.RepeatedPassword, "", new { @class = "error-span" })
                 </div>
 
-                <button class="ps-5 pe-5" type="submit">Войти</button>
+                <button class="ps-5 pe-5" type="submit">Зарегистрироваться</button>
 
                 <hr class="my-4">
                 <div class="">
-                    <p>Нет аккаунта? <a href="@Url.Action("SignUp", "Account")">Зарегистрироваться</a></p>
+                    <p>Уже есть аккаунт? <a href="@Url.Action("SignIn", "Account")">Войти</a></p>
                 </div>
             </div>
         }

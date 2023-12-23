@@ -20,17 +20,26 @@ public class UserService : IUserService
 
     public Response Register(RegisterModel model)
     {
-        if (Get(model.Name) != null) return new Response(StatusCodes.Status409Conflict, "Такой пользователь уже существует");
+        if (_db.Users.FirstOrDefault(f => f.Id == model.id) != null)
+            return new Response(StatusCodes.Status409Conflict, "Пользователь уже существует");
+        
         var passwordHash = PasswordHasher.Hash(model.Password);
         var user = new User { Name = model.Name, PasswordHash = passwordHash };
+        
         _db.Users.Add(user);
         _db.SaveChanges();
+        
         return new Response(StatusCodes.Status201Created, "Пользователь успешно зарегистрировался");
     }
     
-    public User Get(string name)
+    public User Get(Guid id)
     {
-        return _db.Users.FirstOrDefault(u => u.Name == name);
+        return _db.Users.Include(i => i.RefreshToken).FirstOrDefault(u => u.Id == id);
+    }
+
+    public User Get(string Name)
+    {
+        return _db.Users.Include(i => i.RefreshToken).FirstOrDefault(u => u.Name == Name);
     }
 
     public void Update(User user)
