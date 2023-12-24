@@ -34,7 +34,7 @@ public class AccountController : Controller
     /// получение данных о текущем аккаунте
     /// </summary>
     [Auth]
-    [HttpGet("me")]    
+    [HttpGet("me")]
     public IActionResult Me()
     {
         var userViewModel = new UserViewModel
@@ -50,18 +50,20 @@ public class AccountController : Controller
     {
         return View();
     }
-    
+
     /// <summary>
     /// получение нового jwt токена пользователя
     /// </summary>  
     [HttpPost("/login")]
-    public IActionResult SignIn(LoginModel userLogin)
+    public async Task<IActionResult> SignIn(LoginModel userLogin)
     {
         if (!ModelState.IsValid) return View();
         var response = _userService.Authenticate(userLogin);
-        if (response.StatusCode == StatusCodes.Status200OK) 
-            HttpContext.Session.SetString("jwt", (response.Data as TokenModel).JWT);
-        return Redirect("/home/index");
+        if (response.IsSuccess) return Redirect("/home/index");
+        
+        ViewData["Alert"] = response.Message;
+        return View();
+
     }
 
     /// <summary>
@@ -71,11 +73,8 @@ public class AccountController : Controller
     [HttpPost("/sign-out")]
     public IActionResult SignOut()
     {
-        var name = HttpContext.User.Identity.Name;
-        if (name == null) return BadRequest();
-        var response = _userService.Logout(name);
-        if (response.StatusCode == StatusCodes.Status200OK) HttpContext.Response.Cookies.Delete("refreshToken");
-        return StatusCode(response.StatusCode, response.Data);
+        _userService.Logout(HttpContext.User.Identity.Name);
+        return Redirect(Url.Action("SignIn"));
     }
 
     [HttpGet("/sign-up")]
@@ -83,7 +82,7 @@ public class AccountController : Controller
     {
         return View();
     }
-    
+
     /// <summary>
     /// регистрация нового аккаунта
     /// </summary>
@@ -91,8 +90,14 @@ public class AccountController : Controller
     public IActionResult SignUp(RegisterModel registerModel)
     {
         if (!ModelState.IsValid) return View();
+
         var response = _userService.Register(registerModel);
-        return Redirect("/login");
+        if (response.StatusCode != StatusCodes.Status201Created) return View();
+
+        var loginModel = new LoginModel() {Name = registerModel.Name, Password = registerModel.Password};
+        _userService.Authenticate(loginModel);
+
+        return Redirect(Url.Action("Index", "Home"));
     }
 
     /// <summary>
@@ -103,29 +108,5 @@ public class AccountController : Controller
     public IActionResult Update(UserViewModel user)
     {
         return BadRequest();
-    }
-    
-    /// <summary>
-    /// обновление устаревшего JWT
-    /// </summary>
-    [HttpPost]
-    public IActionResult RefreshToken()
-    {
-        if (HttpContext.User.Claims.FirstOrDefault() != null) return StatusCode(StatusCodes.Status403Forbidden, "Токен еще не истек");
-        var jwt = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-        if (jwt == null) return Unauthorized("Пользователь не авторизован");
-        var response = _tokenService.RefreshJwt(jwt);
-        if (response.StatusCode == StatusCodes.Status200OK) SetRefreshTokenSession((response.Data as TokenModel).RefreshToken);
-        return StatusCode(response.StatusCode, response.Data);
-    }
-    
-    private void SetRefreshTokenSession(string token)
-    {
-        var cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Expires = DateTime.UtcNow.AddDays(double.Parse(_configuration["RefreshToken:LifetimeDays"]))
-        };
-        Response.Cookies.Append("refreshToken", token, cookieOptions);
     }
 }

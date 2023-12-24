@@ -1,13 +1,14 @@
 ﻿using System.Security.Claims;
 using AuthService.Services.Interfaces;
+using Microsoft.Extensions.Primitives;
 
 namespace DndOnline.Middlewares;
 
-public class AuthMiddleware
+public class TokenInHeaderMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public AuthMiddleware(RequestDelegate next)
+    public TokenInHeaderMiddleware(RequestDelegate next)
     {
         _next = next;
     }
@@ -30,18 +31,18 @@ public class AuthMiddleware
 
         if (jsonToken.ValidTo > DateTime.UtcNow)
         {
-            context.Request.Headers.Add("Authorization", $"Bearer {jwt}");
+            context.Request.Headers.Authorization = new StringValues("Bearer " + jwt);
         }
         else
         {
-            var userName = jsonToken.Claims.FirstOrDefault(f => f.Type == "unique_name")?.Value;
+            var userName = jsonToken.Claims.FirstOrDefault(f => f.Type == "name")?.Value;
             var refreshToken = userService.Get(userName).RefreshToken;
             if (!refreshToken.IsExpired)
             {
-                tokenService.RefreshJwt(jwt);
+                tokenService.RefreshTokens(jwt);
                 
-                context.Session.SetString("JwtToken", jwt);
-                context.Request.Headers.Add("Authorization", $"Bearer {jwt}");
+                context.Session.SetString("jwt", jwt);
+                context.Request.Headers.Authorization = new StringValues("Bearer " + jwt);
             }
         }
 

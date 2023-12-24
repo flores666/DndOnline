@@ -58,7 +58,7 @@ public class TokenService : ITokenService
         }
     }
 
-    public Response RefreshJwt(string jwt)
+    public Response RefreshTokens(string jwt)
     {
         var userName = GetValueFromJwt(jwt, ClaimTypes.Name);
         var user = _db.Users
@@ -84,7 +84,7 @@ public class TokenService : ITokenService
             RefreshTokenExpTime = newRefreshToken.ExpiryTime
         };
         
-        return new Response(StatusCodes.Status200OK, tokenModel);
+        return new Response(StatusCodes.Status200OK, "Успешно", tokenModel);
     }
 
     public string GetValueFromJwt(string jwt, string param)

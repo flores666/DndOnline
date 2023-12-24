@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using AuthService.DataAccess;
 using AuthService.Services;
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AuthServiceDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("default")));
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
@@ -22,9 +24,9 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
 });
 
-builder.Services.AddSignalR();
-
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -39,6 +41,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+        options.Events = new JwtBearerEvents()
+        {
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                if (context.Request.Headers.Authorization.IsNullOrEmpty()) context.Response.Redirect("/login");
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -62,10 +73,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseMiddleware<TokenInHeaderMiddleware>();
+
 app.UseAuthorization();
 app.UseAuthentication();
-
-app.UseMiddleware<AuthMiddleware>();
 
 app.MapControllerRoute(
     name: "auth",

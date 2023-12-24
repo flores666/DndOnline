@@ -9,24 +9,29 @@
         {
             <div class="card-body p-5 text-center">
 
-                <h3 class="mb-5">Добро пожаловать!</h3>
+                <div class="header mb-3">
+                    <h3>Добро пожаловать!</h3>
+                    <span class="error-span">@ViewData["Alert"]</span>
+                </div>
 
                 <div class="form-outline mb-4">
                     @Html.LabelFor(m => m.Name, new {@class = "form-label"})
                     @Html.TextBoxFor(m => m.Name, new {@class = "form-control-lg input-field"})
-                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "error-span" })
+                    @Html.ValidationMessageFor(m => m.Name, "", new {@class = "error-span"})
                 </div>
 
                 <div class="form-outline mb-4">
                     @Html.LabelFor(m => m.Password, new {@class = "form-label"})
-                    @Html.TextBoxFor(m => m.Password, new {@class = "form-control-lg input-field"})
-                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "error-span" })
+                    @Html.TextBoxFor(m => m.Password, 
+                        new {@class = "form-control-lg input-field", type="password" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new {@class = "error-span"})
                 </div>
 
                 <div class="form-outline mb-4">
                     @Html.LabelFor(m => m.RepeatedPassword, new {@class = "form-label"})
-                    @Html.TextBoxFor(m => m.RepeatedPassword, new {@class = "form-control-lg input-field"})
-                    @Html.ValidationMessageFor(m => m.RepeatedPassword, "", new { @class = "error-span" })
+                    @Html.TextBoxFor(m => m.RepeatedPassword, 
+                        new {@class = "form-control-lg input-field", type="password" })
+                    @Html.ValidationMessageFor(m => m.RepeatedPassword, "", new {@class = "error-span"})
                 </div>
 
                 <button class="ps-5 pe-5" type="submit">Зарегистрироваться</button>

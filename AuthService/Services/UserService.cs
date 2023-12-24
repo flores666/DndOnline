@@ -2,8 +2,10 @@
 using AuthService.DataAccess.Objects;
 using AuthService.Models;
 using AuthService.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 
 namespace AuthService.Services;
 
@@ -11,27 +13,36 @@ public class UserService : IUserService
 {
     private readonly AuthServiceDbContext _db;
     private readonly ITokenService _tokenService;
-
-    public UserService(AuthServiceDbContext context, ITokenService tokenService)
+    private readonly HttpContext _httpContext;
+    
+    public UserService(AuthServiceDbContext context, ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
     {
         _db = context;
         _tokenService = tokenService;
+        _httpContext = httpContextAccessor.HttpContext;
     }
 
     public Response Register(RegisterModel model)
     {
-        if (_db.Users.FirstOrDefault(f => f.Id == model.id) != null)
-            return new Response(StatusCodes.Status409Conflict, "Пользователь уже существует");
+        var response = new Response(StatusCodes.Status409Conflict, "Такой пользователь уже существует");
         
-        var passwordHash = PasswordHasher.Hash(model.Password);
-        var user = new User { Name = model.Name, PasswordHash = passwordHash };
-        
-        _db.Users.Add(user);
-        _db.SaveChanges();
-        
-        return new Response(StatusCodes.Status201Created, "Пользователь успешно зарегистрировался");
+        if (_db.Users.FirstOrDefault(f => f.Name == model.Name) == null)
+        {
+            var passwordHash = PasswordHasher.Hash(model.Password);
+            var user = new User {Name = model.Name, PasswordHash = passwordHash};
+
+            _db.Users.Add(user);
+            var result = _db.SaveChanges();
+
+            if (result > 0)
+            {
+                response.StatusCode = StatusCodes.Status201Created;
+                response.Message = "Успешно!";
+            }
+        }
+        return response;
     }
-    
+
     public User Get(Guid id)
     {
         return _db.Users.Include(i => i.RefreshToken).FirstOrDefault(u => u.Id == id);
@@ -63,7 +74,7 @@ public class UserService : IUserService
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         if (!string.IsNullOrEmpty(user.RefreshToken?.Token)) _db.RefreshTokens.Remove(user.RefreshToken);
-        
+
         user.RefreshToken = refreshToken;
         _db.Update(user);
         _db.SaveChanges();
@@ -74,8 +85,14 @@ public class UserService : IUserService
             RefreshToken = refreshToken.Token,
             RefreshTokenExpTime = refreshToken.ExpiryTime
         };
-        
-        return new Response(StatusCodes.Status200OK, tokenModel);
+
+        if (_httpContext != null)
+        {
+            _httpContext.Session.SetString("jwt", tokenModel.JWT);
+            _httpContext.Request.Headers.Authorization = new StringValues("Bearer " + tokenModel.JWT);
+        }
+
+        return new Response(StatusCodes.Status200OK, "Успешно", tokenModel);
     }
 
     public Response Logout(string name)
@@ -83,11 +100,12 @@ public class UserService : IUserService
         var user = _db.Users.Include(u => u.RefreshToken).FirstOrDefault(u => u.Name == name);
         if (user == null) return new Response(StatusCodes.Status404NotFound, "Пользователь не найден");
         if (user.RefreshToken == null) return new Response(StatusCodes.Status400BadRequest, "Некорректный запрос");
-        //var jwt = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-        //_tokenService.AddJwtToBlackList(jwt);
-        _db.RefreshTokens.Remove(user.RefreshToken);
-        _db.SaveChanges();
 
+        _db.RefreshTokens.Remove(user.RefreshToken);
+        var result = _db.SaveChanges();
+        
+        if (result > 0) _httpContext.Session.Remove("jwt");
+        
         return new Response(StatusCodes.Status200OK, "Пользователь успешно деавторизовался");
     }
 }
