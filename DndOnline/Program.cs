@@ -3,8 +3,8 @@ using System.Text;
 using AuthService.DataAccess;
 using AuthService.Services;
 using AuthService.Services.Interfaces;
+using DndOnline.DataAccess;
 using DndOnline.Middlewares;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +12,9 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AuthServiceDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("default")));
+
+builder.Services.AddDbContext<DndAppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("default")));
 
 builder.Services.AddHttpContextAccessor();
