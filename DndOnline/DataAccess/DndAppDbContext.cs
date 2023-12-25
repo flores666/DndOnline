@@ -6,7 +6,7 @@ namespace DndOnline.DataAccess;
 
 public class DndAppDbContext : DbContext
 {
-    public DbSet<Player> Players { get; set; }
+    public DbSet<Player> Users { get; set; }
     public DbSet<UserRefreshToken> RefreshTokens { get; set; }
     public DbSet<Lobby> Lobbies { get; set; }
     public DbSet<LobbyStatus> LobbyStatuses { get; set; }
@@ -26,7 +26,7 @@ public class DndAppDbContext : DbContext
         modelBuilder.Entity<Player>()
             .HasMany(p => p.Lobbies)
             .WithMany(l => l.Players)
-            .UsingEntity(j => j.ToTable("PlayerLobby"));
+            .UsingEntity(j => j.ToTable("UserLobby"));
         
         modelBuilder.Entity<Role>()
             .HasMany(p => p.Permissions)

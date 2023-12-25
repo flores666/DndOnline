@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace AuthService.DataAccess.Objects;
 
-[Owned]
 public class RefreshToken
 {
     [Key]
