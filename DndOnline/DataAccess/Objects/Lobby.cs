@@ -9,11 +9,12 @@ public class Lobby
     public LobbyStatus Status { get; set; }
     public int MaxPlayers { get; set; }
     public string Master { get; set; }
-    public List<User> Players { get; set; } = new List<User>();
+    public List<User> Players { get; set; } 
 
     public Lobby()
     {
-        Status.Status = LobbyStatusType.WaitingForPlayers;
+        Status = new LobbyStatus();
         MaxPlayers = 6;
+        Players = new List<User>();
     }
 }

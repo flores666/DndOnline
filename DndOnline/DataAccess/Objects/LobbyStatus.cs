@@ -1,4 +1,6 @@
-﻿namespace DndOnline.DataAccess.Objects;
+﻿using System.Text.RegularExpressions;
+
+namespace DndOnline.DataAccess.Objects;
 
 public enum LobbyStatusType
 {
@@ -13,5 +15,12 @@ public enum LobbyStatusType
 public class LobbyStatus
 {
     public Guid Id { get; set; }
-    public LobbyStatusType Status { get; set; }
+    public LobbyStatusType Status { get; set; } = LobbyStatusType.WaitingForPlayers;
+
+    public override string ToString()
+    {
+        var pattern = @"(?<=\p{Ll})(?=\p{Lu})";
+        var result = Regex.Replace(Status.ToString(), pattern, " ");
+        return result;
+    }
 }

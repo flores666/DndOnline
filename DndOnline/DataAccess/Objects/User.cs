@@ -17,5 +17,6 @@ namespace DndOnline.DataAccess.Objects
         public string PasswordHash { get; set; }
 
         public RefreshToken? RefreshToken { get; set; }
+        public List<Lobby> Lobbies { get; set; }
     }
 }
