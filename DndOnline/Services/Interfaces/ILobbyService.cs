@@ -5,8 +5,10 @@ namespace DndOnline.Services.Interfaces;
 
 public interface ILobbyService
 {
-    public Lobby CreateLobby(string name, int maxPlayers);
+    public Lobby CreateLobby(LobbyFormViewModel model);
     public ResponseModel DeleteLobby();
-    public Lobby GetLobby();
+    public Lobby GetLobby(string name);
+    public Lobby GetLobby(Guid id);
+    public List<Lobby> GetLobbies(int page = 1, int pageSize = 20);
     public ResponseModel ConnectUser(string userName);
 }

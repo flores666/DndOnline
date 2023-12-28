@@ -2,6 +2,7 @@
 using DndOnline.DataAccess.Objects;
 using DndOnline.Models;
 using DndOnline.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace DndOnline.Services;
 
@@ -16,15 +17,14 @@ public class LobbyService : ILobbyService
         _httpContext = httpContextAccessor.HttpContext;
     }
     
-    public Lobby CreateLobby(string name, int maxPlayers = 6)
+    public Lobby CreateLobby(LobbyFormViewModel model)
     {
         var master = _httpContext.User.Identity.Name;
         var lobby = new Lobby()
         {
-            Name = name,
-            Master = master ?? "", 
-            Players = new List<User>(),
-            MaxPlayers = maxPlayers
+            Name = model.Name,
+            Master = master,
+            MaxPlayers = model.MaxPlayers
         };
         
         _db.Lobbies.Add(lobby);
@@ -37,9 +37,22 @@ public class LobbyService : ILobbyService
         throw new NotImplementedException();
     }
 
-    public Lobby GetLobby()
+    public Lobby GetLobby(string name)
     {
-        throw new NotImplementedException();
+        return _db.Lobbies.Include(i => i.Players).FirstOrDefault(f => f.Name == name);
+    }
+
+    public Lobby GetLobby(Guid id)
+    {
+        return _db.Lobbies.Include(i => i.Players).FirstOrDefault(f => f.Id == id);
+    }
+
+    public List<Lobby> GetLobbies(int curPage = 1, int pageSize = 20)
+    {
+        return _db.Lobbies
+            .Skip((curPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 
     public ResponseModel ConnectUser(string userName)

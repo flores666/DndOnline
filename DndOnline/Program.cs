@@ -5,6 +5,8 @@ using AuthService.Services;
 using AuthService.Services.Interfaces;
 using DndOnline.DataAccess;
 using DndOnline.Middlewares;
+using DndOnline.Services;
+using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +22,7 @@ builder.Services.AddDbContext<DndAppDbContext>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ILobbyService, LobbyService>();
 
 builder.Services.AddSession(options =>
 {
@@ -87,8 +90,13 @@ app.MapControllerRoute(
     defaults: new { controller = "Account", action = "SignIn" });
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{*path}",
+    name: "home",
+    pattern: "{controller}/{action}",
     defaults: new { controller = "Home", action = "Index" });
+
+app.MapControllerRoute(
+    name: "lobby",
+    pattern: "{controller}/{action}",
+    defaults: new { controller = "Lobby", action = "Index" });
 
 app.Run();
