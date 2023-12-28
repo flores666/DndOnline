@@ -25,4 +25,10 @@
         document.getElementById("player_list").appendChild(li);
         li.textContent = `${user}`;
     });
+    
+    connection.start().then(function () {
+        console.log("signalR connection started");
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
 </script>

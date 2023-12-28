@@ -59,4 +59,18 @@ public class LobbyService : ILobbyService
     {
         throw new NotImplementedException();
     }
+
+    public ResponseModel ConnectUser(Guid userId, Lobby lobby)
+    {
+        var response = new ResponseModel();
+        var user = _db.Users.FirstOrDefault(u => u.Id == userId);
+
+        if (lobby.Players.Any(a => a.Id == userId)) return response;
+        
+        lobby.Players.Add(user);
+        var result = _db.SaveChanges();
+        
+        if (result > 0) response.SetSeccess();
+        return response;
+    }
 }

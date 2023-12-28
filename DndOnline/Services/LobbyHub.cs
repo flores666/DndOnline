@@ -3,14 +3,12 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace DndOnline.Services;
 
-public class LobbyHub : Hub, ILobbyHubContext
+public class LobbyHub : Hub
 {
-    public IHubClients Clients { get; }
-    
-    public void JoinLobby(string playerName)
+    public async Task JoinLobby(string playerName)
     {
         if (Clients != null) 
-        Clients.All.SendAsync("JoinLobby", playerName);
+        await Clients.All.SendAsync("JoinLobby", playerName);
     }
 
     public void LeaveLobby(string playerName)

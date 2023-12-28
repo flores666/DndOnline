@@ -11,4 +11,5 @@ public interface ILobbyService
     public Lobby GetLobby(Guid id);
     public List<Lobby> GetLobbies(int page = 1, int pageSize = 20);
     public ResponseModel ConnectUser(string userName);
+    public ResponseModel ConnectUser(Guid userId, Lobby lobby);
 }

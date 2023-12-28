@@ -32,7 +32,13 @@ public class LobbyController : Controller
         var lobby = _lobbyService.GetLobby(id);
         var playerName = HttpContext.User.Claims
             .FirstOrDefault(f => f.Type == ClaimTypes.Name)?.Value;
-        _lobbyHubContext.Clients.All.SendAsync("JoinLobby", playerName);
+        var playerId = HttpContext.User.Claims
+            .FirstOrDefault(f => f.Type == "id")?.Value;
+
+        var result = _lobbyService.ConnectUser(new Guid(playerId), lobby);
+
+        if (result.IsSuccess) _lobbyHubContext.Clients.All.SendAsync("JoinLobby", playerName);
+
         return View(lobby);
     }
 
