@@ -7,10 +7,22 @@
     <h1>Статус - @Model.Status.ToString()</h1>
     <h1>Макс кол-во игроков @Model.MaxPlayers</h1>
     <h1>Игроки:</h1>
-    <ul>
+    <ul id="player_list">
         @foreach (var player in Model.Players)
         {
             <li>@player.Name</li>
         }
     </ul>
 }
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+
+<script>
+    let connection = new signalR.HubConnectionBuilder().withUrl("/lobbyHub").build();
+    
+    connection.on("JoinLobby", function (user) {
+        let li = document.createElement("li");
+        document.getElementById("player_list").appendChild(li);
+        li.textContent = `${user}`;
+    });
+</script>

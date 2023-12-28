@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using AuthService.DataAccess;
 using AuthService.Services;
@@ -98,5 +97,7 @@ app.MapControllerRoute(
     name: "lobby",
     pattern: "{controller}/{action}",
     defaults: new { controller = "Lobby", action = "Index" });
+
+app.MapHub<LobbyHub>("/lobbyHub");
 
 app.Run();
