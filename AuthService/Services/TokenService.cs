@@ -24,7 +24,7 @@ public class TokenService : ITokenService
         _db = db;
     }
 
-    public string GenerateJwt(string userName)
+    public string GenerateJwt(string userName, Guid id)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
@@ -33,6 +33,7 @@ public class TokenService : ITokenService
             Subject = new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, userName),
+                new Claim("id", id.ToString()),
             }),
             Expires = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:LifetimeMinutes"])),
             SigningCredentials =
@@ -79,7 +80,7 @@ public class TokenService : ITokenService
 
         var tokenModel = new TokenModel
         {
-            JWT = GenerateJwt(userName),
+            JWT = GenerateJwt(userName, user.Id),
             RefreshToken = newRefreshToken.Token,
             RefreshTokenExpTime = newRefreshToken.ExpiryTime
         };

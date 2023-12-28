@@ -70,7 +70,7 @@ public class UserService : IUserService
         if (!PasswordHasher.Validate(model.Password, user.PasswordHash))
             return new Response(StatusCodes.Status400BadRequest, "Данные не верны или отсутствуют");
 
-        var jwtToken = _tokenService.GenerateJwt(model.Name);
+        var jwtToken = _tokenService.GenerateJwt(user.Name, user.Id);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         if (!string.IsNullOrEmpty(user.RefreshToken?.Token)) _db.RefreshTokens.Remove(user.RefreshToken);

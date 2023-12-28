@@ -5,7 +5,7 @@ namespace AuthService.Services.Interfaces;
 
 public interface ITokenService
 {
-    public string GenerateJwt(string userName);
+    public string GenerateJwt(string userName, Guid id);
     public RefreshToken GenerateRefreshToken();
     public Response RefreshTokens(string jwt);
     public string GetValueFromJwt(string jwt, string param);
