@@ -1,5 +1,27 @@
-﻿@{
+﻿@model List<DndOnline.DataAccess.Objects.Lobby>
+
+@{
     Layout = "_Layout";
 }
 
-<h1>asdasdd</h1>
+<h1>Hello, @ViewData["Name"]</h1>
+
+@Html.Partial("Partial/LobbyCreate", new LobbyFormViewModel())
+
+<ul>
+    @if (Model != null && Model.Count > 0)
+    {
+        foreach (var item in Model)
+        {
+            <li>
+                <a href="@Url.Action("index", "lobby", new {id = item.Id})">
+                    @item.Name
+                </a>
+            </li>
+        }
+    }
+    else
+    {
+        <li>Увы</li>
+    }
+</ul>
