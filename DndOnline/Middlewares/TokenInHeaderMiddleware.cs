@@ -7,7 +7,7 @@ namespace DndOnline.Middlewares;
 public class TokenInHeaderMiddleware
 {
     private readonly RequestDelegate _next;
-
+    
     public TokenInHeaderMiddleware(RequestDelegate next)
     {
         _next = next;
@@ -35,8 +35,8 @@ public class TokenInHeaderMiddleware
         }
         else
         {
-            var userName = jsonToken.Claims.FirstOrDefault(f => f.Type == "name")?.Value;
-            var refreshToken = userService.Get(userName).RefreshToken;
+            var userName = jsonToken.Claims.FirstOrDefault(f => f.Type == ClaimTypes.Name)?.Value;
+            var refreshToken = userService.Get(userName)?.RefreshToken;
             if (!refreshToken.IsExpired)
             {
                 tokenService.RefreshTokens(jwt);
