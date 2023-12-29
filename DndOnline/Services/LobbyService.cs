@@ -70,7 +70,39 @@ public class LobbyService : ILobbyService
         lobby.Players.Add(user);
         var result = _db.SaveChanges();
         
-        if (result > 0) response.SetSeccess();
+        if (result > 0) response.SetSuccess(user);
+        return response;
+    }
+
+    public ResponseModel DisconnectUser(Guid userId, Lobby lobby)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ResponseModel DisconnectUser(Guid userId, Guid lobbyId)
+    {
+        var response = new ResponseModel();
+        var lobby = _db.Lobbies
+            .Include(lobby => lobby.Players)
+            .FirstOrDefault(f => f.Id == lobbyId);
+        
+        var toRemove = lobby.Players.FirstOrDefault(f => f.Id == userId);
+        
+        if (toRemove != null)
+        {
+            var isRemoved = lobby.Players.Remove(toRemove);
+            if (isRemoved)
+            {
+                _db.Lobbies.Update(lobby);
+                var saved = _db.SaveChanges();
+                if (saved > 0)
+                {
+                    response.SetSuccess();
+                    response.Data = toRemove;
+                }
+            }
+        }
+
         return response;
     }
 }

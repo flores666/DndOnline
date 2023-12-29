@@ -1,20 +1,35 @@
-﻿using DndOnline.Services.Interfaces;
+﻿using DndOnline.DataAccess.Objects;
+using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace DndOnline.Services;
 
 public class LobbyHub : Hub
 {
-    public async Task JoinLobby(string playerName)
+    private readonly HttpContext _httpContext;
+    private readonly ILobbyService _lobbyService;
+    
+    public LobbyHub(IHttpContextAccessor httpContextAccessor, ILobbyService lobbyService)
     {
-        if (Clients != null) 
-        await Clients.All.SendAsync("JoinLobby", playerName);
+        _httpContext = httpContextAccessor.HttpContext;
+        _lobbyService = lobbyService;
+    }
+    
+    public override async Task OnConnectedAsync()
+    {
+        var playerName = _httpContext.User.Identity.Name;
+        if (Clients != null) await Clients.All.SendAsync("JoinLobby", playerName);
     }
 
-    public void LeaveLobby(string playerName)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        if (Clients != null) 
-        Clients.All.SendAsync("LeaveLobby", playerName);
+        var playerId = _httpContext.User.Claims.FirstOrDefault(w => w.Type == "id").Value;
+        var lobbyIdString = _httpContext.Session.GetString("lobbyId");
+        var lobbyId = new Guid(lobbyIdString);
+        
+        var response = _lobbyService.DisconnectUser(new Guid(playerId), lobbyId);
+        var disconnectedUser = response.Data as User;
+        
+        if (Clients != null) await Clients.All.SendAsync("LeaveLobby", disconnectedUser.Name);
     }
-
 }

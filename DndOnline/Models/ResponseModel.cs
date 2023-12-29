@@ -28,9 +28,16 @@ public class ResponseModel
         Message = result == Results.Success ? "Успех" : "Ошибка";
     }
 
-    public void SetSeccess(string message = null)
+    public void SetSuccess(string message = null)
     {
         Result = Results.Success;
+        Message = message ?? "Успех";
+    }
+    
+    public void SetSuccess(object data, string message = null)
+    {
+        Result = Results.Success;
+        Data = data;
         Message = message ?? "Успех";
     }
 }

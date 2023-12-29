@@ -1,9 +1,8 @@
-﻿using System.Security.Claims;
+﻿using DndOnline.DataAccess.Objects;
 using DndOnline.Extensions;
 using DndOnline.Models;
 using DndOnline.Services;
 using DndOnline.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
@@ -30,15 +29,14 @@ public class LobbyController : Controller
     public IActionResult Index(Guid id)
     {
         var lobby = _lobbyService.GetLobby(id);
-        var playerName = HttpContext.User.Claims
-            .FirstOrDefault(f => f.Type == ClaimTypes.Name)?.Value;
+        
         var playerId = HttpContext.User.Claims
             .FirstOrDefault(f => f.Type == "id")?.Value;
 
         var result = _lobbyService.ConnectUser(new Guid(playerId), lobby);
+        if (!result.IsSuccess) RedirectToAction("Index", "Home");
 
-        if (result.IsSuccess) _lobbyHubContext.Clients.All.SendAsync("JoinLobby", playerName);
-
+        HttpContext.Session.SetString("lobbyId", id.ToString());
         return View(lobby);
     }
 
@@ -47,7 +45,7 @@ public class LobbyController : Controller
     {
         if (!ModelState.IsValid)
         {
-            _lobbyService.CreateLobby(model);
+            var lobby = _lobbyService.CreateLobby(model);
         }
         else
         {
