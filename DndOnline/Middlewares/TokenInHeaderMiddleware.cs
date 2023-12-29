@@ -35,7 +35,7 @@ public class TokenInHeaderMiddleware
         }
         else
         {
-            var userName = jsonToken.Claims.FirstOrDefault(f => f.Type == ClaimTypes.Name)?.Value;
+            var userName = jsonToken.Claims.FirstOrDefault(f => f.Type == "unique_name")?.Value;
             var refreshToken = userService.Get(userName)?.RefreshToken;
             if (!refreshToken.IsExpired)
             {
