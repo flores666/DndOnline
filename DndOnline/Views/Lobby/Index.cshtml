@@ -16,30 +16,5 @@
 }
 
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
-
-<script>
-    let connection = new signalR.HubConnectionBuilder().withUrl("/lobbyHub").build();
-    
-    connection.on("JoinLobby", function (userName) {
-        let playerListItem = document.getElementById('player_list');
-        let playerList = playerListItem.getElementsByTagName('li');
-        let exists = Array.from(playerList).some(f => f.innerText === userName);
-
-        if (exists) return;
-        
-        let li = document.createElement("li");
-        document.getElementById("player_list").appendChild(li);
-        li.textContent = `${userName}`;
-    });
-    
-    connection.on("LeaveLobby", function (userName) {
-            let li = document.getElementById("player_list").find(userName);
-            li.remove();
-        });
-    
-    connection.start().then(function () {
-        console.log("signalR connection started");
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
-</script>
+<script src="lib/jquery/dist/jquery.min.js"></script>
+<script src="js/lobby.js"></script>
