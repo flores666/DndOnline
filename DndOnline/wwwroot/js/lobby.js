@@ -20,13 +20,15 @@ $(document).ready(function () {
         let elem = getElementFromUl('player_list', userName);
         if (elem) elem.remove();
     });
-    
-    document.addEventListener('beforeunload', async function(){
-        await connection.invoke("OnDisconnectedAsync");
-    });
+    //
+    // document.addEventListener('beforeunload', async function(){
+    //     await connection.invoke("LeaveLobby");
+    // });
 
     <!--Подключаемся-->
-    connection.start().then(function () {
+    connection.start().then(async function () {
+        // await connection.invoke("JoinLobby");
+        
         console.log("signalR connection started");
     }).catch(function (err) {
         return console.error(err.toString());

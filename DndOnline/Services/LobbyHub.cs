@@ -15,13 +15,13 @@ public class LobbyHub : Hub
         _lobbyService = lobbyService;
     }
     
-    public override async Task OnConnectedAsync()
+    public async Task JoinLobby()
     {
         var playerName = _httpContext.User.Identity.Name;
         if (Clients != null) await Clients.All.SendAsync("JoinLobby", playerName);
     }
 
-    public override async Task OnDisconnectedAsync(Exception? exception)
+    public async Task LeaveLobby()
     {
         var playerId = _httpContext.User.Claims.FirstOrDefault(w => w.Type == "id").Value;
         var lobbyIdString = _httpContext.Session.GetString("lobbyId");
@@ -31,5 +31,17 @@ public class LobbyHub : Hub
         var disconnectedUser = response.Data as User;
         
         if (Clients != null) await Clients.All.SendAsync("LeaveLobby", disconnectedUser.Name);
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        await LeaveLobby();
+        await base.OnDisconnectedAsync(exception);
+    }
+
+    public override async Task OnConnectedAsync()
+    {
+        await JoinLobby();
+        await base.OnConnectedAsync();
     }
 }
