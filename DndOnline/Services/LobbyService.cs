@@ -64,7 +64,7 @@ public class LobbyService : ILobbyService
     {
         var response = new ResponseModel();
         var user = _db.Users.FirstOrDefault(u => u.Id == userId);
-
+        
         if (lobby.Players.Any(a => a.Id == userId)) return response;
         
         lobby.Players.Add(user);
@@ -84,6 +84,7 @@ public class LobbyService : ILobbyService
         var response = new ResponseModel();
         var lobby = _db.Lobbies
             .Include(lobby => lobby.Players)
+            .Include(lobby => lobby.Status)
             .FirstOrDefault(f => f.Id == lobbyId);
         
         var toRemove = lobby.Players.FirstOrDefault(f => f.Id == userId);
@@ -93,7 +94,15 @@ public class LobbyService : ILobbyService
             var isRemoved = lobby.Players.Remove(toRemove);
             if (isRemoved)
             {
-                _db.Lobbies.Update(lobby);
+                if (lobby.Players.Count == 0 && lobby.Status.Status == LobbyStatusType.WaitingForPlayers)
+                {
+                    _db.Lobbies.Remove(lobby);
+                } 
+                else
+                {
+                    _db.Lobbies.Update(lobby);
+                }
+                
                 var saved = _db.SaveChanges();
                 if (saved > 0)
                 {
