@@ -61,7 +61,7 @@ public class TokenService : ITokenService
 
     public Response RefreshTokens(string jwt)
     {
-        var userName = GetValueFromJwt(jwt, ClaimTypes.Name);
+        var userName = GetValueFromJwt(jwt, "unique_name");
         var user = _db.Users
             .Include(u => u.RefreshToken)
             .FirstOrDefault(u => u.Name == userName);
