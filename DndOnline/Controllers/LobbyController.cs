@@ -31,14 +31,21 @@ public class LobbyController : Controller
     {
         var lobby = _lobbyService.GetLobby(id);
         
+        if (lobby == null)
+        {
+            return RedirectToAction("Index", "Home");
+        }
+        
         var playerId = HttpContext.User.Claims
             .FirstOrDefault(f => f.Type == "id")?.Value;
 
         var result = _lobbyService.ConnectUser(new Guid(playerId), lobby);
         if (!result.IsSuccess) RedirectToAction("Index", "Home");
 
+        var curUserName = HttpContext.User.Identity.Name;
         HttpContext.Session.SetString("lobbyId", id.ToString());
-        return View(lobby);
+
+        return lobby.Master == curUserName ? View("LobbyMaster", lobby) : View(lobby);
     }
 
     [HttpPost]
