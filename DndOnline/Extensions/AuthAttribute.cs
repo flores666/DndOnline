@@ -13,12 +13,15 @@ public class AuthAttribute : Attribute, IAuthorizationFilter
         if (string.IsNullOrEmpty(jwt))
         {
             context.Result = result;
-
         }
         else
         {
-            var handler = new JwtSecurityTokenHandler();
-            if (handler.ReadToken(jwt) is not JwtSecurityToken token) context.Result = result;
+            if (!context.HttpContext.User.Identity.IsAuthenticated) context.Result = result;
+            else
+            {
+                var handler = new JwtSecurityTokenHandler();
+                if (handler.ReadToken(jwt) is not JwtSecurityToken token) context.Result = result;
+            }
         }
     }
 }
