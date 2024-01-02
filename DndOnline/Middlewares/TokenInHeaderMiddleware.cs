@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AuthService.Models;
 using AuthService.Services.Interfaces;
 using Microsoft.Extensions.Primitives;
 
@@ -39,10 +40,13 @@ public class TokenInHeaderMiddleware
             var refreshToken = userService.Get(userName)?.RefreshToken;
             if (!refreshToken.IsExpired)
             {
-                tokenService.RefreshTokens(jwt);
-                
-                context.Session.SetString("jwt", jwt);
-                context.Request.Headers.Authorization = new StringValues("Bearer " + jwt);
+                var response = tokenService.RefreshTokens(jwt);
+                if (response.IsSuccess)
+                {
+                    var token = response.Data as TokenModel;
+                    context.Session.SetString("jwt", token.JWT);
+                    context.Request.Headers.Authorization = new StringValues("Bearer " + token.JWT);
+                }
             }
         }
 
