@@ -1,11 +1,11 @@
 :root {
     --font-ubuntu-regular: 'Ubuntu', sans-serif;
     --font-ubuntu-medium: 'Ubuntu Medium', sans-serif;
-    --primary-dark: #201f33;
-    --secondary-dark: #33314d;
-    --font-primary: #d1d0de;
-    --btn-primary: rgba(15, 15, 24, 0.56);
-    --btn-secondary: rgba(11, 12, 21, 0.84);
+    --alice-blue: #D5DFE5;
+    --eerie-black: #191716;
+    --sea-green: #5C946E;
+    --tekhelet: #3D348B;
+    --dark-spring-green: #337357;
 }
 
 html {
@@ -27,14 +27,8 @@ html {
 
 body {
     margin-bottom: 60px;
-    color: var(--font-primary);
-    background: radial-gradient(
-            ellipse farthest-side at 50% -150%,
-            var(--secondary-dark),
-            var(--primary-dark) 15%,
-            var(--secondary-dark) 0%,
-            var(--primary-dark)
-    );
+    color: var(--eerie-black);
+    background: var(--alice-blue);
 }
 
 .header p, h1, h2, h3, h4, h5, h6 {
@@ -42,19 +36,19 @@ body {
 }
 
 button {
-    border: 1px solid var(--btn-primary);
+    border: 1px solid var(--eerie-black);
     border-radius: 8px;
     padding: 7px 13px;
-    background-color: var(--btn-primary);
-    color: var(--font-primary);
+    background-color: var(--tekhelet);
+    color: var(--alice-blue);
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 button:hover {
-    border-color: var(--btn-secondary);
-    outline: #ffffff thin;
-    box-shadow: 0 0 0 2px var(--secondary-dark);
+    border-color: var(--alice-blue);
+    outline: var(--eerie-black) thin;
+    box-shadow: 0 0 0 2px var(--eerie-black);
 }
 
 .unset {
@@ -64,23 +58,23 @@ button:hover {
 .asterisk:after {
     content: '*';
     margin-left: 1px;
-    color: var(--primary-dark);
+    color: var(--eerie-black);
 }
 
 .input-field {
     height: 2.5rem;
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 1px solid var(--secondary-dark);
+    border: 1px solid var(--tekhelet);
     border-radius: 8px;
-    background-color: var(--btn-primary);
-    color: var(--font-primary)
+    background-color: var(--alice-blue);
+    color: var(--eerie-black);
 }
 
 .input-field:focus {
-    border-color: var(--btn-secondary);
+    border-color: var(--eerie-black);
     outline: #ffffff thin;
-    box-shadow: 0 0 0 2px var(--secondary-dark);
+    box-shadow: 0 0 0 2px var(--alice-blue);
 }
 
 .input-field:disabled {
@@ -89,18 +83,45 @@ button:hover {
 }
 
 .card {
-    background-color: rgba(32, 31, 51, 0.66);
+    background-color: var(--eerie-black);
+    color: var(--alice-blue);
     border-radius: 1rem;
 }
 
+.card {
+    box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.53);
+}
+
 a {
-    color: var(--font-primary);
+    color: var(--alice-blue);
 }
 
 a:hover {
-    color: var(--btn-secondary);
+    color: white;
 }
 
 .error-span {
     color: rgba(158, 157, 168, 0.87);
+}
+
+.lobby-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.lobby-item {
+    margin: 0 1.5em 2.5em 1.5em;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+    padding: 1em;
+}
+
+.lobby-list-container {
+    width: 96%;
+    margin-left: auto;
+    margin-right: auto;
 }

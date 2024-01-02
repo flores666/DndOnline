@@ -4,3 +4,20 @@
     transform: translateY(-50%);
     width: 35rem;
 }
+
+.auth-form button {
+    height: 3em;
+    width: 16em;
+}
+
+.header {
+    padding-bottom: 2em;
+} 
+
+.form-check {
+    padding-top: 1em;
+}
+
+.form-check-input:checked {
+    background-color: var(--tekhelet);
+}
