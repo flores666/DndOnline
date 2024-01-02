@@ -4,29 +4,25 @@
     Layout = "_Layout";
 }
 
-<h1>Hello, @ViewData["Name"]</h1>
-
-@if (ViewBag.Alert != null)
-{
-    <span class="alert alert-danger">@ViewBag.Alert</span>
-}
-
-@Html.Partial("Partial/LobbyCreate", new LobbyFormViewModel())
-
-<ul>
-    @if (Model != null && Model.Count > 0)
-    {
-        foreach (var item in Model)
+<div class="lobby-list-container pt-3">
+    <div class="row align-items-center ps-4 pe-4 pb-3">
+        <h1 class="col">Лобби</h1>
+        <p class="col text-end">Новое лобби</p>
+    </div>
+    <div class="lobby-list">
+        @foreach (var item in Model)
         {
-            <li>
-                <a href="@Url.Action("index", "lobby", new {id = item.Id})">
-                    @item.Name
-                </a>
-            </li>
+            <div class="card lobby-item">
+                <div class="p-4">
+                    <h1>@item.Name</h1>
+                    <div class="d-flex align-items-center align-bottom">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mr-2 text-gray-500">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <p class="mb-0 ms-2">Players: @item.Players.Count/@item.MaxPlayers</p>
+                    </div>
+                </div>
+            </div>
         }
-    }
-    else
-    {
-        <li>Увы</li>
-    }
-</ul>
+    </div>
+</div>
