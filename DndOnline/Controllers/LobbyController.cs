@@ -49,6 +49,7 @@ public class LobbyController : Controller
             try
             {
                 var lobby = _lobbyService.CreateLobby(model);
+                return RedirectToAction("Index", new { id = lobby.Id });
             }
             catch (DbUpdateException ex)
             {
