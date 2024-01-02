@@ -6,6 +6,7 @@ using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace DndOnline.Controllers;
 
@@ -45,7 +46,15 @@ public class LobbyController : Controller
     {
         if (!ModelState.IsValid)
         {
-            var lobby = _lobbyService.CreateLobby(model);
+            try
+            {
+                var lobby = _lobbyService.CreateLobby(model);
+            }
+            catch (DbUpdateException ex)
+            {
+                var baseEx = ex.GetBaseException() as Npgsql.PostgresException;
+                if (baseEx.SqlState == "23505") ViewBag.Alert = "Лобби с таким названием уже существует";
+            }
         }
         else
         {

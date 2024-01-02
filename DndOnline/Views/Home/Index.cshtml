@@ -6,6 +6,11 @@
 
 <h1>Hello, @ViewData["Name"]</h1>
 
+@if (ViewBag.Alert != null)
+{
+    <span class="alert alert-danger">@ViewBag.Alert</span>
+}
+
 @Html.Partial("Partial/LobbyCreate", new LobbyFormViewModel())
 
 <ul>
