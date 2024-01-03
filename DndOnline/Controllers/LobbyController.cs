@@ -1,5 +1,4 @@
-﻿using DndOnline.DataAccess.Objects;
-using DndOnline.Extensions;
+﻿using DndOnline.Extensions;
 using DndOnline.Models;
 using DndOnline.Services;
 using DndOnline.Services.Interfaces;
@@ -48,8 +47,15 @@ public class LobbyController : Controller
         return lobby.Master == curUserName ? View("LobbyMaster", lobby) : View(lobby);
     }
 
+    [HttpGet]
+    public IActionResult NewLobby(string name)
+    {
+        var model = new LobbyFormViewModel { Name = name };
+        return View(model);
+    }
+
     [HttpPost]
-    public IActionResult CreateLobby(LobbyFormViewModel model)
+    public IActionResult NewLobby(LobbyFormViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -69,6 +75,6 @@ public class LobbyController : Controller
             ViewBag.Alert = "Ошибка создания лобби";
         }
 
-        return RedirectToAction("Index", "Home");
+        return View("NewLobby", model);
     }
 }
