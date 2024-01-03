@@ -1,4 +1,5 @@
-﻿using AuthService.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using AuthService.Models;
 using AuthService.Services.Interfaces;
 using DndOnline.Extensions;
 using DndOnline.Models;
@@ -70,7 +71,7 @@ public class AccountController : Controller
     /// выход из аккаунта
     /// </summary>
     [Auth]
-    [HttpPost("/sign-out")]
+    [Route("/sign-out")]
     public IActionResult SignOut()
     {
         _userService.Logout(HttpContext.User.Identity.Name);
