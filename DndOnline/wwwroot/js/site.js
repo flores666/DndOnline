@@ -25,4 +25,21 @@
             card.addEventListener("mouseleave", resetStyles);
         });
     }
+    
+    if (typeof lobby_search !== 'undefined') {
+        lobby_search.addEventListener('input', function () {
+            let input = lobby_search.value;
+            $.ajax({
+                url: "/Home/SearchLobby",
+                type: "GET",
+                data: {input: input},
+                success: function (data) {
+                    $(".lobby-list-container").html(data);
+                },
+                error: function () {
+                    console.error("Error during search");
+                }
+            });
+        });
+    }
 });

@@ -1,5 +1,6 @@
 ﻿using DndOnline.DataAccess;
 using DndOnline.Extensions;
+using DndOnline.Models;
 using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -25,6 +26,28 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         var lobbies = _lobbyService.GetLobbies();
-        return View(lobbies);
+        var model = lobbies.Select(s => new LobbyFormViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Master = s.Master,
+            MaxPlayers = s.MaxPlayers,
+            PLayersCount = s.Players.Count
+        });
+        return View(model);
+    }
+    
+    public IActionResult SearchLobby(string input)
+    {
+        var lobbies = _lobbyService.GetLobbies(input);
+        var model = lobbies.Select(s => new LobbyFormViewModel
+        {
+            Id = s.Id,
+            Name = s.Name,
+            Master = s.Master,
+            MaxPlayers = s.MaxPlayers,
+            PLayersCount = s.Players.Count
+        });
+        return PartialView("Partial/LobbyList", model);
     }
 }
