@@ -4,8 +4,8 @@
     const THRESHOLD = 10;
 
     function handleHover(e) {
-        const { clientX, clientY, currentTarget } = e;
-        const { clientWidth, clientHeight, offsetLeft, offsetTop } = currentTarget;
+        const {clientX, clientY, currentTarget} = e;
+        const {clientWidth, clientHeight, offsetLeft, offsetTop} = currentTarget;
 
         const horizontal = (clientX - offsetLeft) / clientWidth;
         const vertical = (clientY - offsetTop) / clientHeight;
@@ -25,21 +25,39 @@
             card.addEventListener("mouseleave", resetStyles);
         });
     }
-    
-    if (typeof lobby_search !== 'undefined') {
-        lobby_search.addEventListener('input', function () {
-            let input = lobby_search.value;
-            $.ajax({
-                url: "/Home/SearchLobby",
-                type: "GET",
-                data: {input: input},
-                success: function (data) {
-                    $(".lobby-list-container").html(data);
-                },
-                error: function () {
-                    console.error("Error during search");
-                }
-            });
+
+    $('#lobby_search').on('input', function () {
+        let input = $('#lobby_search').val();
+        $.ajax({
+            url: "/Home/SearchLobby",
+            type: "GET",
+            data: {input: input},
+            success: function (data) {
+                $(".lobby-list-container").html(data);
+            },
+            error: function () {
+                console.error("Error during search");
+            }
         });
-    }
+    });
+
+    $('#new_lobby').on('click', function () {
+        let name = $('#lobby_search').value;
+        $.ajax({
+            url: "/Lobby/NewLobby",
+            type: "GET",
+            data: {name: name},
+            success: function (data) {
+                $("main").html(data);
+            },
+            error: function () {
+                console.error("Lobby creation page error");
+            }
+        });
+    });
+
+    $('.lobby-item').on('click', function () {
+        let id = this.id;
+        window.location.href = '/lobby/' + id;
+    });
 });

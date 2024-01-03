@@ -3,7 +3,7 @@
 <div class="lobby-list">
     @foreach(var item in Model)
     {
-        <div class="lobby-item">
+        <div class="lobby-item" id="@item.Id">
             <div class="p-4">
                 <h1>@item.Name</h1>
                 <div class="d-flex align-items-center align-bottom">

@@ -37,7 +37,7 @@ public class HomeController : Controller
         return View(model);
     }
     
-    public IActionResult SearchLobby(string input)
+    public PartialViewResult SearchLobby(string input)
     {
         var lobbies = _lobbyService.GetLobbies(input);
         var model = lobbies.Select(s => new LobbyFormViewModel
