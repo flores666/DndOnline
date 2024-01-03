@@ -16,7 +16,7 @@ public class RegisterModel
     [DisplayName("Пароль")]
     [MinLength(5, ErrorMessage = "Пароль должен содержать минимум 5 символов")]
     [MaxLength(15, ErrorMessage = "Пароль должен содержать максимум 15 символов")]
-    [RegularExpression(@"^.*(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&?]).*$", ErrorMessage = "Пароль должен содержать хотя бы одну цифру и символ (!,#,$,%,&,?)")]
+    [RegularExpression(@"^(?=.*[0-9])[a-zA-Z0-9]+$", ErrorMessage = "Пароль должен содержать хотя бы одну цифру и латинские символы")]
     public string Password { get; set; }
     
     [Compare("Password", ErrorMessage = "Пароли не совпадают")]
