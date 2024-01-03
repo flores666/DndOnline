@@ -74,7 +74,7 @@ public class AccountController : Controller
     [Route("/sign-out")]
     public IActionResult SignOut()
     {
-        _userService.Logout(HttpContext.User.Identity.Name);
+        _userService.Logout(HttpContext.User.Claims.FirstOrDefault(f => f.Type == "id")?.Value);
         return Redirect(Url.Action("SignIn"));
     }
 

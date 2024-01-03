@@ -108,4 +108,18 @@ public class UserService : IUserService
         
         return new Response(StatusCodes.Status200OK, "Пользователь успешно деавторизовался");
     }
+    
+    public Response Logout(Guid id)
+    {
+        var user = _db.Users.Include(u => u.RefreshToken).FirstOrDefault(u => u.Id == id);
+        if (user == null) return new Response(StatusCodes.Status404NotFound, "Пользователь не найден");
+        if (user.RefreshToken == null) return new Response(StatusCodes.Status400BadRequest, "Некорректный запрос");
+
+        _db.RefreshTokens.Remove(user.RefreshToken);
+        var result = _db.SaveChanges();
+        
+        if (result > 0) _httpContext.Session.Remove("jwt");
+        
+        return new Response(StatusCodes.Status200OK, "Пользователь успешно деавторизовался");
+    }
 }

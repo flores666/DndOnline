@@ -12,4 +12,5 @@ public interface IUserService
     public bool Delete(int id);
     public Response Authenticate(LoginModel model);
     public Response Logout(string name);
+    public Response Logout(Guid id);
 }
