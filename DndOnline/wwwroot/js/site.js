@@ -42,18 +42,8 @@
     });
 
     $('#new_lobby').on('click', function () {
-        let name = $('#lobby_search').value;
-        $.ajax({
-            url: "/Lobby/NewLobby",
-            type: "GET",
-            data: {name: name},
-            success: function (data) {
-                $("main").html(data);
-            },
-            error: function () {
-                console.error("Lobby creation page error");
-            }
-        });
+        let name = $('#lobby_search').value ?? '';
+        window.location.href = '/Lobby/NewLobby/' + name;
     });
 
     $('.lobby-item').on('click', function () {
