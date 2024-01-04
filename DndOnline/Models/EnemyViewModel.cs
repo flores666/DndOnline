@@ -1,6 +1,6 @@
 namespace DndOnline.Models;
 
-public class EnemyVIewModel
+public class EnemyViewModel
 {
     public string Name { get; set; }
     public string FilePath { get; set; }

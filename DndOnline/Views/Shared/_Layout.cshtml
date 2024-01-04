@@ -14,8 +14,8 @@
 </head>
 <body>
 
-@if (ViewContext.RouteData.Values["controller"].ToString() != "Lobby"
-     && ViewContext.RouteData.Values["controller"].ToString() != "Account")
+@if (/*ViewContext.RouteData.Values["controller"].ToString() != "Lobby" && */
+     ViewContext.RouteData.Values["controller"].ToString() != "Account")
 {
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
