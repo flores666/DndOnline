@@ -1,0 +1,18 @@
+@model CharacterViewModel
+
+<h2>Create Character</h2>
+<form method="post" enctype="multipart/form-data" asp-action="NewCharacter">
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+
+    <div>
+        <label asp-for="File"></label>
+        <input type="file" asp-for="File" />
+        <span asp-validation-for="File"></span>
+    </div>
+
+    <input type="submit" value="Create Character" />
+</form>

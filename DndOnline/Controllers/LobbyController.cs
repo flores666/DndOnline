@@ -47,11 +47,19 @@ public class LobbyController : Controller
         return lobby.Master == curUserName ? View("LobbyMaster", lobby) : View(lobby);
     }
 
-    [HttpGet]
-    public IActionResult NewLobby(string name)
+    public IActionResult LobbyConstructor()
     {
-        var model = new LobbyFormViewModel { Name = name };
+        var userName = User.Identity.Name;
+        var model = new LobbyFormViewModel { Name = userName + "`s game" };
         return View(model);
+    }
+    
+    [HttpGet]
+    public PartialViewResult NewLobby()
+    {
+        var userName = User.Identity.Name;
+        var model = new LobbyFormViewModel { Name = userName + "`s game" };
+        return PartialView("Partial/NewLobby", model);
     }
 
     [HttpPost]
@@ -75,6 +83,42 @@ public class LobbyController : Controller
             ViewBag.Alert = "Ошибка создания лобби";
         }
 
-        return View("NewLobby", model);
+        return PartialView("Partial/NewLobby", model);
+    }
+
+    public PartialViewResult NewEnemy()
+    {
+        var model = new EnemyViewModel();
+        return PartialView("Partial/NewEnemies", model);
+    }
+    
+    [HttpPost]
+    public IActionResult NewEnemy(EnemyViewModel model)
+    {
+        throw new NotImplementedException();
+    }
+
+    public PartialViewResult NewCharacter()
+    {
+        var model = new CharacterViewModel();
+        return PartialView("Partial/NewCharacter", model);
+    }
+    
+    [HttpPost]
+    public IActionResult NewCharacter(CharacterViewModel model)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public IActionResult NewGameItem()
+    {
+        var model = new GameItemViewModel();
+        return PartialView("Partial/NewGameItem", model);
+    }
+    
+    [HttpPost]
+    public IActionResult NewGameItem(GameItemViewModel model)
+    {
+        throw new NotImplementedException();
     }
 }

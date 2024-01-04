@@ -1,0 +1,23 @@
+@model LobbyFormViewModel
+
+<form method="post" enctype="multipart/form-data" asp-action="NewLobby">
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name"/>
+        <span asp-validation-for="Name"></span>
+    </div>
+
+    <div>
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description"></textarea>
+        <span asp-validation-for="Description"></span>
+    </div>
+
+    <div>
+        <label asp-for="MaxPlayers"></label>
+        <input asp-for="MaxPlayers"/>
+        <span asp-validation-for="MaxPlayers"></span>
+    </div>
+
+    <input type="submit" value="Create Lobby"/>
+</form>

@@ -90,8 +90,8 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "new_lobby",
-    pattern: "lobby/{action}/{name?}",
-    defaults: new { controller = "Lobby", action = "NewLobby" });
+    pattern: "lobby/{action}",
+    defaults: new { controller = "Lobby", action = "LobbyConstructor" });
 
 app.MapControllerRoute(
     name: "lobby",
@@ -100,7 +100,7 @@ app.MapControllerRoute(
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller}/{action}",
+    pattern: "{controller}/{action}/{id?}",
     defaults: new { controller = "Home", action = "Index" });
 
 app.MapHub<LobbyHub>("/lobbyHub");

@@ -1,0 +1,24 @@
+@model LobbyFormViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<ul class="lobby-creation-nav">
+    <li>
+        <a href="@Url.Action("NewLobby", "Lobby")">Игра</a>
+    </li>
+    <li>
+        <a href="@Url.Action("NewCharacter", "Lobby")">Персонажи</a>
+    </li>
+    <li>
+        <a href="@Url.Action("NewEnemy", "Lobby")">Враги</a>
+    </li>
+    <li>
+        <a href="@Url.Action("NewGameItem", "Lobby")">Предметы</a>
+    </li>
+</ul>
+
+<div class="lobby-creation-content">
+    @Html.Partial("Partial/NewLobby", Model)
+</div>

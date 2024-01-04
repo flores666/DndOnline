@@ -42,12 +42,32 @@
     });
 
     $('#new_lobby').on('click', function () {
-        let name = $('#lobby_search').value ?? '';
-        window.location.href = '/Lobby/NewLobby/' + name;
+        window.location.href = '/Lobby/LobbyConstructor';
     });
 
     $('.lobby-item').on('click', function () {
         let id = this.id;
         window.location.href = '/lobby/' + id;
     });
+
+    let navigationLinks = $('.lobby-creation-nav a');
+
+    navigationLinks.click(function (event) {
+        event.preventDefault();
+        let url = $(this).attr('href');
+        loadPageContent(url);
+    });
+
+    function loadPageContent(url) {
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function (html) {
+                $('.lobby-creation-content').html(html);
+            },
+            error: function (error) {
+                console.error('Error fetching content:', error);
+            }
+        });
+    }
 });

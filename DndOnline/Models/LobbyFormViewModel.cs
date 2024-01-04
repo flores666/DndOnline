@@ -19,14 +19,6 @@ public class LobbyFormViewModel
 
     [Required] 
     public string Master { get; set; }
-
-    public List<User> Players { get; set; } = new List<User>();
-    
-    public List<Enemy> Enemies { get; set; } = new List<Enemy>();
-    
-    public List<Character> Characters { get; set; } = new List<Character>();
-    
-    public List<GameItem> GameItems { get; set; } = new List<GameItem>();
     
     public List<Map> Maps { get; set; } = new List<Map>();
 }
