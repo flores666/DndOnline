@@ -1,6 +1,4 @@
-﻿using AuthService.DataAccess.Objects;
-
-namespace DndOnline.DataAccess.Objects;
+﻿namespace DndOnline.DataAccess.Objects;
 
 public class Lobby
 {
@@ -10,6 +8,10 @@ public class Lobby
     public int MaxPlayers { get; set; }
     public string Master { get; set; }
     public List<User> Players { get; set; } 
+    public List<Enemy> Enemies = new List<Enemy>();
+    public List<Character> Characters = new List<Character>();
+    public List<GameItem> GameItems = new List<GameItem>();
+    public Map? Map;
 
     public Lobby()
     {

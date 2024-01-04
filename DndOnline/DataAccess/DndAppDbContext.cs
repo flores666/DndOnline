@@ -9,6 +9,11 @@ public class DndAppDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Lobby> Lobbies { get; set; }
     public DbSet<LobbyStatus> LobbyStatuses { get; set; }
+    
+    public DbSet<Character> Characters { get; set; }
+    public DbSet<Enemy> Enemies { get; set; }
+    public DbSet<Map> Maps { get; set; }
+    public DbSet<GameItem> GameItems { get; set; }
 
     public DndAppDbContext() { }
 

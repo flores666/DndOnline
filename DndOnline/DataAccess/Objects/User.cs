@@ -18,5 +18,9 @@ namespace DndOnline.DataAccess.Objects
 
         public RefreshToken? RefreshToken { get; set; }
         public List<Lobby> Lobbies { get; set; }
+        public List<Character> Characters { get; set; } = new List<Character>();
+        public List<Map> Maps { get; set; } = new List<Map>();
+        public List<Enemy> Enemies { get; set; } = new List<Enemy>();
+        public List<GameItem> GameItems { get; set; } = new List<GameItem>();
     }
 }
