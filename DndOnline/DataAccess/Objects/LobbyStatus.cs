@@ -4,6 +4,7 @@ namespace DndOnline.DataAccess.Objects;
 
 public enum LobbyStatusType
 {
+    Creating,
     WaitingForPlayers,
     ReadyToStart,
     InProgress,
