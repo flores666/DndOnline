@@ -107,6 +107,7 @@ a:hover {
     color: rgba(158, 157, 168, 0.87);
 }
 
+/*
 .lobby-list {
     display: flex;
     flex-direction: row;
@@ -125,6 +126,7 @@ a:hover {
     padding: 1em;
     box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.2);
 }
+*/
 
 li {
     list-style-type: none;
@@ -140,7 +142,7 @@ li {
 }
 
 .lobby-search-container {
-    margin-bottom: 2em;
+    margin: 10em 0 4em 0;
 }
 
 .lobby-search-container input {
@@ -157,4 +159,29 @@ li {
     margin: 0;
     width: 150px;
     background-color: #f1f1f1;
+}
+
+.lobby-list {
+    align-items: center;
+}
+
+.lobby-list-item {
+    cursor: pointer;
+    width: 90em;
+    background: none;
+    transition: transform 0.2s ease, background-color ease 0.2s;
+    padding: 10px;
+}
+
+.lobby-list-item p {
+    margin: 0;    
+}
+
+.lobby-list-item:hover {
+    background-color: rgba(203, 212, 217, 0.78);
+}
+
+.lobby-list-header p {
+    font-size: 18px;
+    padding-left: 66px;
 }

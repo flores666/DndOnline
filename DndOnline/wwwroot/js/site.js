@@ -45,7 +45,7 @@
         window.location.href = '/Lobby/LobbyConstructor';
     });
 
-    $('.lobby-item').on('click', function () {
+    $('.lobby-list-item').on('click', function () {
         let id = this.id;
         window.location.href = '/lobby/' + id;
     });
