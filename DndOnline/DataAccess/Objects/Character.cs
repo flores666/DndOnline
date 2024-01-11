@@ -13,6 +13,5 @@ public class Character
     [Required] 
     public string FullFilePath { get; set; }
 
-    [Required]
-    public byte[] File { get; set; }
+    public List<Lobby> Lobbies { get; set; }
 }

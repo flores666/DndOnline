@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace DndOnline.DataAccess.Objects;
 
@@ -12,7 +13,6 @@ public class Enemy
     
     [Required] 
     public string FullFilePath { get; set; }
-
-    [Required]
-    public byte[] File { get; set; }
+    
+    public List<Lobby> Lobbies { get; set; }
 }
