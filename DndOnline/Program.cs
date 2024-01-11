@@ -89,9 +89,9 @@ app.MapControllerRoute(
     defaults: new { controller = "Account", action = "SignIn" });
 
 app.MapControllerRoute(
-    name: "new_lobby",
-    pattern: "lobby/{action}",
-    defaults: new { controller = "Lobby", action = "LobbyConstructor" });
+    name: "lobby_constructor",
+    pattern: "lobby-constructor",
+    defaults: new { controller = "LobbyConstructor", action = "Index" });
 
 app.MapControllerRoute(
     name: "lobby",

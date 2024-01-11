@@ -28,6 +28,10 @@
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Lobby\Partial\NewCharacter.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Lobby\Partial\NewEnemies.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Lobby\Partial\NewGameItem.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Lobby\Partial\NewLobby.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,6 +39,13 @@
       <Folder Include="wwwroot\Content\Enemies\" />
       <Folder Include="wwwroot\Content\GameItems\" />
       <Folder Include="wwwroot\Content\Maps\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Views\LobbyConstructor\Partial\NewCharacter.cshtml" />
+      <AdditionalFiles Include="Views\LobbyConstructor\Partial\NewEnemies.cshtml" />
+      <AdditionalFiles Include="Views\LobbyConstructor\Partial\NewGameItem.cshtml" />
+      <AdditionalFiles Include="Views\LobbyConstructor\Partial\NewLobby.cshtml" />
     </ItemGroup>
 
 </Project>

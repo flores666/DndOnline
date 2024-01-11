@@ -42,7 +42,7 @@
     });
 
     $('#new_lobby').on('click', function () {
-        window.location.href = '/Lobby/LobbyConstructor';
+        window.location.href = '/lobby-constructor';
     });
 
     $('.lobby-list-item').on('click', function () {
