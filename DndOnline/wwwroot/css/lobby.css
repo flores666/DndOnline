@@ -1,0 +1,33 @@
+.page-content {
+    display: flex;
+    padding-top: 2em;
+}
+
+.lobby-creation-nav {
+    list-style-type: none;
+    width: 17em;
+}
+
+.lobby-creation-nav a {
+    text-decoration: none;
+    font-size: 1.5em;
+    color: var(--eerie-black);
+    transition: transform 0.2s ease, font-size ease 0.2s;
+}
+
+.lobby-creation-nav li {
+    height: 2.5em;
+}
+
+.lobby-creation-nav a:hover {
+    font-size: 1.55em;
+}
+
+.lobby-creation-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: 10em;
+    margin-right: 5em;
+}
+
