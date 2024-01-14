@@ -36,7 +36,6 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\Content\Characters\" />
-      <Folder Include="wwwroot\Content\Enemies\" />
       <Folder Include="wwwroot\Content\GameItems\" />
       <Folder Include="wwwroot\Content\Maps\" />
     </ItemGroup>

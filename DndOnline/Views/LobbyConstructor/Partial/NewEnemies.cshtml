@@ -1,18 +1,47 @@
-@model EnemyViewModel
+@model List<EnemyViewModel>
 
 <h2>Create Enemy</h2>
-<form method="post" enctype="multipart/form-data" asp-action="NewEnemy">
-    <div>
-        <label asp-for="Name"></label>
-        <input asp-for="Name" />
-        <span asp-validation-for="Name"></span>
-    </div>
 
-    <div>
-        <label asp-for="File"></label>
-        <input type="file" asp-for="File" />
-        <span asp-validation-for="File"></span>
-    </div>
+<div class="enemies-container">
+    @foreach (var item in Model)
+    {
+        <div class="card3d">
+            <div>
+                <label for="@item.Name"></label>
+                <p>@item.Name</p>
+            </div>
 
-    <input type="submit" value="Create Character" />
-</form>
+            <div>
+                <label for="@item.File"></label>
+                <img src="@Url.Content(item.FilePath)" alt="img"/>
+            </div>
+
+            <button class="btn btn-primary">Редактировать</button>
+        </div>
+    }
+
+    <form class="lobby-creation-item" method="post" enctype="multipart/form-data" asp-action="NewEnemy">
+        <div>
+            <label for="Name"></label>
+            <input type="text" name="Name"/>
+            <span validation-for="Name"></span>
+        </div>
+
+        <div>
+            <label for="File"></label>
+            <input type="file" name="File"/>
+            <span validation-for="File"></span>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+    </form>
+</div>
+
+<script>
+  let imgs = document.querySelectorAll("img");
+  imgs.forEach(img => {
+      img.onerror = function() {
+        img.src = "Content/Enemies/default.png";
+      }
+  });
+</script>

@@ -31,3 +31,8 @@
     margin-right: 5em;
 }
 
+.enemies-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}

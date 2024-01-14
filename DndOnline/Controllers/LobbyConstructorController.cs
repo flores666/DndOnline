@@ -1,6 +1,8 @@
+using System.Text.Json;
 using DndOnline.Models;
 using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 
 namespace DndOnline.Controllers;
@@ -13,22 +15,37 @@ public class LobbyConstructorController : Controller
     {
         _lobbyService = lobbyService;
     }
-    
+
+    public override void OnActionExecuting(ActionExecutingContext context)
+    {
+        ViewBag.Title = "Конструтор лобби";
+    }
+
     public IActionResult Index()
     {
         var userName = User.Identity.Name;
-        var model = new LobbyFormViewModel { Name = userName + "`s game" };
+        var model = new LobbyFormViewModel {Name = userName + "`s game"};
+        HttpContext.Session.SetString("LobbyFormViewModel", JsonSerializer.Serialize(model));
         return View(model);
     }
-    
+
     [HttpGet]
     public PartialViewResult NewLobby()
     {
-        var userName = User.Identity.Name;
-        var model = new LobbyFormViewModel { Name = userName + "`s game" };
+        var sessionVal = HttpContext.Session.GetString("LobbyFormViewModel");
+        var model = new LobbyFormViewModel();
+
+        if (string.IsNullOrEmpty(sessionVal))
+        {
+            var userName = User.Identity.Name;
+            model.Name = userName + "`s game";
+            HttpContext.Session.SetString("LobbyFormViewModel", JsonSerializer.Serialize(model));
+        }
+        else model = JsonSerializer.Deserialize<LobbyFormViewModel>(sessionVal);
+
         return PartialView("Partial/NewLobby", model);
     }
-    
+
     [HttpPost]
     public IActionResult NewLobby(LobbyFormViewModel model)
     {
@@ -37,7 +54,7 @@ public class LobbyConstructorController : Controller
             try
             {
                 var lobby = _lobbyService.CreateLobby(model);
-                return RedirectToAction("Index", new { id = lobby.Id });
+                return RedirectToAction("Index", new {id = lobby.Id});
             }
             catch (DbUpdateException ex)
             {
@@ -55,14 +72,39 @@ public class LobbyConstructorController : Controller
 
     public PartialViewResult NewEnemy()
     {
-        var model = new EnemyViewModel();
+        var model = new List<EnemyViewModel>();
+
+        var sessionVal = HttpContext.Session.GetString("LobbyEnemies");
+        if (!string.IsNullOrEmpty(sessionVal))
+        {
+            model = JsonSerializer.Deserialize<List<EnemyViewModel>>(sessionVal);
+        }
+
         return PartialView("Partial/NewEnemies", model);
     }
-    
+
     [HttpPost]
-    public IActionResult NewEnemy(EnemyViewModel model)
+    public ResponseModel NewEnemy(EnemyViewModel model)
     {
-        throw new NotImplementedException();
+        var response = new ResponseModel();
+
+        if (!string.IsNullOrEmpty(model.Name))
+        {
+            var enemiesList = new List<EnemyViewModel>();
+            var sessionVal = HttpContext.Session.GetString("LobbyEnemies");
+
+            if (!string.IsNullOrEmpty(sessionVal))
+            {
+                enemiesList = JsonSerializer.Deserialize<List<EnemyViewModel>>(sessionVal);
+            }
+
+            enemiesList.Add(model);
+
+            HttpContext.Session.SetString("LobbyEnemies", JsonSerializer.Serialize(enemiesList));
+            response.SetSuccess(model);
+        }
+
+        return response;
     }
 
     public PartialViewResult NewCharacter()
@@ -70,19 +112,19 @@ public class LobbyConstructorController : Controller
         var model = new CharacterViewModel();
         return PartialView("Partial/NewCharacter", model);
     }
-    
+
     [HttpPost]
     public IActionResult NewCharacter(CharacterViewModel model)
     {
         throw new NotImplementedException();
     }
-    
+
     public IActionResult NewGameItem()
     {
         var model = new GameItemViewModel();
         return PartialView("Partial/NewGameItem", model);
     }
-    
+
     [HttpPost]
     public IActionResult NewGameItem(GameItemViewModel model)
     {
