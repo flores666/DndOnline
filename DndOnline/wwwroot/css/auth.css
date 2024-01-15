@@ -25,3 +25,7 @@
 .form-control-lg {
     width: 100%;
 }
+
+.card {
+    background-color: var(--eerie-black);
+}

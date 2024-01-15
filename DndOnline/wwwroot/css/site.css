@@ -84,7 +84,6 @@ button:hover {
 }
 
 .card {
-    background-color: var(--eerie-black);
     color: var(--alice-blue);
     border-radius: 1rem;
 }
