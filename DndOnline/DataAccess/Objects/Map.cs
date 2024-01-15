@@ -10,6 +10,8 @@ public class Map
     [Required]
     public string Name { get; set; }
     
+    public string? Description { get; set; }
+    
     [Required] 
     public string FullFilePath { get; set; }
 
