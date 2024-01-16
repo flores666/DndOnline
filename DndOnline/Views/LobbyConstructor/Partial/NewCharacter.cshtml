@@ -1,22 +1,60 @@
-@model CharacterViewModel
+@model List<CharacterViewModel>
 
 <h2>Create Character</h2>
-<div class="card3d">
-    <form class="lobby-creation-item" method="post" enctype="multipart/form-data" asp-action="NewCharacter">
-        <div>
-            <label asp-for="Name"></label>
-            <input asp-for="Name"/>
-            <span asp-validation-for="Name"></span>
+
+<div class="lobby-creation-item-container">
+    @foreach (var item in Model)
+    {
+        <div class="lobby-creation-item card3d">
+            <div class="lobby-creation-item-name">
+                <label for="@item.Name"></label>
+                <p>@item.Name</p>
+            </div>
+
+            <div class="lobby-creation-item-desc">
+                <label for="Description"></label>
+                <p>@item.Description</p>
+                <span validation-for="Description"></span>
+            </div>
+
+            <div class="lobby-creation-item-file">
+                <label for="@item.File"></label>
+                <img src="@Url.Content(item.FilePath)" alt="img"/>
+            </div>
+
+            <button class="btn btn-primary">Редактировать</button>
+        </div>
+    }
+
+    <form class="lobby-creation-item\" method="post" enctype="multipart/form-data" asp-action="NewCharacter">
+        <div class="lobby-creation-item-name">
+            <label for="Name"></label>
+            <input type="text" name="Name"/>
+            <span validation-for="Name"></span>
         </div>
 
-        <div>
-            <label asp-for="File"></label>
-            <input type="file" asp-for="File"/>
-            <span asp-validation-for="File"></span>
+        <div class="lobby-creation-item-desc">
+            <label for="Description"></label>
+            <input type="text" name="Description"/>
+            <span validation-for="Description"></span>
         </div>
 
-        <input type="submit" value="Create Character"/>
+        <div class="lobby-creation-item-file">
+            <label for="File"></label>
+            <input type="file" name="File"/>
+            <span validation-for="File"></span>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Сохранить</button>
     </form>
 </div>
 
 <script src="~/js/lobbyConstructor.js"></script>
+<script> 
+let imgs = document.querySelectorAll("img");
+imgs.forEach(img => {
+    img.onerror = function() {
+        img.src = "Content/Characters/default.png";
+    }
+});
+</script>

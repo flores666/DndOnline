@@ -1,4 +1,5 @@
 using System.Text.Json;
+using DndOnline.Extensions;
 using DndOnline.Models;
 using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DndOnline.Controllers;
 
+[Auth]
 public class LobbyConstructorController : Controller
 {
     private readonly ILobbyService _lobbyService;
@@ -109,25 +111,75 @@ public class LobbyConstructorController : Controller
 
     public PartialViewResult NewCharacter()
     {
-        var model = new CharacterViewModel();
+        var model = new List<CharacterViewModel>();
+
+        var sessionVal = HttpContext.Session.GetString("LobbyCharacters");
+        if (!string.IsNullOrEmpty(sessionVal))
+        {
+            model = JsonSerializer.Deserialize<List<CharacterViewModel>>(sessionVal);
+        }
+
         return PartialView("Partial/NewCharacter", model);
     }
 
     [HttpPost]
-    public IActionResult NewCharacter(CharacterViewModel model)
+    public ResponseModel NewCharacter(CharacterViewModel model)
     {
-        throw new NotImplementedException();
+        var response = new ResponseModel();
+
+        if (!string.IsNullOrEmpty(model.Name))
+        {
+            var enemiesList = new List<CharacterViewModel>();
+            var sessionVal = HttpContext.Session.GetString("LobbyCharacters");
+
+            if (!string.IsNullOrEmpty(sessionVal))
+            {
+                enemiesList = JsonSerializer.Deserialize<List<CharacterViewModel>>(sessionVal);
+            }
+
+            enemiesList.Add(model);
+
+            HttpContext.Session.SetString("LobbyCharacters", JsonSerializer.Serialize(enemiesList));
+            response.SetSuccess(model);
+        }
+
+        return response;
     }
 
     public IActionResult NewGameItem()
     {
-        var model = new GameItemViewModel();
+        var model = new List<GameItemViewModel>();
+
+        var sessionVal = HttpContext.Session.GetString("LobbyGameItems");
+        if (!string.IsNullOrEmpty(sessionVal))
+        {
+            model = JsonSerializer.Deserialize<List<GameItemViewModel>>(sessionVal);
+        }
+
         return PartialView("Partial/NewGameItem", model);
     }
 
     [HttpPost]
-    public IActionResult NewGameItem(GameItemViewModel model)
+    public ResponseModel NewGameItem(GameItemViewModel model)
     {
-        throw new NotImplementedException();
+        var response = new ResponseModel();
+
+        if (!string.IsNullOrEmpty(model.Name))
+        {
+            var enemiesList = new List<GameItemViewModel>();
+            var sessionVal = HttpContext.Session.GetString("LobbyGameItems");
+
+            if (!string.IsNullOrEmpty(sessionVal))
+            {
+                enemiesList = JsonSerializer.Deserialize<List<GameItemViewModel>>(sessionVal);
+            }
+
+            enemiesList.Add(model);
+
+            HttpContext.Session.SetString("LobbyGameItems", JsonSerializer.Serialize(enemiesList));
+            response.SetSuccess(model);
+        }
+
+        return response;
     }
 }

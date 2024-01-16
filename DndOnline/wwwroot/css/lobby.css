@@ -31,8 +31,20 @@
     margin-right: 5em;
 }
 
-.enemies-container {
+.lobby-creation-item-container {
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
+}
+
+.lobby-creation-item {
+    min-height: 25em;
+    min-width: 20em;
+}
+
+.lobby-creation-item img {
+    height: 100%;
+    width: 100%;
+}
+
+.lobby-creation-new-item {
+    
 }

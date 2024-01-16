@@ -1,47 +1,64 @@
 @model List<EnemyViewModel>
 
+@{
+    var defaultImgPath = "Content/Enemies/default.png";
+}
+
 <h2>Create Enemy</h2>
 
-<div class="enemies-container">
+<div class="lobby-creation-item-container">
     @foreach (var item in Model)
     {
-        <div class="card3d">
-            <div>
+        <div class="lobby-creation-item card3d">
+            <div class="lobby-creation-item-name">
                 <label for="@item.Name"></label>
                 <p>@item.Name</p>
             </div>
 
-            <div>
+            <div class="lobby-creation-item-file">
                 <label for="@item.File"></label>
-                <img src="@Url.Content(item.FilePath)" alt="img"/>
+                <img src="@(Url.Content(item.FilePath) ?? defaultImgPath)" alt="img"/>
+            </div>
+
+            <div class="lobby-creation-item-desc">
+                <p>@item.Description</p>
+                <span validation-for="Description"></span>
             </div>
 
             <button class="btn btn-primary">Редактировать</button>
         </div>
     }
 
-    <form class="lobby-creation-item" method="post" enctype="multipart/form-data" asp-action="NewEnemy">
-        <div>
-            <label for="Name"></label>
+    <div class="lobby-creation-item lobby-creation-new-item card">
+        <div class="lobby-creation-item-name">
+            <label>Имя персонажа</label>
             <input type="text" name="Name"/>
             <span validation-for="Name"></span>
         </div>
 
-        <div>
+        <div class="lobby-creation-item-file">
             <label for="File"></label>
             <input type="file" name="File"/>
             <span validation-for="File"></span>
         </div>
 
+        <div class="lobby-creation-item-desc">
+            <label for="Description"></label>
+            <input type="text" name="Description"/>
+            <span validation-for="Description"></span>
+        </div>
+
         <button class="btn btn-primary" type="submit">Сохранить</button>
-    </form>
+    </div>
 </div>
 
-<script>
-  let imgs = document.querySelectorAll("img");
-  imgs.forEach(img => {
-      img.onerror = function() {
-        img.src = "Content/Enemies/default.png";
-      }
-  });
+<script src="~/js/lobbyConstructor.js"></script>
+<script> 
+    let imgs = document.querySelectorAll("img");
+    
+    imgs.forEach(img => {
+        img.onerror = function() {
+            img.src = '@defaultImgPath';
+        }
+    });
 </script>
