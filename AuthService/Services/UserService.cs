@@ -1,4 +1,6 @@
-﻿using AuthService.DataAccess;
+﻿using System.Security.Claims;
+using System.Text.Json;
+using AuthService.DataAccess;
 using AuthService.DataAccess.Objects;
 using AuthService.Models;
 using AuthService.Services.Interfaces;
@@ -70,7 +72,11 @@ public class UserService : IUserService
         if (!PasswordHasher.Validate(model.Password, user.PasswordHash))
             return new Response(StatusCodes.Status400BadRequest, "Данные не верны или отсутствуют");
 
-        var jwtToken = _tokenService.GenerateJwt(user.Name, user.Id);
+        var claims = new List<Claim>();
+        claims.Add(new Claim("unique_name", user.Name));
+        claims.Add(new Claim("id", user.Id.ToString()));
+        
+        var jwtToken = _tokenService.GenerateJwt(claims);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         if (!string.IsNullOrEmpty(user.RefreshToken?.Token)) _db.RefreshTokens.Remove(user.RefreshToken);
@@ -88,7 +94,7 @@ public class UserService : IUserService
 
         if (_httpContext != null)
         {
-            _httpContext.Session.SetString("jwt", tokenModel.JWT);
+            _httpContext.Response.Cookies.Append("jwt", JsonSerializer.Serialize(tokenModel));
             _httpContext.Request.Headers.Authorization = new StringValues("Bearer " + tokenModel.JWT);
         }
 
@@ -104,7 +110,7 @@ public class UserService : IUserService
         _db.RefreshTokens.Remove(user.RefreshToken);
         var result = _db.SaveChanges();
         
-        if (result > 0) _httpContext.Session.Remove("jwt");
+        if (result > 0) _httpContext.Response.Cookies.Delete("jwt");
         
         return new Response(StatusCodes.Status200OK, "Пользователь успешно деавторизовался");
     }
@@ -118,7 +124,7 @@ public class UserService : IUserService
         _db.RefreshTokens.Remove(user.RefreshToken);
         var result = _db.SaveChanges();
         
-        if (result > 0) _httpContext.Session.Remove("jwt");
+        if (result > 0) _httpContext.Response.Cookies.Delete("jwt");
         
         return new Response(StatusCodes.Status200OK, "Пользователь успешно деавторизовался");
     }

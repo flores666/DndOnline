@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using AuthService.Models;
 using AuthService.Services.Interfaces;
 using Microsoft.Extensions.Primitives;
@@ -16,11 +17,22 @@ public class TokenInHeaderMiddleware
 
     public async Task Invoke(HttpContext context, ITokenService tokenService, IUserService userService)
     {
-        // Проверяем, есть ли токен в сессии
-        string jwt = context.Session.GetString("jwt");
+        // Проверяем, есть ли токен в куках
+        var containsValue = context.Request.Cookies.TryGetValue("jwt", out string jwt);
 
         // Если токен отсутствует, выполняем следующий обработчик в цепочке middleware
-        if (string.IsNullOrEmpty(jwt))
+        if (!containsValue)
+        {
+            await _next(context);
+            return;
+        }
+        
+        TokenModel token;
+        try
+        {
+            token = JsonSerializer.Deserialize<TokenModel>(jwt);
+        }
+        catch
         {
             await _next(context);
             return;
@@ -28,24 +40,22 @@ public class TokenInHeaderMiddleware
 
         // Если токен присутствует, проверяем, истек ли он
         var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-        var jsonToken = handler.ReadToken(jwt) as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
+        var accessToken = handler.ReadToken(token.JWT) as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
 
-        if (jsonToken.ValidTo > DateTime.UtcNow)
+        if (accessToken.ValidTo > DateTime.UtcNow)
         {
-            context.Request.Headers.Authorization = new StringValues("Bearer " + jwt);
+            context.Request.Headers.Authorization = new StringValues("Bearer " + token.JWT);
         }
         else
         {
-            var userName = jsonToken.Claims.FirstOrDefault(f => f.Type == "unique_name")?.Value;
-            var refreshToken = userService.Get(userName)?.RefreshToken;
-            if (!refreshToken.IsExpired)
+            if (token.RefreshTokenExpTime > DateTime.Now)
             {
-                var response = tokenService.RefreshTokens(jwt);
+                var response = tokenService.RefreshToken(token);
                 if (response.IsSuccess)
                 {
-                    var token = response.Data as TokenModel;
-                    context.Session.SetString("jwt", token.JWT);
-                    context.Request.Headers.Authorization = new StringValues("Bearer " + token.JWT);
+                    var newToken = response.Data as TokenModel;
+                    context.Response.Cookies.Append("jwt", JsonSerializer.Serialize(newToken));
+                    context.Request.Headers.Authorization = new StringValues("Bearer " + newToken.JWT);
                 }
             }
         }

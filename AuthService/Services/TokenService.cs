@@ -24,17 +24,13 @@ public class TokenService : ITokenService
         _db = db;
     }
 
-    public string GenerateJwt(string userName, Guid id)
+    public string GenerateJwt(IEnumerable<Claim> claims)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, userName),
-                new Claim("id", id.ToString()),
-            }),
+            Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["Jwt:LifetimeMinutes"])),
             SigningCredentials =
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
@@ -59,12 +55,11 @@ public class TokenService : ITokenService
         }
     }
 
-    public Response RefreshTokens(string jwt)
+    public Response RefreshToken(TokenModel token)
     {
-        var userName = GetValueFromJwt(jwt, "unique_name");
         var user = _db.Users
             .Include(u => u.RefreshToken)
-            .FirstOrDefault(u => u.Name == userName);
+            .FirstOrDefault(u => u.RefreshToken.Token == token.RefreshToken);
 
         if (user == null)
             return new Response(StatusCodes.Status404NotFound, "Пользователь не найден");
@@ -78,9 +73,13 @@ public class TokenService : ITokenService
         _db.Update(user);
         _db.SaveChanges();
 
+        var claims = new List<Claim>();
+        claims.Add(new Claim("unique_name", user.Name));
+        claims.Add(new Claim("id", user.Id.ToString()));
+        
         var tokenModel = new TokenModel
         {
-            JWT = GenerateJwt(userName, user.Id),
+            JWT = GenerateJwt(claims),
             RefreshToken = newRefreshToken.Token,
             RefreshTokenExpTime = newRefreshToken.ExpiryTime
         };

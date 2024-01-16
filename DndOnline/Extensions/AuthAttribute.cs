@@ -1,4 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
+using AuthService.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,7 +10,7 @@ public class AuthAttribute : Attribute, IAuthorizationFilter
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        var jwt = context.HttpContext.Session.GetString("jwt");
+        context.HttpContext.Request.Cookies.TryGetValue("jwt", out string jwt);
         var result = new RedirectToRouteResult(new RouteValueDictionary(new { controller = "Account", action = "SignIn" }));
         if (string.IsNullOrEmpty(jwt))
         {
@@ -19,8 +21,9 @@ public class AuthAttribute : Attribute, IAuthorizationFilter
             if (!context.HttpContext.User.Identity.IsAuthenticated) context.Result = result;
             else
             {
+                var token = JsonSerializer.Deserialize<TokenModel>(jwt); 
                 var handler = new JwtSecurityTokenHandler();
-                if (handler.ReadToken(jwt) is not JwtSecurityToken token) context.Result = result;
+                if (handler.ReadToken(token?.JWT) is not JwtSecurityToken) context.Result = result;
             }
         }
     }
