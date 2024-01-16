@@ -59,7 +59,10 @@ public class LobbyService : ILobbyService
     public List<Lobby> GetLobbies(string input, int page = 1, int pageSize = 20)
     {
         var query = _db.Lobbies.AsQueryable();
-        if (!string.IsNullOrEmpty(input)) query = query.Where(w => w.Name.Contains(input));
+        
+        if (!string.IsNullOrEmpty(input)) 
+            query = query
+            .Where(w => w.Name.ToLower().Contains(input.ToLower()));
         
         return query
             .Include(i => i.Players)
