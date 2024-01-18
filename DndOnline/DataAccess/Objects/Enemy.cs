@@ -15,6 +15,7 @@ public class Enemy
     
     [Required] 
     public string FullFilePath { get; set; }
-    
-    public List<Lobby> Lobbies { get; set; }
+
+    public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
+    public IEnumerable<EnemyLobby> EnemyLobby { get; set; } = new List<EnemyLobby>();
 }

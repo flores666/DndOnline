@@ -16,4 +16,5 @@ public class Character
     public string FullFilePath { get; set; }
 
     public List<Lobby> Lobbies { get; set; }
+    public IEnumerable<CharacterLobby> CharacterLobby { get; set; } = new List<CharacterLobby>();
 }

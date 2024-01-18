@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DndOnline.DataAccess.Objects;
 
-public class GameItem
+public class Item
 {
     [Key]
     public Guid Id { get; set; }
@@ -16,4 +16,5 @@ public class GameItem
     public string FullFilePath { get; set; }
 
     public List<Lobby> Lobbies { get; set; }
+    public IEnumerable<ItemLobby> ItemLobby { get; set; } = new List<ItemLobby>();
 }

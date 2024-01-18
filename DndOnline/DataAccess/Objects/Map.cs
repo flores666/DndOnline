@@ -16,4 +16,5 @@ public class Map
     public string FullFilePath { get; set; }
 
     public List<Lobby> Lobbies { get; set; }
+    public IEnumerable<MapLobby> MapLobby { get; set; } = new List<MapLobby>();
 }

@@ -10,8 +10,13 @@ public class Lobby
     public List<User> Players { get; set; } 
     public List<Enemy> Enemies { get; set; } 
     public List<Character> Characters { get; set; } 
-    public List<GameItem> GameItems { get; set; } 
-    public List<Map> Maps { get; set; } 
+    public List<Item> Items { get; set; } 
+    public List<Map> Maps { get; set; }
+
+    public IEnumerable<EnemyLobby> EnemyLobby { get; set; } = new List<EnemyLobby>();
+    public IEnumerable<CharacterLobby> CharacterLobby { get; set; } = new List<CharacterLobby>();
+    public IEnumerable<MapLobby> MapLobby { get; set; } = new List<MapLobby>();
+    public IEnumerable<ItemLobby> ItemLobby { get; set; } = new List<ItemLobby>();
 
     public Lobby()
     {
@@ -20,7 +25,7 @@ public class Lobby
         Players = new List<User>();
         Enemies = new List<Enemy>();
         Characters = new List<Character>();
-        GameItems = new List<GameItem>();
+        Items = new List<Item>();
         Maps = new List<Map>();
     }
 }
