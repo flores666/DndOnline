@@ -182,7 +182,6 @@ li {
 .card3d {
     margin: 1em;
     border-radius: 1rem;
-    cursor: pointer;
     transition: transform 0.1s ease;
     transform-style: preserve-3d;
     will-change: transform;

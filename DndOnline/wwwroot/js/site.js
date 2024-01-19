@@ -1,5 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    handleCard3d();
+    handleCard3d(3);
 
     $('#lobby_search').on('input', function () {
         let input = $('#lobby_search').val();
@@ -47,10 +47,9 @@
     }
 });
 
-function handleCard3d() {
+function handleCard3d(THRESHOLD) {
     const cards = document.querySelectorAll(".card3d");
     const motionMatchMedia = window.matchMedia("(prefers-reduced-motion)");
-    const THRESHOLD = 5;
     
     function handleHover(e) {
         const {clientX, clientY, currentTarget} = e;

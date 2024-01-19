@@ -4,8 +4,6 @@
     var defaultImgPath = "Content/Enemies/default.png";
 }
 
-<h2>Create Enemy</h2>
-
 <div class="lobby-creation-item-container">
     @foreach (var item in Model)
     {
@@ -28,6 +26,25 @@
             <button class="btn btn-primary">Редактировать</button>
         </div>
     }
+
+    <div class="lobby-creation-item card3d">
+        <div class="lobby-creation-item-name">
+            <label for="item.Name"></label>
+            <p>item.Name</p>
+        </div>
+
+        <div class="lobby-creation-item-file">
+            <label for="item.File"></label>
+            <img src="@(Url.Content(defaultImgPath))" alt="img"/>
+        </div>
+
+        <div class="lobby-creation-item-desc">
+            <p>item.Description</p>
+            <span validation-for="Description"></span>
+        </div>
+
+        <button class="btn btn-primary">Редактировать</button>
+    </div>
 
     <div class="lobby-creation-item lobby-creation-new-item card">
         <div class="lobby-creation-item-name">
@@ -54,6 +71,7 @@
 
 <script src="~/js/lobbyConstructor.js"></script>
 <script> 
+    handleCard3d(2);
     let imgs = document.querySelectorAll("img");
     
     imgs.forEach(img => {

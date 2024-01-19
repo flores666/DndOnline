@@ -24,15 +24,10 @@
 }
 
 .lobby-creation-content {
-    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     margin-left: 10em;
     margin-right: 5em;
-}
-
-.lobby-creation-item-container {
-    display: flex;
 }
 
 .lobby-creation-item {
@@ -45,6 +40,6 @@
     width: 100%;
 }
 
-.lobby-creation-new-item {
-    
+.lobby-creation-item-container {
+    display: flex;
 }

@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    handleCard3d();
 });
 
 function addItem() {

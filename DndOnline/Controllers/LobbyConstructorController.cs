@@ -146,11 +146,11 @@ public class LobbyConstructorController : Controller
         return response;
     }
 
-    public IActionResult NewGameItem()
+    public IActionResult NewItem()
     {
         var model = new List<GameItemViewModel>();
 
-        var sessionVal = HttpContext.Session.GetString("LobbyGameItems");
+        var sessionVal = HttpContext.Session.GetString("LobbyItems");
         if (!string.IsNullOrEmpty(sessionVal))
         {
             model = JsonSerializer.Deserialize<List<GameItemViewModel>>(sessionVal);
@@ -160,14 +160,14 @@ public class LobbyConstructorController : Controller
     }
 
     [HttpPost]
-    public ResponseModel NewGameItem(GameItemViewModel model)
+    public ResponseModel NewItem(GameItemViewModel model)
     {
         var response = new ResponseModel();
 
         if (!string.IsNullOrEmpty(model.Name))
         {
             var enemiesList = new List<GameItemViewModel>();
-            var sessionVal = HttpContext.Session.GetString("LobbyGameItems");
+            var sessionVal = HttpContext.Session.GetString("LobbyItems");
 
             if (!string.IsNullOrEmpty(sessionVal))
             {
@@ -176,7 +176,7 @@ public class LobbyConstructorController : Controller
 
             enemiesList.Add(model);
 
-            HttpContext.Session.SetString("LobbyGameItems", JsonSerializer.Serialize(enemiesList));
+            HttpContext.Session.SetString("LobbyItems", JsonSerializer.Serialize(enemiesList));
             response.SetSuccess(model);
         }
 
