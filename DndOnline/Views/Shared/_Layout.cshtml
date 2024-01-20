@@ -12,9 +12,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="@(ViewContext.RouteData.Values["controller"].ToString() != "Account" ? "container-width" : "")">
 
-@if (/*ViewContext.RouteData.Values["controller"].ToString() != "Lobby" && */
+@if ( /*ViewContext.RouteData.Values["controller"].ToString() != "Lobby" && */
      ViewContext.RouteData.Values["controller"].ToString() != "Account")
 {
     <nav class="navbar navbar-expand-lg">
@@ -23,6 +23,9 @@
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Index", "Home")">Список лобби</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Коллекция</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
@@ -41,7 +44,7 @@
     </nav>
 }
 
-<main role="main" class="pb-3">
+<main role="main">
     @RenderBody()
 </main>
 

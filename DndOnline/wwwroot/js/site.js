@@ -47,6 +47,11 @@
     }
 });
 
+$(document).on('input', '.auto-textarea', function () {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight + 2) + 'px';
+});
+
 function handleCard3d(THRESHOLD) {
     const cards = document.querySelectorAll(".card3d");
     const motionMatchMedia = window.matchMedia("(prefers-reduced-motion)");

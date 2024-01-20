@@ -20,7 +20,18 @@ public class LobbyConstructorController : Controller
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        ViewBag.Title = "Конструтор лобби";
+        var sessionVal = HttpContext.Session.GetString("LobbyFormViewModel");
+        var model = new LobbyFormViewModel();
+
+        if (!string.IsNullOrEmpty(sessionVal))
+        {
+            model = JsonSerializer.Deserialize<LobbyFormViewModel>(sessionVal);
+            ViewBag.Title = model.Name;
+        }
+        else
+        {
+            ViewBag.Title = "Конструтор лобби";
+        }
     }
 
     public IActionResult Index()
@@ -148,30 +159,30 @@ public class LobbyConstructorController : Controller
 
     public IActionResult NewItem()
     {
-        var model = new List<GameItemViewModel>();
+        var model = new List<ItemViewModel>();
 
         var sessionVal = HttpContext.Session.GetString("LobbyItems");
         if (!string.IsNullOrEmpty(sessionVal))
         {
-            model = JsonSerializer.Deserialize<List<GameItemViewModel>>(sessionVal);
+            model = JsonSerializer.Deserialize<List<ItemViewModel>>(sessionVal);
         }
 
-        return PartialView("Partial/NewGameItem", model);
+        return PartialView("Partial/NewItem", model);
     }
 
     [HttpPost]
-    public ResponseModel NewItem(GameItemViewModel model)
+    public ResponseModel NewItem(ItemViewModel model)
     {
         var response = new ResponseModel();
 
         if (!string.IsNullOrEmpty(model.Name))
         {
-            var enemiesList = new List<GameItemViewModel>();
+            var enemiesList = new List<ItemViewModel>();
             var sessionVal = HttpContext.Session.GetString("LobbyItems");
 
             if (!string.IsNullOrEmpty(sessionVal))
             {
-                enemiesList = JsonSerializer.Deserialize<List<GameItemViewModel>>(sessionVal);
+                enemiesList = JsonSerializer.Deserialize<List<ItemViewModel>>(sessionVal);
             }
 
             enemiesList.Add(model);

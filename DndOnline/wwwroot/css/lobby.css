@@ -1,45 +1,88 @@
 .page-content {
     display: flex;
-    padding-top: 2em;
+    width: 100%;
 }
 
 .lobby-creation-nav {
     list-style-type: none;
-    width: 17em;
+    border-right: var(--border);
+    padding-right: 1.5em;
 }
 
 .lobby-creation-nav a {
     text-decoration: none;
-    font-size: 1.5em;
-    color: var(--eerie-black);
+    font-size: 1.2em;
     transition: transform 0.2s ease, font-size ease 0.2s;
 }
 
 .lobby-creation-nav li {
-    height: 2.5em;
+    height: 2em;
 }
 
 .lobby-creation-nav a:hover {
-    font-size: 1.55em;
+    font-size: 1.32em;
 }
 
 .lobby-creation-content {
+    margin-left: 1em;
     flex-direction: row;
     flex-wrap: wrap;
-    margin-left: 10em;
-    margin-right: 5em;
+    width: 100%;
 }
 
 .lobby-creation-item {
-    min-height: 25em;
-    min-width: 20em;
+    height: 22em;
+    width: 17em;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: var(--darker);
+    cursor: pointer;
+}
+
+.lobby-creation-item-file {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .lobby-creation-item img {
-    height: 100%;
-    width: 100%;
+    max-height: 10em;
+    max-width: 10em;
 }
 
 .lobby-creation-item-container {
     display: flex;
+    flex-wrap: wrap;
+}
+
+.lobby-creation-item-name .edit-item {
+    width: 2.5em;
+    height: 2em;
+    padding-top: 6px;
+}
+
+.lobby-creation-item-desc {
+    padding-top: 1em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.new-item {
+    background-color: rgba(18, 18, 18, 0.24);
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.new-item p {
+    font-size: 10em;
+    color: var(--grey) !important;
+}
+
+#lobby-create-textarea {
+    min-height: 10em;
 }

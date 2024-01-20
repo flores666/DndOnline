@@ -1,17 +1,28 @@
 :root {
     --font-ubuntu-regular: 'Ubuntu', sans-serif;
     --font-ubuntu-medium: 'Ubuntu Medium', sans-serif;
-    --alice-blue: #D5DFE5;
-    --eerie-black: #191716;
-    --sea-green: #5C946E;
+    --white: #f4f4f4;
     --tekhelet: #3D348B;
-    --dark-spring-green: #337357;
+    --darker: #121212;
+    --dark: #181818;
+    --grey: rgba(140, 140, 140, 0.53);
+    --border: 1px solid rgba(140, 140, 140, 0.14);
 }
 
 html {
     font-size: 16px;
     font-family: var(--font-ubuntu-regular);
+    background-color: var(--darker);
     letter-spacing: 1px;
+    height: 100vh !important;
+}
+
+body {
+    background-color: var(--darker);
+}
+
+html * {
+    color: var(--white) !important;
 }
 
 @media (min-width: 768px) {
@@ -20,33 +31,50 @@ html {
     }
 }
 
-body {
-    color: var(--eerie-black);
-    background: var(--alice-blue);
-}
-
 main {
     padding-top: 3em;
 }
 
 .header p, h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-ubuntu-medium) !important;
+    font-weight: bold;
 }
 
-button {
-    border: 1px solid var(--eerie-black);
+.container-width {
+    background-color: var(--dark);
+    width: 80%;
+    min-height: 100vh;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.container {
+    background-color: var(--dark);
+}
+
+.navbar {
+    border-bottom: var(--border);
+    margin: 0 1em 0 1em;
+    background-color: var(--dark);
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.btn {
+    border: 1px solid var(--dark);
     border-radius: 8px;
     padding: 7px 13px;
     background-color: var(--tekhelet);
-    color: var(--alice-blue);
+    color: var(--white);
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-button:hover {
-    border-color: var(--alice-blue);
-    outline: var(--eerie-black) thin;
-    box-shadow: 0 0 0 2px var(--eerie-black);
+.btn:hover {
+    background-color: var(--tekhelet);
+    color: var(--white);
 }
 
 .unset {
@@ -60,22 +88,23 @@ button:hover {
 .asterisk:after {
     content: '*';
     margin-left: 1px;
-    color: var(--eerie-black);
+    color: var(--white);
 }
 
 .input-field {
     height: 2.5rem;
     padding: 0.75rem 1rem;
-    border: 1px solid var(--tekhelet);
+    border: 1px solid var(--grey);
     border-radius: 8px;
-    background-color: var(--alice-blue);
-    color: var(--eerie-black);
+    background-color: var(--dark);
+    color: var(--white);
 }
 
 .input-field:focus {
-    border-color: var(--eerie-black);
+    border-color: var(--grey);
     outline: #ffffff thin;
-    box-shadow: 0 0 0 2px var(--alice-blue);
+    box-shadow: 0 0 0 1px var(--grey);
+    background-color: var(--dark);
 }
 
 .input-field:disabled {
@@ -84,70 +113,43 @@ button:hover {
 }
 
 .card {
-    color: var(--alice-blue);
+    color: var(--white);
     border-radius: 1rem;
 }
 
-.card {
-    box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.53);
+.error-span {
+    color: var(--grey);
 }
 
-a {
-    color: var(--alice-blue);
+.card {
+    background-color: var(--darker);
 }
 
 a:hover {
     color: white;
 }
 
-.error-span {
-    color: rgba(158, 157, 168, 0.87);
-}
-
-/*
-.lobby-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-left: 10em;
-    margin-right: 5em;
-}
-
-.lobby-item {
-    margin: 1em;
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: transform 0.1s ease;
-    transform-style: preserve-3d;
-    will-change: transform;
-    padding: 1em;
-    box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.2);
-}
-*/
-
 li {
     list-style-type: none;
-}
-
-.navbar {
-    position: fixed;
-    top:0;
-    width: 100%;
-    height: 3em;
-    background-color: var(--alice-blue);
-    margin-bottom: 1em;
-}
-
-.navbar a {
-    color: var(--eerie-black) !important;
 }
 
 .lobby-search-container {
     padding: 7em 0 4em 0;
 }
 
+.lobby-search-container h1 {
+    font-size: 1.5em;
+    padding-right: 1em;
+}
+
+.lobby-search-container {
+    color: var(--grey);
+}
+
 .lobby-search-container input {
-    width: 85%;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 62%;
 }
 
 .lobby-search-container button:hover {
@@ -186,5 +188,32 @@ li {
     transform-style: preserve-3d;
     will-change: transform;
     padding: 1em;
-    box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.61);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Стили для скроллбаров */
+textarea::-webkit-scrollbar {
+    width: 7px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background-color: var(--grey);
+    border-radius: 12px;
+}
+
+textarea::-webkit-scrollbar-track {
+    background-color: var(--dark); 
+}
+
+.form-group {
+    margin-bottom: 1em;
 }

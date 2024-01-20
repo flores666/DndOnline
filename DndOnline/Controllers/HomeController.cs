@@ -19,7 +19,7 @@ public class HomeController : Controller
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        ViewBag.Title = "Домашняя страница";
+        ViewBag.Title = "Список лобби";
         ViewData["Name"] = HttpContext.User.Identity.Name;
     }
 
@@ -39,8 +39,12 @@ public class HomeController : Controller
     
     public PartialViewResult SearchLobby(string input)
     {
+        IEnumerable<LobbyFormViewModel> model = new List<LobbyFormViewModel>();
+        
+        if (string.IsNullOrEmpty(input)) return PartialView("Partial/LobbyList", model);
+        
         var lobbies = _lobbyService.GetLobbies(input);
-        var model = lobbies.Select(s => new LobbyFormViewModel
+        model = lobbies.Select(s => new LobbyFormViewModel
         {
             Id = s.Id,
             Name = s.Name,
@@ -48,6 +52,7 @@ public class HomeController : Controller
             MaxPlayers = s.MaxPlayers,
             PLayersCount = s.Players.Count
         });
+        
         return PartialView("Partial/LobbyList", model);
     }
 }

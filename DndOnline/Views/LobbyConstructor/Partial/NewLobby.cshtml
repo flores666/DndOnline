@@ -1,25 +1,43 @@
 @model LobbyFormViewModel
 
+<h1 class="pb-2">
+    @Model.Name
+</h1>
+
 <form method="post" enctype="multipart/form-data" asp-action="NewLobby">
-    <div>
-        <label asp-for="Name"></label>
-        <input asp-for="Name"/>
-        <span asp-validation-for="Name"></span>
+    <div class="row">
+        <div class="col-10">
+            <label asp-for="Name"></label>
+        </div>
+        <div class="col">
+            <label asp-for="MaxPlayers"></label>
+        </div>
     </div>
 
-    <div>
+    <div class="row">
+        <div class="form-group col-10">
+            <input autocomplete="off" class="input-field form-control" asp-for="Name"/>
+            <span asp-validation-for="Name" hidden="hidden"></span>
+        </div>
+
+        <div class="form-group col-1">
+            <input autocomplete="off" class="input-field form-control text-center" asp-for="MaxPlayers"/>
+            <span asp-validation-for="MaxPlayers" hidden="hidden"></span>
+        </div>
+    </div>
+
+    <div class="row">
         <label asp-for="Description"></label>
-        <textarea asp-for="Description"></textarea>
-        <span asp-validation-for="Description"></span>
     </div>
 
-    <div>
-        <label asp-for="MaxPlayers"></label>
-        <input asp-for="MaxPlayers"/>
-        <span asp-validation-for="MaxPlayers"></span>
+    <div class="row">
+        <div class="form-group">
+            <textarea id="lobby-create-textarea" class="auto-textarea input-field col-11" asp-for="Description"></textarea>
+        </div>
     </div>
 
-    <input type="submit" value="Create Lobby"/>
+    <button class="create-lobby btn btn-primary" type="submit">Создать</button>
+    @Html.ValidationSummary(false, "", new {@class = "text-danger"})
 </form>
 
 <script src="~/js/lobbyConstructor.js"></script>

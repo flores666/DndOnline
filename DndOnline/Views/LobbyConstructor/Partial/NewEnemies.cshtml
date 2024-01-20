@@ -5,16 +5,22 @@
 }
 
 <div class="lobby-creation-item-container">
+    <div class="lobby-creation-item card card3d new-item">
+        <p>+</p>
+    </div>
     @foreach (var item in Model)
     {
-        <div class="lobby-creation-item card3d">
-            <div class="lobby-creation-item-name">
-                <label for="@item.Name"></label>
+        <div class="lobby-creation-item card card3d" title="Нажмите чтобы увидеть подробное описание">
+            <div class="lobby-creation-item-name d-flex">
                 <p>@item.Name</p>
+                <div class="edit-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil ms-auto float-end pointer" viewBox="0 0 16 16">
+                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                    </svg>
+                </div>
             </div>
 
             <div class="lobby-creation-item-file">
-                <label for="@item.File"></label>
                 <img src="@(Url.Content(item.FilePath) ?? defaultImgPath)" alt="img"/>
             </div>
 
@@ -22,59 +28,42 @@
                 <p>@item.Description</p>
                 <span validation-for="Description"></span>
             </div>
-
-            <button class="btn btn-primary">Редактировать</button>
         </div>
     }
 
-    <div class="lobby-creation-item card3d">
-        <div class="lobby-creation-item-name">
-            <label for="item.Name"></label>
-            <p>item.Name</p>
+    <div class="lobby-creation-item card card3d" title="Нажмите чтобы увидеть подробное описание">
+        <div class="lobby-creation-item-name d-flex">
+            <p>Аватар Смерти (Avatar of Death)</p>
+            <div class="edit-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil ms-auto float-end pointer" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                </svg>
+            </div>
         </div>
 
         <div class="lobby-creation-item-file">
-            <label for="item.File"></label>
             <img src="@(Url.Content(defaultImgPath))" alt="img"/>
         </div>
 
         <div class="lobby-creation-item-desc">
-            <p>item.Description</p>
+            <p>
+                Призрачный гуманоидный скелет, облаченный в изодранную чёрную одежду и вооружённый призрачной косой.
+                Он появляется в пределах 10 футов от вас (в месте по выбору Мастера) и нападает на вас,
+                предупреждая всех, что вы должны выиграть это сражение в одиночку.
+                Аватар смерти сражается до тех пор, пока вы не погибнете, или его хиты не опустятся до 0.
+                После этого он исчезает. Если кто-нибудь попытается помочь вам, он вызовет этим собственный Аватар смерти.
+                Существо, убитое образом смерти, не может быть возвращено к жизни.
+            </p>
             <span validation-for="Description"></span>
         </div>
-
-        <button class="btn btn-primary">Редактировать</button>
-    </div>
-
-    <div class="lobby-creation-item lobby-creation-new-item card">
-        <div class="lobby-creation-item-name">
-            <label>Имя персонажа</label>
-            <input type="text" name="Name"/>
-            <span validation-for="Name"></span>
-        </div>
-
-        <div class="lobby-creation-item-file">
-            <label for="File"></label>
-            <input type="file" name="File"/>
-            <span validation-for="File"></span>
-        </div>
-
-        <div class="lobby-creation-item-desc">
-            <label for="Description"></label>
-            <input type="text" name="Description"/>
-            <span validation-for="Description"></span>
-        </div>
-
-        <button class="btn btn-primary" type="submit">Сохранить</button>
     </div>
 </div>
 
 <script src="~/js/lobbyConstructor.js"></script>
 <script> 
     handleCard3d(2);
-    let imgs = document.querySelectorAll("img");
     
-    imgs.forEach(img => {
+    document.querySelectorAll("img").forEach(img => {
         img.onerror = function() {
             img.src = '@defaultImgPath';
         }
