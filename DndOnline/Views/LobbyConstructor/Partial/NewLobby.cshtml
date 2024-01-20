@@ -1,26 +1,31 @@
 @model LobbyFormViewModel
 
-<h1 class="pb-2">
-    @Model.Name
-</h1>
+<div class="d-flex lobby-creation-header">
+    <h1 class="pb-2 col-10">
+        @Model.Name
+    </h1>
 
-<form method="post" enctype="multipart/form-data" asp-action="NewLobby">
+    <button form="page-form" class="col-1 btn btn-primary" type="submit">Создать</button>
+</div>
+
+<form id="page-form" method="post" enctype="multipart/form-data" asp-action="NewLobby">
     <div class="row">
-        <div class="col-10">
+        <div class="col-9">
             <label asp-for="Name"></label>
         </div>
-        <div class="col">
+        <div class="col-2">
             <label asp-for="MaxPlayers"></label>
         </div>
     </div>
 
     <div class="row">
-        <div class="form-group col-10">
+        <div class="form-group col-9">
             <input autocomplete="off" class="input-field form-control" asp-for="Name"/>
+            <small>Будет отображаться в поиске</small>
             <span asp-validation-for="Name" hidden="hidden"></span>
         </div>
 
-        <div class="form-group col-1">
+        <div class="form-group col-2">
             <input autocomplete="off" class="input-field form-control text-center" asp-for="MaxPlayers"/>
             <span asp-validation-for="MaxPlayers" hidden="hidden"></span>
         </div>
@@ -31,13 +36,16 @@
     </div>
 
     <div class="row">
-        <div class="form-group">
+        <div class="form-group mb-0">
             <textarea id="lobby-create-textarea" class="auto-textarea input-field col-11" asp-for="Description"></textarea>
         </div>
     </div>
 
-    <button class="create-lobby btn btn-primary" type="submit">Создать</button>
-    @Html.ValidationSummary(false, "", new {@class = "text-danger"})
+    <div class="row">
+        <small class="pb-2">Игровые элементы можно добавить позже, во время игры.</small>
+    </div>
+
+    @Html.ValidationSummary(false, "", new {@class = "text-danger validation-summary"})
 </form>
 
 <script src="~/js/lobbyConstructor.js"></script>

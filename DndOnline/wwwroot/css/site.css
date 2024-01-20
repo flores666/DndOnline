@@ -6,6 +6,7 @@
     --darker: #121212;
     --dark: #181818;
     --grey: rgba(140, 140, 140, 0.53);
+    --light-grey: rgba(175, 175, 175, 0.7);
     --border: 1px solid rgba(140, 140, 140, 0.14);
 }
 
@@ -118,7 +119,7 @@ main {
 }
 
 .error-span {
-    color: var(--grey);
+    color: var(--light-grey) !important
 }
 
 .card {
@@ -173,7 +174,7 @@ li {
 }
 
 .lobby-list-item:hover {
-    background-color: rgba(203, 212, 217, 0.78);
+    background-color: var(--darker);
 }
 
 .lobby-list-header p {
@@ -216,4 +217,13 @@ textarea::-webkit-scrollbar-track {
 
 .form-group {
     margin-bottom: 1em;
+}
+
+small {
+    color: var(--light-grey) !important;
+}
+
+.validation-summary ul {
+    margin: 0;
+    padding: 0;
 }

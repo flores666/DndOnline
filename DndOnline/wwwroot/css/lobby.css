@@ -86,3 +86,8 @@
 #lobby-create-textarea {
     min-height: 10em;
 }
+
+.lobby-creation-header button {
+    padding: 0;
+    height: 3em;
+}
