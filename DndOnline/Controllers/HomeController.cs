@@ -41,8 +41,6 @@ public class HomeController : Controller
     {
         IEnumerable<LobbyFormViewModel> model = new List<LobbyFormViewModel>();
         
-        if (string.IsNullOrEmpty(input)) return PartialView("Partial/LobbyList", model);
-        
         var lobbies = _lobbyService.GetLobbies(input);
         model = lobbies.Select(s => new LobbyFormViewModel
         {
