@@ -24,10 +24,13 @@
                 <img src="@(Url.Content(item.FilePath) ?? defaultImgPath)" alt="img"/>
             </div>
 
-            <div class="lobby-creation-item-desc">
-                <p>@item.Description</p>
-                <span validation-for="Description"></span>
-            </div>
+            @if (item.Description != null)
+            {
+                <div class="lobby-creation-item-desc">
+                    <p>@item.Description</p>
+                    <span validation-for="Description"></span>
+                </div>
+            }
         </div>
     }
 
@@ -47,8 +50,8 @@
 
         <div class="lobby-creation-item-desc">
             <p>
-                Эти великолепные латные перчатки, известные как Рукавицы Изумрудной Защиты, восхищают своим блеском и защитными свойствами. 
-                Их поверхность украшена инкрустацией изумрудов, создавая впечатление, что драгоценные камни охраняют носителя. 
+                Эти великолепные латные перчатки, известные как Рукавицы Изумрудной Защиты, восхищают своим блеском и защитными свойствами.
+                Их поверхность украшена инкрустацией изумрудов, создавая впечатление, что драгоценные камни охраняют носителя.
                 Латные части перчаток изготовлены из прочного металла, тщательно отлитого и украшенного рельефными узорами.
             </p>
             <span validation-for="Description"></span>

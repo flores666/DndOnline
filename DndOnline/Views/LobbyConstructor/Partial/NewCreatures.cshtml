@@ -21,13 +21,16 @@
             </div>
 
             <div class="lobby-creation-item-file">
-                <img src="@Url.Content(item.FilePath)" alt="img"/>
+                <img src="@(Url.Content(item.FilePath) ?? defaultImgPath)" alt="img"/>
             </div>
 
-            <div class="lobby-creation-item-desc">
-                <p>@item.Description</p>
-                <span validation-for="Description"></span>
-            </div>
+            @if (item.Description != null)
+            {
+                <div class="lobby-creation-item-desc">
+                    <p>@item.Description</p>
+                    <span validation-for="Description"></span>
+                </div>
+            }
         </div>
     }
 

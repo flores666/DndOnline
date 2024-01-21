@@ -34,10 +34,16 @@
     height: 22em;
     width: 17em;
     display: flex;
-    justify-content: center;
-    flex-direction: column;
     background-color: var(--darker);
     cursor: pointer;
+}
+
+.lobby-creation-item-name {
+    height: 3.5em;
+}
+
+.lobby-creation-item-name p {
+    width: 12em;
 }
 
 .lobby-creation-item-file {
@@ -47,8 +53,10 @@
 }
 
 .lobby-creation-item img {
-    max-height: 10em;
-    max-width: 10em;
+    max-height: 14em;
+    max-width: 11em;
+    width: auto;
+    height: auto;
 }
 
 .lobby-creation-item-container {
