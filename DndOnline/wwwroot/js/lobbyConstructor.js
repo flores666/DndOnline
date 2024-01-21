@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $('#new-enemy').on('click', async function () {
-        let modal = await getPartialContentAsync('/LobbyConstructor/EnemyPartialForm');
+        let modal = await getPartialContentAsync('/LobbyConstructor/CreaturePartialForm');
         
         $('body').prepend(modal);
     });
