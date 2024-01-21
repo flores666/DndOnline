@@ -1,7 +1,7 @@
 @model List<CreatureViewModel>
 
 @{
-    var defaultImgPath = "Content/Enemies/default.png";
+    var defaultImgPath = "Content/Creatures/default.png";
 }
 
 <div class="lobby-creation-item-container">
@@ -21,7 +21,7 @@
             </div>
 
             <div class="lobby-creation-item-file">
-                <img src="@(Url.Content(item.FilePath) ?? defaultImgPath)" alt="img"/>
+                <img src="@Url.Content(item.FilePath)" alt="img"/>
             </div>
 
             <div class="lobby-creation-item-desc">
@@ -42,7 +42,7 @@
         </div>
 
         <div class="lobby-creation-item-file">
-            <img src="@(Url.Content(defaultImgPath))" alt="img"/>
+            <img src="@Url.Content(defaultImgPath)" alt="img"/>
         </div>
 
         <div class="lobby-creation-item-desc">
@@ -62,10 +62,4 @@
 <script src="~/js/lobbyConstructor.js"></script>
 <script> 
     handleCard3d(2);
-    
-    document.querySelectorAll("img").forEach(img => {
-        img.onerror = function() {
-            img.src = '@defaultImgPath';
-        }
-    });
 </script>

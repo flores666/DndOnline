@@ -36,9 +36,18 @@ public class LobbyConstructorController : Controller
 
     public IActionResult Index()
     {
-        var userName = User.Identity.Name;
-        var model = new LobbyFormViewModel {Name = userName + "`s game"};
-        HttpContext.Session.SetString("LobbyFormViewModel", JsonSerializer.Serialize(model));
+        var sessionVal = HttpContext.Session.GetString("LobbyFormViewModel");
+        var model = new LobbyFormViewModel();
+
+        if (string.IsNullOrEmpty(sessionVal))
+        {
+            var userName = User.Identity.Name;
+            model.Name = userName + "`s game";
+            model.Master = userName;
+            HttpContext.Session.SetString("LobbyFormViewModel", JsonSerializer.Serialize(model));
+        }
+        else model = JsonSerializer.Deserialize<LobbyFormViewModel>(sessionVal);
+        
         return View(model);
     }
 
@@ -52,6 +61,7 @@ public class LobbyConstructorController : Controller
         {
             var userName = User.Identity.Name;
             model.Name = userName + "`s game";
+            model.Master = userName;
             HttpContext.Session.SetString("LobbyFormViewModel", JsonSerializer.Serialize(model));
         }
         else model = JsonSerializer.Deserialize<LobbyFormViewModel>(sessionVal);
@@ -80,7 +90,7 @@ public class LobbyConstructorController : Controller
             ViewBag.Alert = "Ошибка создания лобби";
         }
 
-        return PartialView("Partial/NewLobby", model);
+        return PartialView("Index", model);
     }
 
     public PartialViewResult NewCreature()

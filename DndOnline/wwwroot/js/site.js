@@ -69,8 +69,6 @@ async function getPartialContentAsync(url) {
             async: true
         });
 
-        // Создаем временный div, вставляем в него полученный HTML и возвращаем элемент
-        const tempDiv = $('<div>').html(html);
         return html;
     } catch (error) {
         console.error('Error fetching content:', error);
