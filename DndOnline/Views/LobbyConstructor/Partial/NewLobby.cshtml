@@ -5,7 +5,7 @@
         @Model.Name
     </h1>
 
-    <button form="page-form" class="col-1 btn btn-primary" type="submit">Создать</button>
+    <button form="page-form" class="col-1 btn" type="submit">Создать</button>
 </div>
 
 <form id="page-form" method="post" enctype="multipart/form-data" asp-action="NewLobby">
@@ -37,7 +37,7 @@
 
     <div class="row">
         <div class="form-group mb-0">
-            <textarea id="lobby-create-textarea" class="auto-textarea input-field col-11" asp-for="Description"></textarea>
+            <textarea class="auto-textarea input-field col-11 description-textarea" asp-for="Description"></textarea>
         </div>
     </div>
 
@@ -48,4 +48,5 @@
     @Html.ValidationSummary(false, "", new {@class = "text-danger validation-summary"})
 </form>
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/lobbyConstructor.js"></script>

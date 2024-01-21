@@ -27,24 +27,12 @@
 
     let navigationLinks = $('.lobby-creation-nav a');
 
-    navigationLinks.click(function (event) {
+    navigationLinks.click(async function (event) {
         event.preventDefault();
         let url = $(this).attr('href');
-        loadPageContent(url);
+        await loadPartialContentAsync(url, $('.lobby-creation-content'));
     });
 
-    function loadPageContent(url) {
-        $.ajax({
-            url: url,
-            method: 'GET',
-            success: function (html) {
-                $('.lobby-creation-content').html(html);
-            },
-            error: function (error) {
-                console.error('Error fetching content:', error);
-            }
-        });
-    }
 });
 
 $(document).on('input', '.auto-textarea', function () {
@@ -52,10 +40,48 @@ $(document).on('input', '.auto-textarea', function () {
     this.style.height = (this.scrollHeight + 2) + 'px';
 });
 
+//скрытие модального окна
+$(document).on('click', '.modal', function (event) {
+    if (event.target === this) {
+        this.style.display = 'none';
+        document.body.removeChild(this);
+    }
+});
+
+async function loadPartialContentAsync(url, container) {
+    $.ajax({
+        url: url,
+        method: 'GET',
+        success: function (html) {
+            container.html(html);
+        },
+        error: function (error) {
+            console.error('Error fetching content:', error);
+        }
+    });
+}
+
+async function getPartialContentAsync(url) {
+    try {
+        const html = await $.ajax({
+            url: url,
+            method: 'GET',
+            async: true
+        });
+
+        // Создаем временный div, вставляем в него полученный HTML и возвращаем элемент
+        const tempDiv = $('<div>').html(html);
+        return html;
+    } catch (error) {
+        console.error('Error fetching content:', error);
+        return null;
+    }
+}
+
 function handleCard3d(THRESHOLD) {
     const cards = document.querySelectorAll(".card3d");
     const motionMatchMedia = window.matchMedia("(prefers-reduced-motion)");
-    
+
     function handleHover(e) {
         const {clientX, clientY, currentTarget} = e;
         const {clientWidth, clientHeight, offsetLeft, offsetTop} = currentTarget;
@@ -77,4 +103,75 @@ function handleCard3d(THRESHOLD) {
             card.addEventListener("mouseleave", resetStyles);
         });
     }
+}
+
+// Базовое пустое модальное окно.
+// Родитель - .modal, конент - .modal-content. 
+// Изначально по центре
+function createBaseModal() {
+    let modal = document.createElement('div');
+    let modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+    modal.classList.add('modal');
+    modalContent.style.width = '70em';
+
+    // let closeBtn = document.createElement('span');
+    // closeBtn.classList.add('close-modal');
+    // closeBtn.innerHTML = '&times;';
+    //
+    // modalContent.appendChild(closeBtn);
+    modal.appendChild(modalContent);
+
+    document.body.appendChild(modal);
+
+    // closeBtn.onclick = function () {
+    //     modal.style.display = 'none';
+    //     document.body.removeChild(modal);
+    // };
+
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+            document.body.removeChild(modal);
+        }
+    };
+
+    modal.style.display = 'block';
+    return modalContent;
+}
+
+$(document).on('change', '.input-file input[type=file]', function () {
+    let dt = new DataTransfer();
+    let $files_list = $(this).closest('.input-file').next();
+    $files_list.empty();
+
+    for (let i = 0; i < this.files.length; i++) {
+        let file = this.files.item(i);
+        dt.items.add(file);
+
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onloadend = function () {
+            let new_file_input = '<div class="input-file-list-item">' +
+                '<img class="input-file-list-img" src="' + reader.result + '">' +
+                '<span class="input-file-list-name">' + file.name + '</span>' +
+                '<a href="#" onclick="removeFilesItem(this); return false;" class="input-file-list-remove">x</a>' +
+                '</div>';
+            $files_list.append(new_file_input);
+        }
+    };
+    this.files = dt.files;
+});
+
+function removeFilesItem(target) {
+    let name = $(target).prev().text();
+    let input = $(target).closest('.input-file-row').find('input[type=file]');
+    $(target).closest('.input-file-list-item').remove();
+    for (let i = 0; i < dt.items.length; i++) {
+        if (name === dt.items[i].getAsFile().name) {
+            dt.items.remove(i);
+        }
+    }
+    input[0].files = dt.files;
 }

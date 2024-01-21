@@ -1,0 +1,30 @@
+﻿@model ItemViewModel
+
+<div class="modal">
+    <form id="page-form" class="modal-content" method="post" enctype="multipart/form-data" asp-action="NewCreature">
+        <div class="form-group row d-flex">
+            <label asp-for="Name"></label>
+            <div class="col-11">
+                <input autocomplete="off" class="input-field form-control" asp-for="Name"/>
+                <span asp-validation-for="Name" hidden="hidden"></span>
+            </div>
+            <button form="page-form" class="col-1 btn float-end" type="submit">Создать</button>
+        </div>
+
+        <div class="row">
+            <label asp-for="Description"></label>
+            <div class="form-group mb-0 col-9">
+                <textarea class="auto-textarea input-field col-12 description-textarea col-9" asp-for="Description"></textarea>
+            </div>
+            <div class="input-file-row col">
+                <label class="input-file d-flex justify-content-center">
+                    <input type="file" name="File" accept="image/*">
+                    <span>Выберите изображение</span>
+                </label>
+                <div class="input-file-list"></div>
+            </div>
+        </div>
+
+        @Html.ValidationSummary(false, "", new {@class = "text-danger validation-summary"})
+    </form>
+</div>

@@ -83,8 +83,8 @@
     color: var(--grey) !important;
 }
 
-#lobby-create-textarea {
-    min-height: 10em;
+.description-textarea {
+    min-height: 15em !important;
 }
 
 .lobby-creation-header button {
