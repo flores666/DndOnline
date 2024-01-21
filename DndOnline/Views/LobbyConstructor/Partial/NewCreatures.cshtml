@@ -1,12 +1,12 @@
-@model List<EnemyViewModel>
+@model List<CreatureViewModel>
 
 @{
     var defaultImgPath = "Content/Enemies/default.png";
 }
 
 <div class="lobby-creation-item-container">
-    <div class="lobby-creation-item card card3d new-item">
-        <p>+</p>
+    <div id="new-enemy" class="lobby-creation-item card card3d new-item">
+        <p class="">+</p>
     </div>
     @foreach (var item in Model)
     {

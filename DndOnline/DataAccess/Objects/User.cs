@@ -20,7 +20,7 @@ namespace DndOnline.DataAccess.Objects
         public List<Lobby> Lobbies { get; set; }
         public List<Character> Characters { get; set; } = new List<Character>();
         public List<Map> Maps { get; set; } = new List<Map>();
-        public List<Enemy> Enemies { get; set; } = new List<Enemy>();
-        public List<Item> GameItems { get; set; } = new List<Item>();
+        public List<Creature> Creatures { get; set; } = new List<Creature>();
+        public List<Item> Items { get; set; } = new List<Item>();
     }
 }

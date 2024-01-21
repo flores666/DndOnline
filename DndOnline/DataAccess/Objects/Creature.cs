@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace DndOnline.DataAccess.Objects;
 
-public class Enemy
+public class Creature
 {
     [Key]
     public Guid Id { get; set; }
@@ -17,5 +17,5 @@ public class Enemy
     public string FullFilePath { get; set; }
 
     public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
-    public IEnumerable<EnemyLobby> EnemyLobby { get; set; } = new List<EnemyLobby>();
+    public IEnumerable<CreatureLobby> EnemyLobby { get; set; } = new List<CreatureLobby>();
 }

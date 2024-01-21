@@ -41,7 +41,6 @@
     <ItemGroup>
       <AdditionalFiles Include="Views\LobbyConstructor\Partial\NewCharacter.cshtml" />
       <AdditionalFiles Include="Views\LobbyConstructor\Partial\NewEnemies.cshtml" />
-      <AdditionalFiles Include="Views\LobbyConstructor\Partial\NewGameItem.cshtml" />
       <AdditionalFiles Include="Views\LobbyConstructor\Partial\NewLobby.cshtml" />
     </ItemGroup>
 

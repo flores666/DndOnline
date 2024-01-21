@@ -83,37 +83,37 @@ public class LobbyConstructorController : Controller
         return PartialView("Partial/NewLobby", model);
     }
 
-    public PartialViewResult NewEnemy()
+    public PartialViewResult NewCreature()
     {
-        var model = new List<EnemyViewModel>();
+        var model = new List<CreatureViewModel>();
 
-        var sessionVal = HttpContext.Session.GetString("LobbyEnemies");
+        var sessionVal = HttpContext.Session.GetString("LobbyCreatures");
         if (!string.IsNullOrEmpty(sessionVal))
         {
-            model = JsonSerializer.Deserialize<List<EnemyViewModel>>(sessionVal);
+            model = JsonSerializer.Deserialize<List<CreatureViewModel>>(sessionVal);
         }
 
-        return PartialView("Partial/NewEnemies", model);
+        return PartialView("Partial/NewCreatures", model);
     }
 
     [HttpPost]
-    public ResponseModel NewEnemy(EnemyViewModel model)
+    public ResponseModel NewCreature(CreatureViewModel model)
     {
         var response = new ResponseModel();
 
         if (!string.IsNullOrEmpty(model.Name))
         {
-            var enemiesList = new List<EnemyViewModel>();
-            var sessionVal = HttpContext.Session.GetString("LobbyEnemies");
+            var enemiesList = new List<CreatureViewModel>();
+            var sessionVal = HttpContext.Session.GetString("LobbyCreatures");
 
             if (!string.IsNullOrEmpty(sessionVal))
             {
-                enemiesList = JsonSerializer.Deserialize<List<EnemyViewModel>>(sessionVal);
+                enemiesList = JsonSerializer.Deserialize<List<CreatureViewModel>>(sessionVal);
             }
 
             enemiesList.Add(model);
 
-            HttpContext.Session.SetString("LobbyEnemies", JsonSerializer.Serialize(enemiesList));
+            HttpContext.Session.SetString("LobbyCreatures", JsonSerializer.Serialize(enemiesList));
             response.SetSuccess(model);
         }
 
@@ -192,5 +192,20 @@ public class LobbyConstructorController : Controller
         }
 
         return response;
+    }
+
+    public PartialViewResult CreaturePartialForm()
+    {
+        return PartialView("Partial/CreaturePartialView");
+    }
+    
+    public PartialViewResult CharacterPartialForm()
+    {
+        return PartialView("Partial/CharacterPartialView");
+    }
+    
+    public PartialViewResult ItemPartialForm()
+    {
+        return PartialView("Partial/ItemPartialView");
     }
 }

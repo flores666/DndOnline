@@ -11,6 +11,8 @@ public class ItemViewModel
     [MaxLength(50, ErrorMessage = "Недопустимое количество символов")]
     public string Name { get; set; }
     public string FilePath { get; set; }
+    
+    [DisplayName("Описание")]
     public string Description { get; set; }
     public FormFile? File { get; set; }
 }

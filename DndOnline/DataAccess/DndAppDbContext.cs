@@ -11,11 +11,11 @@ public class DndAppDbContext : DbContext
     public DbSet<LobbyStatus> LobbyStatuses { get; set; }
 
     public DbSet<Character> Characters { get; set; }
-    public DbSet<Enemy> Enemies { get; set; }
+    public DbSet<Creature> Creatures { get; set; }
     public DbSet<Map> Maps { get; set; }
     public DbSet<Item> Items { get; set; }
 
-    public DbSet<EnemyLobby> EnemyLobby { get; set; }
+    public DbSet<CreatureLobby> CreatureLobby { get; set; }
     public DbSet<CharacterLobby> CharacterLobby { get; set; }
     public DbSet<ItemLobby> ItemLobby { get; set; }
     public DbSet<MapLobby> MapLobby { get; set; }
@@ -30,19 +30,19 @@ public class DndAppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        #region EnemyLobby
+        #region CreatureLobby
 
         modelBuilder
-            .Entity<Enemy>()
+            .Entity<Creature>()
             .HasMany(c => c.Lobbies)
-            .WithMany(s => s.Enemies)
-            .UsingEntity<EnemyLobby>(
+            .WithMany(s => s.Creatues)
+            .UsingEntity<CreatureLobby>(
                 j => j
                     .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.EnemyLobby)
+                    .WithMany(p => p.CreatureLobby)
                     .HasForeignKey(pt => pt.LobbyId),
                 j => j
-                    .HasOne(pt => pt.Enemy)
+                    .HasOne(pt => pt.Creature)
                     .WithMany(t => t.EnemyLobby)
                     .HasForeignKey(pt => pt.EnemyId),
                 j =>
@@ -50,7 +50,7 @@ public class DndAppDbContext : DbContext
                     j.Property(pt => pt.X).HasDefaultValue(0.0);
                     j.Property(pt => pt.Y).HasDefaultValue(0.0);
                     j.HasKey(t => new { t.EnemyId, t.LobbyId });
-                    j.ToTable("EnemyLobby");
+                    j.ToTable("CreatureLobby");
                 });
 
         #endregion
