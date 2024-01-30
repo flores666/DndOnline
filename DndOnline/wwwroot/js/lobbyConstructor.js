@@ -8,17 +8,17 @@ $(document).ready(function () {
 });
 
 <!-- Обработка добавляения нового элемента -->
-$(document).on('click', '#new-item', async function () {
+$(document).on('click', '#add-item', async function () {
     let modal = await getPartialContentAsync('/LobbyConstructor/ItemPartialForm');
     $('body').prepend(modal);
 });
 
-$(document).on('click', '#new-creature', async function () {
+$(document).on('click', '#add-creature', async function () {
     let modal = await getPartialContentAsync('/LobbyConstructor/CreaturePartialForm');
     $('body').prepend(modal);
 });
 
-$(document).on('click', '#new-character', async function () {
+$(document).on('click', '#add-character', async function () {
     let modal = await getPartialContentAsync('/LobbyConstructor/CharacterPartialForm');
     $('body').prepend(modal);
 });
@@ -32,7 +32,7 @@ $(document).on('submit', '.creation-form', async function (event) {
     let response;
 
     let model = new FormData(form);
-debugger
+
     switch (form.id) {
         case "character-form":
             response = await sendRequestAsync('POST', '/LobbyConstructor/NewCharacter', model);
