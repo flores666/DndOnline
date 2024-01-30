@@ -5,7 +5,6 @@ namespace DndOnline.Models;
 
 public class ItemViewModel
 {
-    
     [DisplayName("Название предмета")]
     [Required(ErrorMessage = "Поле '{0}' обязательно для заполнения")]
     [MaxLength(50, ErrorMessage = "Недопустимое количество символов")]
@@ -14,5 +13,5 @@ public class ItemViewModel
     
     [DisplayName("Описание")]
     public string Description { get; set; }
-    public FormFile? File { get; set; }
+    public IFormFile? File { get; set; }
 }

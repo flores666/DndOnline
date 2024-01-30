@@ -13,5 +13,5 @@ public class CreatureViewModel
     [DisplayName("Описание")]
     public string? Description { get; set; }
     public string? FilePath { get; set; }
-    public FormFile? File { get; set; } 
+    public IFormFile? File { get; set; } 
 }

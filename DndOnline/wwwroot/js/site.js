@@ -24,18 +24,9 @@
         let id = this.id;
         window.location.href = '/lobby/' + id;
     });
-
-    let navigationLinks = $('.lobby-creation-nav a');
-
-    navigationLinks.click(async function (event) {
-        event.preventDefault();
-        let url = $(this).attr('href');
-        await loadPartialContentAsync(url, $('.lobby-creation-content'));
-    });
-
 });
 
-$(document).on('input', '.auto-textarea', function () {
+$(document).on('input', 'textarea', function () {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight + 2) + 'px';
 });
@@ -158,7 +149,8 @@ $(document).on('change', '.input-file input[type=file]', function () {
                 '</div>';
             $files_list.append(new_file_input);
         }
-    };
+    }
+    ;
     this.files = dt.files;
 });
 
@@ -172,4 +164,87 @@ function removeFilesItem(target) {
         }
     }
     input[0].files = dt.files;
+}
+
+$.fn.getLabelValue = function (fieldName) {
+    let label = this.find(`[for="${fieldName}"]`);
+
+    return label.length ? label.text() : null;
+};
+
+// method - POST/GET
+// url - адрес до точки
+// data - отправляемые данные. Объект либо FormData
+async function sendRequestAsync(method, url, data) {
+    return new Promise((resolve, reject) => {
+        let ajaxOptions = {
+            url: url,
+            method: method,
+            success: function (response) {
+                resolve(response);
+            },
+            error: function (error) {
+                reject(error);
+            }
+        };
+
+        // Проверяем, есть ли данные в formData
+        if (data) {
+            if (data.getAll && data.getAll.length > 0) {
+                ajaxOptions.processData = false;
+                ajaxOptions.contentType = false;
+            }
+            ajaxOptions.data = data;
+        }
+
+        $.ajax(ajaxOptions);
+    });
+}
+
+// Функция для сжатия размера изображения
+function compressImage(file, maxSizeInBytes, callback) {
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+        const img = new Image();
+
+        img.onload = function () {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            let width = img.width;
+            let height = img.height;
+
+            // Если размер файла меньше или равен maxSizeInBytes, вызываем callback без изменений
+            if (file.size <= maxSizeInBytes) {
+                callback(file);
+                return;
+            }
+
+            // Рассчитываем новые размеры изображения для сжатия
+            const maxDimension = Math.max(width, height);
+            if (maxDimension > 1024) {
+                const ratio = 1024 / maxDimension;
+                width *= ratio;
+                height *= ratio;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            // Рисуем изображение на канвасе
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Преобразуем изображение на канвасе обратно в Blob (файл)
+            canvas.toBlob(function (blob) {
+                const compressedFile = new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() });
+
+                // Вызываем callback с сжатым файлом
+                callback(compressedFile);
+            }, 'image/jpeg', 0.8);
+        };
+
+        img.src = event.target.result;
+    };
+
+    reader.readAsDataURL(file);
 }

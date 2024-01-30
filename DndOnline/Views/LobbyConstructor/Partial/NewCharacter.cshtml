@@ -4,8 +4,8 @@
     var defaultImgPath = "Content/Characters/default.png";
 }
 
-<div class="lobby-creation-item-container">
-    <div id="new-character" class="lobby-creation-item card card3d new-item">
+<div id="new-character" class="lobby-creation-item-container">
+    <div id="add-character" class="lobby-creation-item card card3d new-item">
         <p>+</p>
     </div>
     @foreach (var item in Model)
@@ -64,8 +64,3 @@
         </div>
     </div>
 </div>
-
-<script src="~/js/lobbyConstructor.js"></script>
-<script> 
-handleCard3d(2);
-</script>

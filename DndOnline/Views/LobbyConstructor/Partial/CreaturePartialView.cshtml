@@ -1,14 +1,14 @@
 ﻿@model CreatureViewModel
 
 <div class="modal">
-    <form id="page-form" class="modal-content" method="post" enctype="multipart/form-data" asp-action="NewCreature">
+    <form id="creature-form" class="modal-content creation-form" method="post" enctype="multipart/form-data">
         <div class="form-group row d-flex">
             <label asp-for="Name"></label>
             <div class="col-11">
                 <input autocomplete="off" class="input-field form-control" asp-for="Name"/>
                 <span asp-validation-for="Name" hidden="hidden"></span>
             </div>
-            <button form="page-form" class="col-1 btn float-end" type="submit">Создать</button>
+            <button class="col-1 btn float-end">Создать</button>
         </div>
 
         <div class="row">
@@ -18,7 +18,7 @@
             </div>
             <div class="input-file-row col">
                 <label class="input-file d-flex justify-content-center">
-                    <input type="file" name="File" accept="image/*">
+                    <input type="file" name="File" accept="image/png, image/jpeg, image/jpg">
                     <span>Выберите изображение</span>
                 </label>
                 <div class="input-file-list"></div>
