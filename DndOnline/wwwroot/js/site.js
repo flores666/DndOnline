@@ -180,6 +180,7 @@ async function sendRequestAsync(method, url, data) {
         let ajaxOptions = {
             url: url,
             method: method,
+            async: true,
             success: function (response) {
                 resolve(response);
             },
@@ -202,49 +203,51 @@ async function sendRequestAsync(method, url, data) {
 }
 
 // Функция для сжатия размера изображения
-function compressImage(file, maxSizeInBytes, callback) {
-    const reader = new FileReader();
+async function compressImage(file, maxSizeInBytes, callback) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
 
-    reader.onload = function (event) {
-        const img = new Image();
+        reader.onload = function (event) {
+            const img = new Image();
 
-        img.onload = function () {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            let width = img.width;
-            let height = img.height;
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                let width = img.width;
+                let height = img.height;
 
-            // Если размер файла меньше или равен maxSizeInBytes, вызываем callback без изменений
-            if (file.size <= maxSizeInBytes) {
-                callback(file);
-                return;
-            }
+                // Если размер файла меньше или равен maxSizeInBytes, вызываем callback без изменений
+                if (file.size <= maxSizeInBytes) {
+                    resolve(callback(file));
+                    return;
+                }
 
-            // Рассчитываем новые размеры изображения для сжатия
-            const maxDimension = Math.max(width, height);
-            if (maxDimension > 1024) {
-                const ratio = 1024 / maxDimension;
-                width *= ratio;
-                height *= ratio;
-            }
+                // Рассчитываем новые размеры изображения для сжатия
+                const maxDimension = Math.max(width, height);
+                if (maxDimension > 1024) {
+                    const ratio = 1024 / maxDimension;
+                    width *= ratio;
+                    height *= ratio;
+                }
 
-            canvas.width = width;
-            canvas.height = height;
+                canvas.width = width;
+                canvas.height = height;
 
-            // Рисуем изображение на канвасе
-            ctx.drawImage(img, 0, 0, width, height);
+                // Рисуем изображение на канвасе
+                ctx.drawImage(img, 0, 0, width, height);
 
-            // Преобразуем изображение на канвасе обратно в Blob (файл)
-            canvas.toBlob(function (blob) {
-                const compressedFile = new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() });
+                // Преобразуем изображение на канвасе обратно в Blob (файл)
+                canvas.toBlob(function (blob) {
+                    const compressedFile = new File([blob], file.name, {type: 'image/jpeg', lastModified: Date.now()});
 
-                // Вызываем callback с сжатым файлом
-                callback(compressedFile);
-            }, 'image/jpeg', 0.8);
+                    // Вызываем callback с сжатым файлом
+                    resolve(callback(compressedFile));
+                }, 'image/jpeg', 0.8);
+            };
+
+            img.src = event.target.result;
         };
 
-        img.src = event.target.result;
-    };
-
-    reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+    });
 }
