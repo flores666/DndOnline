@@ -26,12 +26,23 @@ $(document).on('click', '#add-character', async function () {
 <!-- Обработка создания нового элемента -->
 $(document).on('submit', '.creation-form', async function (event) {
     event.preventDefault();
+    let loader = new Loader();
+    loader.show();
+    
     let form = event.target;
     let validated = validateBaseForm(form);
     if (!validated) return;
-    let response;
-
     let model = new FormData(form);
+    
+    let img = $(form).find('[name="File"]')[0].files[0];
+    if (img != null) {
+        await compressImage(img, 512 * 1024, function (compressedFile) {
+            let newFile = new File([compressedFile], img.name, { type: 'image/jpeg', lastModified: Date.now() });
+            model.set('File', newFile);
+        });
+    }
+    
+    let response;
 
     switch (form.id) {
         case "character-form":
@@ -47,7 +58,15 @@ $(document).on('submit', '.creation-form', async function (event) {
             response = null;
             break;
     }
-    console.log(response);
+    
+    loader.hide();
+    
+    if (response.isSuccess) {
+        $('.modal').remove();
+        addItem(response.data);
+    } else {
+        console.error('Непредвиденная ошибка при отправке формы');
+    }
 });
 
 // Валидация основных общих полей формы создания объекта
@@ -87,13 +106,6 @@ function validateBaseForm(form) {
         result = false;
     }
 
-    let img = $(form).find('[name="File"]')[0].files[0];
-    if (img != null) {
-        compressImage(img, 512 * 1024, function (result) {
-            $('.input-file-list-img').src = "";
-        });
-    }
-
     return result;
 }
 
@@ -102,10 +114,32 @@ $(document).on('input', 'input', function () {
     $('.creation-form .error-span').remove();
 });
 
-function addItem() {
-    let itemsContainer = document.getElementById('lobby-creation-item-container');
-
-    let newItem = document.createElement('div');
-    newItem.className = 'lobby-creation-item card3d';
-    itemsContainer.appendChild(newItem);
+function addItem(model) {
+    let name = model.name;
+    let desc = model.description;
+    let pic = model.relativePath;
+    
+    let card3d = $('<div></div>');
+    card3d.addClass('lobby-creation-item card card3d');
+    card3d.title = 'Нажмите чтобы увидеть подробное описание';
+    
+    let nameWrapper = $('<div></div>');
+    nameWrapper.addClass('lobby-creation-item-name d-flex');
+    nameWrapper.append(`<p>${name}</p>`);
+    card3d.append(nameWrapper);
+    
+    let file = $('<div></div>');
+    file.addClass('lobby-creation-item-file');
+    file.append(`<img src="${pic ?? "Content/default.png"}" alt="img" />`);
+    card3d.append(file);
+    
+    if (desc != null) {
+        let item = $('<div></div>');
+        item.addClass = 'lobby-creation-item-desc';
+        item.append(`<p>${desc}</p>`)
+        card3d.append(item);
+    }
+    
+    $('.lobby-creation-item-container').append(card3d);
+    handleCard3d(2.5);
 }
