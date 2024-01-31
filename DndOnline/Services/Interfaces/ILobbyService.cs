@@ -9,9 +9,18 @@ public interface ILobbyService
     public ResponseModel DeleteLobby();
     public Lobby GetLobby(string name);
     public Lobby GetLobby(Guid id);
+    public Lobby GetLobby(Guid userId, LobbyStatusType status);
     public List<Lobby> GetLobbies(int page = 1, int pageSize = 20);
     public List<Lobby> GetLobbies(string input, int page = 1, int pageSize = 20);
     public ResponseModel ConnectUser(string userName);
     public ResponseModel ConnectUser(Guid userId, Lobby lobby);
     public ResponseModel DisconnectUser(Guid userId, Guid lobbyId);
+    public Task<ResponseModel> AddItemAsync(Guid lobbyId, ItemViewModel model);
+    public Task<ResponseModel> AddCreature(Guid lobbyId, CreatureViewModel model);
+    public Task<ResponseModel> AddCharacter(Guid lobbyId, CharacterViewModel model);
+    public Task<ResponseModel> AddMap(Guid lobbyId, MapViewModel model);
+    public List<Item> GetItems(Guid lobbyId);
+    public List<Creature> GetCreatures(Guid lobbyId);
+    public List<Character> GetCharacters(Guid lobbyId);
+    public List<Map> GetMaps(Guid lobbyId);
 }

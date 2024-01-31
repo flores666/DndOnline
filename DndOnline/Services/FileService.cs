@@ -4,12 +4,14 @@ using Results = DndOnline.Models.Results;
 
 namespace DndOnline.Services;
 
-public class FileService : IFIleService
+public class FileService : IFileService
 {
     private readonly string _fileMaxSize;
     private readonly string _filesAllowed;
     private readonly string _imagesAllowed;
-    private readonly string _dir;
+    
+    private readonly string _currentDirectory;
+    private readonly string _directory;
 
     private readonly ILogger _logger;
 
@@ -18,12 +20,14 @@ public class FileService : IFIleService
         _fileMaxSize = configuration.GetSection("Files").GetSection("MaxSize").Value;
         _filesAllowed = "";
         _imagesAllowed = configuration.GetSection("Files").GetSection("ImagesAllowed").Value;
-        _dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\content");
+        
+        _currentDirectory = Directory.GetCurrentDirectory();
+        _directory = Path.Combine(_currentDirectory, "wwwroot", "Content");
         
         _logger = logger;
     }
 
-    public async Task<ResponseModel> Save(IFormFile file, string type)
+    public async Task<ResponseModel> SaveAsync(IFormFile file, string type)
     {
         var result = new ResponseModel();
         var allowedToSave = true;
@@ -47,13 +51,14 @@ public class FileService : IFIleService
         var caption = Path.GetFileNameWithoutExtension(file.FileName);
         var fileId = Guid.NewGuid();
         
-        var dir = _dir + GetFolder(type) + "\\" + fileId + $".{fileExtension}";
-
+        var fullPath = Path.Combine(_directory, GetFolder(type));
+        var relativePath = Path.Combine("Content", GetFolder(type), fileId.ToString(), ".png");
+        
         var fileInfo = new FileModel
         {
             Id = fileId,
             Caption = caption,
-            Path = $"{dir}",
+            RelativePath = relativePath,
             Size = file.Length,
             Extension = fileExtension
         };
@@ -61,7 +66,7 @@ public class FileService : IFIleService
         try
         {
             // сохраняем файл
-            using (var filestream = new FileStream(fileInfo.Path, FileMode.Create))
+            using (var filestream = new FileStream(fullPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 await file.CopyToAsync(filestream);
             }
@@ -75,13 +80,13 @@ public class FileService : IFIleService
 
         result.Result = Results.Success;
         //Возвращаем данные о файле
-        var fi = new FileInfo(fileInfo.Path);
+        var fi = new FileInfo(fullPath);
         if (fi.Exists)
             result.SetSuccess(new FileModel()
             {
                 Id = fileInfo.Id,
                 Caption = fileInfo.Caption,
-                Path = fileInfo.Path,
+                RelativePath = relativePath,
                 Size = fileInfo.Size
             });
 
@@ -97,10 +102,10 @@ public class FileService : IFIleService
     {
         return type.ToLower() switch
         {
-            "creature" => "\\creatures",
-            "character" => "\\characters",
-            "item" => "\\items",
-            "map" => "\\maps",
+            "creature" => "Creatures",
+            "character" => "Characters",
+            "item" => "Items",
+            "map" => "Maps",
             _ => "img"
         };
     }

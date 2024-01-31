@@ -10,21 +10,26 @@ public class LobbyService : ILobbyService
 {
     private readonly DndAppDbContext _db;
     private readonly HttpContext _httpContext;
+    private readonly IFileService _fIleService;
 
-    public LobbyService(DndAppDbContext context, IHttpContextAccessor httpContextAccessor)
+    public LobbyService(DndAppDbContext context, IHttpContextAccessor httpContextAccessor,
+        IFileService fs)
     {
         _db = context;
         _httpContext = httpContextAccessor.HttpContext;
+        _fIleService = fs;
     }
 
     public Lobby CreateLobby(LobbyFormViewModel model)
     {
-        var master = _httpContext.User.Identity.Name;
+        var masterId = _httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value;
         var lobby = new Lobby()
         {
+            Id = model.Id == Guid.Empty ? new Guid() : model.Id,
             Name = model.Name,
-            Master = master,
-            MaxPlayers = model.MaxPlayers
+            MasterId = new Guid(masterId),
+            MaxPlayers = model.MaxPlayers,
+            Description = model.Description,
         };
 
         _db.Lobbies.Add(lobby);
@@ -47,6 +52,12 @@ public class LobbyService : ILobbyService
         return _db.Lobbies.Include(i => i.Players).FirstOrDefault(f => f.Id == id);
     }
 
+    public Lobby GetLobby(Guid userId, LobbyStatusType status)
+    {
+        return _db.Lobbies
+            .FirstOrDefault(w => w.MasterId == userId && w.Status.Status == status);
+    }
+
     public List<Lobby> GetLobbies(int page = 1, int pageSize = 20)
     {
         return _db.Lobbies
@@ -59,11 +70,11 @@ public class LobbyService : ILobbyService
     public List<Lobby> GetLobbies(string input, int page = 1, int pageSize = 20)
     {
         var query = _db.Lobbies.AsQueryable();
-        
-        if (!string.IsNullOrEmpty(input)) 
+
+        if (!string.IsNullOrEmpty(input))
             query = query
-            .Where(w => w.Name.ToLower().Contains(input.ToLower()));
-        
+                .Where(w => w.Name.ToLower().Contains(input.ToLower()));
+
         return query
             .Include(i => i.Players)
             .Skip((page - 1) * pageSize)
@@ -130,5 +141,83 @@ public class LobbyService : ILobbyService
         }
 
         return response;
+    }
+
+    public async Task<ResponseModel> AddItemAsync(Guid lobbyId, ItemViewModel model)
+    {
+        var response = new ResponseModel();
+
+        var result = await _fIleService.SaveAsync(model.File, "item");
+        if (!result.IsSuccess) return result;
+        
+        var data = result.Data as FileModel;
+        var path = data.RelativePath;
+
+        var item = new Item
+        {
+            Id = new Guid(),
+            Name = model.Name,
+            Description = model.Description,
+            RelativePath = path
+        };
+        
+        _db.Items.Add(item);
+        var res = await _db.SaveChangesAsync();
+
+        _db.ItemLobby.Add(new ()
+        {
+            ItemId = item.Id,
+            LobbyId = lobbyId 
+        });
+
+        res += await _db.SaveChangesAsync();
+        
+        if (res > 0) response.SetSuccess(item);
+
+        return response;
+    }
+
+    public async Task<ResponseModel> AddCreature(Guid lobbyId, CreatureViewModel model)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ResponseModel> AddCharacter(Guid lobbyId, CharacterViewModel model)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ResponseModel> AddMap(Guid lobbyId, MapViewModel model)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<Item> GetItems(Guid lobbyId)
+    {
+        return _db.ItemLobby
+            .Where(w => w.LobbyId == lobbyId)
+            .Select(s => new Item()
+            {
+                Id = s.Item.Id,
+                Name = s.Item.Name,
+                Description = s.Item.Description,
+                RelativePath = s.Item.RelativePath
+            })
+            .ToList();
+    }
+
+    public List<Creature> GetCreatures(Guid lobbyId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<Character> GetCharacters(Guid lobbyId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<Map> GetMaps(Guid lobbyId)
+    {
+        throw new NotImplementedException();
     }
 }

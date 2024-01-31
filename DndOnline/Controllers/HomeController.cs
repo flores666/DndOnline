@@ -30,7 +30,6 @@ public class HomeController : Controller
         {
             Id = s.Id,
             Name = s.Name,
-            Master = s.Master,
             MaxPlayers = s.MaxPlayers,
             PLayersCount = s.Players.Count
         });
@@ -46,7 +45,6 @@ public class HomeController : Controller
         {
             Id = s.Id,
             Name = s.Name,
-            Master = s.Master,
             MaxPlayers = s.MaxPlayers,
             PLayersCount = s.Players.Count
         });

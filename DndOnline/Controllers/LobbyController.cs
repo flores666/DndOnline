@@ -35,15 +35,13 @@ public class LobbyController : Controller
             return RedirectToAction("Index", "Home");
         }
         
-        var playerId = HttpContext.User.Claims
-            .FirstOrDefault(f => f.Type == "id")?.Value;
+        var userId = HttpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value;
 
-        var result = _lobbyService.ConnectUser(new Guid(playerId), lobby);
+        var result = _lobbyService.ConnectUser(new Guid(userId), lobby);
         if (!result.IsSuccess) RedirectToAction("Index", "Home");
 
-        var curUserName = HttpContext.User.Identity.Name;
         HttpContext.Session.SetString("lobbyId", id.ToString());
 
-        return lobby.Master == curUserName ? View("LobbyMaster", lobby) : View(lobby);
+        return lobby.MasterId == new Guid(userId) ? View("LobbyMaster", lobby) : View(lobby);
     }
 }

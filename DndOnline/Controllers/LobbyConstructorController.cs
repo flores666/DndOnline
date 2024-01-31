@@ -1,4 +1,5 @@
 using System.Text.Json;
+using DndOnline.DataAccess.Objects;
 using DndOnline.Extensions;
 using DndOnline.Models;
 using DndOnline.Services.Interfaces;
@@ -20,52 +21,60 @@ public class LobbyConstructorController : Controller
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        var sessionVal = HttpContext.Session.GetString("LobbyFormViewModel");
-        var model = new LobbyFormViewModel();
-
-        if (!string.IsNullOrEmpty(sessionVal))
-        {
-            model = JsonSerializer.Deserialize<LobbyFormViewModel>(sessionVal);
-            ViewBag.Title = model.Name;
-        }
-        else
-        {
-            ViewBag.Title = "Конструтор лобби";
-        }
+        var sessionVal = HttpContext.Session.GetString("DraftLobbyName");
+        ViewBag.Title = !string.IsNullOrEmpty(sessionVal) ? sessionVal : "Конструтор лобби";
     }
 
     public IActionResult Index()
     {
-        var sessionVal = HttpContext.Session.GetString("LobbyFormViewModel");
-        var model = new LobbyFormViewModel();
+        var userName = User.Identity.Name;
+        var userId = User.Claims.FirstOrDefault(f => f.Type == "id").Value;
 
-        if (string.IsNullOrEmpty(sessionVal))
+        var model = new LobbyFormViewModel
         {
-            var userName = User.Identity.Name;
-            model.Name = userName + "`s game";
-            model.Master = userName;
-            HttpContext.Session.SetString("LobbyFormViewModel", JsonSerializer.Serialize(model));
+            Id = new Guid(),
+            Master = userName,
+            Name = userName + "`s game"
+        };
+
+        var draftLobby = _lobbyService.GetLobby(new Guid(userId), LobbyStatusType.Draft);
+        if (draftLobby != null)
+        {
+            model = new LobbyFormViewModel
+            {
+                Master = User.Identity.Name,
+                Id = draftLobby.Id,
+                Name = draftLobby.Name,
+                MaxPlayers = draftLobby.MaxPlayers,
+                Description = draftLobby.Description
+            };
         }
-        else model = JsonSerializer.Deserialize<LobbyFormViewModel>(sessionVal);
+        else
+        {
+            _lobbyService.CreateLobby(model);
+        }
         
+        HttpContext.Session.SetString("DraftLobbyName", model.Name);
+        HttpContext.Session.SetString("DraftLobbyId", model.Id.ToString());
         return View(model);
     }
 
     [HttpGet]
     public PartialViewResult NewLobby()
     {
-        var sessionVal = HttpContext.Session.GetString("LobbyFormViewModel");
         var model = new LobbyFormViewModel();
+        var userId = User.Claims.FirstOrDefault(f => f.Type == "id").Value;
+        var draftLobby = _lobbyService.GetLobby(new Guid(userId), LobbyStatusType.Draft);
 
-        if (string.IsNullOrEmpty(sessionVal))
+        model = new LobbyFormViewModel
         {
-            var userName = User.Identity.Name;
-            model.Name = userName + "`s game";
-            model.Master = userName;
-            HttpContext.Session.SetString("LobbyFormViewModel", JsonSerializer.Serialize(model));
-        }
-        else model = JsonSerializer.Deserialize<LobbyFormViewModel>(sessionVal);
-
+            Master = User.Identity.Name,
+            Id = draftLobby.Id,
+            Name = draftLobby.Name,
+            MaxPlayers = draftLobby.MaxPlayers,
+            Description = draftLobby.Description
+        };
+        
         return PartialView("Partial/NewLobby", model);
     }
 
@@ -77,7 +86,7 @@ public class LobbyConstructorController : Controller
             try
             {
                 var lobby = _lobbyService.CreateLobby(model);
-                return RedirectToAction("Index", new {id = lobby.Id});
+                return RedirectToAction("Index", new { id = lobby.Id });
             }
             catch (DbUpdateException ex)
             {
@@ -100,7 +109,7 @@ public class LobbyConstructorController : Controller
         var sessionVal = HttpContext.Session.GetString("LobbyCreatures");
         if (!string.IsNullOrEmpty(sessionVal))
         {
-            model = JsonSerializer.Deserialize<List<CreatureViewModel>>(sessionVal);
+            // model = JsonSerializer.Deserialize<List<CreatureViewModel>>(sessionVal);
         }
 
         return PartialView("Partial/NewCreatures", model);
@@ -113,19 +122,10 @@ public class LobbyConstructorController : Controller
 
         if (!string.IsNullOrEmpty(model.Name))
         {
-            var enemiesList = new List<CreatureViewModel>();
-            var sessionVal = HttpContext.Session.GetString("LobbyCreatures");
-
-            if (!string.IsNullOrEmpty(sessionVal))
-            {
-                enemiesList = JsonSerializer.Deserialize<List<CreatureViewModel>>(sessionVal);
-            }
-
-            enemiesList.Add(model);
-
-            HttpContext.Session.SetString("LobbyCreatures", JsonSerializer.Serialize(enemiesList));
-            response.SetSuccess(model);
+            
         }
+
+        response.SetSuccess(model);
 
         return response;
     }
@@ -170,35 +170,32 @@ public class LobbyConstructorController : Controller
     public IActionResult NewItem()
     {
         var model = new List<ItemViewModel>();
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
-        var sessionVal = HttpContext.Session.GetString("LobbyItems");
-        if (!string.IsNullOrEmpty(sessionVal))
+        var draft = _lobbyService.GetItems(new Guid(lobbyId));
+        
+        if (draft != null)
         {
-            model = JsonSerializer.Deserialize<List<ItemViewModel>>(sessionVal);
+            model = draft.Select(s => new ItemViewModel()
+            {
+                Name = s.Name,
+                Description = s.Description,
+                FilePath = s.RelativePath
+            }).ToList();
         }
 
         return PartialView("Partial/NewItem", model);
     }
 
     [HttpPost]
-    public ResponseModel NewItem(ItemViewModel model)
+    public async Task<ResponseModel> NewItem(ItemViewModel model)
     {
         var response = new ResponseModel();
-
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
+        
         if (!string.IsNullOrEmpty(model.Name))
         {
-            var enemiesList = new List<ItemViewModel>();
-            var sessionVal = HttpContext.Session.GetString("LobbyItems");
-
-            if (!string.IsNullOrEmpty(sessionVal))
-            {
-                enemiesList = JsonSerializer.Deserialize<List<ItemViewModel>>(sessionVal);
-            }
-
-            enemiesList.Add(model);
-
-            HttpContext.Session.SetString("LobbyItems", JsonSerializer.Serialize(enemiesList));
-            response.SetSuccess(model);
+            response = await _lobbyService.AddItemAsync(new Guid(lobbyId), model);
         }
 
         return response;
@@ -208,12 +205,12 @@ public class LobbyConstructorController : Controller
     {
         return PartialView("Partial/CreaturePartialView");
     }
-    
+
     public PartialViewResult CharacterPartialForm()
     {
         return PartialView("Partial/CharacterPartialView");
     }
-    
+
     public PartialViewResult ItemPartialForm()
     {
         return PartialView("Partial/ItemPartialView");
