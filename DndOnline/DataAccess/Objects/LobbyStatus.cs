@@ -4,7 +4,7 @@ namespace DndOnline.DataAccess.Objects;
 
 public enum LobbyStatusType
 {
-    Creating,
+    Draft,
     WaitingForPlayers,
     ReadyToStart,
     InProgress,
@@ -16,7 +16,7 @@ public enum LobbyStatusType
 public class LobbyStatus
 {
     public Guid Id { get; set; }
-    public LobbyStatusType Status { get; set; } = LobbyStatusType.WaitingForPlayers;
+    public LobbyStatusType Status { get; set; } = LobbyStatusType.Draft;
 
     public override string ToString()
     {

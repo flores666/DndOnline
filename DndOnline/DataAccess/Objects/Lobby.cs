@@ -4,9 +4,10 @@ public class Lobby
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
+    public string? Description { get; set; }
     public LobbyStatus Status { get; set; }
     public int MaxPlayers { get; set; }
-    public string Master { get; set; }
+    public Guid MasterId { get; set; }
     public List<User> Players { get; set; } 
     public List<Creature> Creatues { get; set; } 
     public List<Character> Characters { get; set; } 

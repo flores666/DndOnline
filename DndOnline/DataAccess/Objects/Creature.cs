@@ -14,8 +14,8 @@ public class Creature
     public string? Description { get; set; }
     
     [Required] 
-    public string FullFilePath { get; set; }
+    public string RelativePath { get; set; }
 
     public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
-    public IEnumerable<CreatureLobby> EnemyLobby { get; set; } = new List<CreatureLobby>();
+    public IEnumerable<CreatureLobby> CreatureLobby { get; set; } = new List<CreatureLobby>();
 }

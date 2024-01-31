@@ -6,6 +6,6 @@ public class CharacterLobby
     public Character Character { get; set; }
     public Guid LobbyId { get; set; }
     public Lobby Lobby { get; set; }
-    public double X { get; set; }
-    public double Y { get; set; }
+    public double X { get; set; } = 0.0;
+    public double Y { get; set; } = 0.0;
 }

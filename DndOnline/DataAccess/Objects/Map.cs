@@ -13,7 +13,7 @@ public class Map
     public string? Description { get; set; }
     
     [Required] 
-    public string FullFilePath { get; set; }
+    public string RelativePath { get; set; }
 
     public List<Lobby> Lobbies { get; set; }
     public IEnumerable<MapLobby> MapLobby { get; set; } = new List<MapLobby>();

@@ -43,13 +43,13 @@ public class DndAppDbContext : DbContext
                     .HasForeignKey(pt => pt.LobbyId),
                 j => j
                     .HasOne(pt => pt.Creature)
-                    .WithMany(t => t.EnemyLobby)
-                    .HasForeignKey(pt => pt.EnemyId),
+                    .WithMany(t => t.CreatureLobby)
+                    .HasForeignKey(pt => pt.CreatureId),
                 j =>
                 {
                     j.Property(pt => pt.X).HasDefaultValue(0.0);
                     j.Property(pt => pt.Y).HasDefaultValue(0.0);
-                    j.HasKey(t => new { t.EnemyId, t.LobbyId });
+                    j.HasKey(t => new { EnemyId = t.CreatureId, t.LobbyId });
                     j.ToTable("CreatureLobby");
                 });
 
