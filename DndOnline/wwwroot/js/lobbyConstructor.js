@@ -26,12 +26,14 @@ $(document).on('click', '#add-character', async function () {
 <!-- Обработка создания нового элемента -->
 $(document).on('submit', '.creation-form', async function (event) {
     event.preventDefault();
-    let loader = new Loader();
-    loader.show();
     
     let form = event.target;
     let validated = validateBaseForm(form);
     if (!validated) return;
+    
+    let loader = new Loader();
+    loader.show();
+    
     let model = new FormData(form);
     
     let img = $(form).find('[name="File"]')[0].files[0];
