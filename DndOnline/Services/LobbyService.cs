@@ -89,14 +89,15 @@ public class LobbyService : ILobbyService
     {
         var query = _db.Lobbies.AsQueryable();
 
+        query = query.Where(w => w.StatusId == LobbyStatusType.WaitingForPlayers ||
+                                 w.StatusId == LobbyStatusType.ReadyToStart ||
+                                 w.StatusId == LobbyStatusType.Paused);
+
         if (!string.IsNullOrEmpty(input))
             query = query
-                .Where(w => w.Name.Contains(input, StringComparison.CurrentCultureIgnoreCase));
+                .Where(w => w.Name.ToLower().Contains(input.ToLower()));
 
         return query
-            .Where(w => w.StatusId == LobbyStatusType.WaitingForPlayers ||
-                        w.StatusId == LobbyStatusType.ReadyToStart ||
-                        w.StatusId == LobbyStatusType.Paused)
             .Include(i => i.Players)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
