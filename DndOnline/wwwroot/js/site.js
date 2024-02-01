@@ -1,7 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
     handleCard3d(3);
 
-    $('#lobby_search').on('input', function () {
+    $('#lobby_search').donetyping( function () {
         let input = $('#lobby_search').val();
         $.ajax({
             url: "/Home/SearchLobby",
