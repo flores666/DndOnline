@@ -23,6 +23,7 @@ public class LobbyService : ILobbyService
     public Lobby CreateLobby(LobbyFormViewModel model)
     {
         var masterId = _httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value;
+
         var lobby = new Lobby()
         {
             Id = model.Id == Guid.Empty ? new Guid() : model.Id,
@@ -32,7 +33,15 @@ public class LobbyService : ILobbyService
             Description = model.Description,
         };
 
-        _db.Lobbies.Add(lobby);
+        if (model.Id != Guid.Empty)
+        {
+            _db.Lobbies.Update(lobby);
+        }
+        else
+        {
+            _db.Lobbies.Add(lobby);
+        }
+
         _db.SaveChanges();
         return lobby;
     }
@@ -67,9 +76,9 @@ public class LobbyService : ILobbyService
                 .Where(w => w.Name.Contains(input, StringComparison.CurrentCultureIgnoreCase));
 
         return query
-            .Where(w => w.Status.Status == LobbyStatusType.WaitingForPlayers ||
-                        w.Status.Status == LobbyStatusType.ReadyToStart ||
-                        w.Status.Status == LobbyStatusType.Paused)
+            .Where(w => w.StatusId == LobbyStatusType.WaitingForPlayers ||
+                        w.StatusId == LobbyStatusType.ReadyToStart ||
+                        w.StatusId == LobbyStatusType.Paused)
             .Include(i => i.Players)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)

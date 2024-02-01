@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace DndOnline.DataAccess.Objects;
 
@@ -13,11 +14,12 @@ public enum LobbyStatusType
     Completed
 }
 
+[PrimaryKey("Status")]
 public class LobbyStatus
 {
-    public Guid Id { get; set; }
     public LobbyStatusType Status { get; set; } = LobbyStatusType.Draft;
-
+    public string Name { get; set; }
+    
     public override string ToString()
     {
         var pattern = @"(?<=\p{Ll})(?=\p{Lu})";

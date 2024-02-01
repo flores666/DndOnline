@@ -106,7 +106,7 @@ public class DndAppDbContext : DbContext
         #endregion
 
         #region MapLobby
-        
+
         modelBuilder
             .Entity<Map>()
             .HasMany(c => c.Lobbies)
@@ -125,7 +125,17 @@ public class DndAppDbContext : DbContext
                     j.HasKey(t => new { t.MapId, t.LobbyId });
                     j.ToTable("LobbyMaps");
                 });
-        
+
         #endregion
+
+        modelBuilder.Entity<LobbyStatus>().HasData(
+            new LobbyStatus { Status = LobbyStatusType.Draft, Name = "Черновик" },
+            new LobbyStatus { Status = LobbyStatusType.WaitingForPlayers, Name = "Ожидание игроков" },
+            new LobbyStatus { Status = LobbyStatusType.ReadyToStart, Name = "Готово к началу" },
+            new LobbyStatus { Status = LobbyStatusType.InProgress, Name = "В процессе" },
+            new LobbyStatus { Status = LobbyStatusType.Paused, Name = "Приостановлено" },
+            new LobbyStatus { Status = LobbyStatusType.Closed, Name = "Закрыто" },
+            new LobbyStatus { Status = LobbyStatusType.Completed, Name = "Заверешно" }
+        );
     }
 }
