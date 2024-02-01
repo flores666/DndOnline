@@ -16,9 +16,9 @@ public interface ILobbyService
     public ResponseModel ConnectUser(Guid userId, Lobby lobby);
     public ResponseModel DisconnectUser(Guid userId, Guid lobbyId);
     public Task<ResponseModel> AddItemAsync(Guid lobbyId, ItemViewModel model);
-    public Task<ResponseModel> AddCreature(Guid lobbyId, CreatureViewModel model);
-    public Task<ResponseModel> AddCharacter(Guid lobbyId, CharacterViewModel model);
-    public Task<ResponseModel> AddMap(Guid lobbyId, MapViewModel model);
+    public Task<ResponseModel> AddCreatureAsync(Guid lobbyId, CreatureViewModel model);
+    public Task<ResponseModel> AddCharacterAsync(Guid lobbyId, CharacterViewModel model);
+    public Task<ResponseModel> AddMapAsync(Guid lobbyId, MapViewModel model);
     public List<Item> GetItems(Guid lobbyId);
     public List<Creature> GetCreatures(Guid lobbyId);
     public List<Character> GetCharacters(Guid lobbyId);

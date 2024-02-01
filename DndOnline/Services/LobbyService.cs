@@ -146,7 +146,8 @@ public class LobbyService : ILobbyService
     public async Task<ResponseModel> AddItemAsync(Guid lobbyId, ItemViewModel model)
     {
         var response = new ResponseModel();
-
+        var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
+        
         var result = await _fIleService.SaveAsync(model.File, "item");
         if (!result.IsSuccess) return result;
         
@@ -158,43 +159,128 @@ public class LobbyService : ILobbyService
             Id = new Guid(),
             Name = model.Name,
             Description = model.Description,
-            RelativePath = path
+            RelativePath = path,
+            UserId = userId
         };
-        
-        _db.Items.Add(item);
-        var res = await _db.SaveChangesAsync();
 
-        _db.ItemLobby.Add(new ()
+        _db.ItemPositions.Add(new ()
         {
             ItemId = item.Id,
-            LobbyId = lobbyId 
+            Item = item,
+            LobbyId = lobbyId
         });
 
-        res += await _db.SaveChangesAsync();
+        var res = await _db.SaveChangesAsync();
         
         if (res > 0) response.SetSuccess(new ItemViewModel(item));
 
         return response;
     }
 
-    public async Task<ResponseModel> AddCreature(Guid lobbyId, CreatureViewModel model)
+    public async Task<ResponseModel> AddCreatureAsync(Guid lobbyId, CreatureViewModel model)
     {
-        throw new NotImplementedException();
+        var response = new ResponseModel();
+        var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
+        
+        var result = await _fIleService.SaveAsync(model.File, "creature");
+        if (!result.IsSuccess) return result;
+        
+        var data = result.Data as FileModel;
+        var path = data.RelativePath;
+
+        var creature = new Creature
+        {
+            Id = new Guid(),
+            Name = model.Name,
+            Description = model.Description,
+            RelativePath = path,
+            UserId = userId
+        };
+
+        _db.CreaturePositions.Add(new ()
+        {
+            CreatureId = creature.Id,
+            Creature = creature,
+            LobbyId = lobbyId
+        });
+
+        var res = await _db.SaveChangesAsync();
+        
+        if (res > 0) response.SetSuccess(new CreatureViewModel(creature));
+
+        return response;
     }
 
-    public async Task<ResponseModel> AddCharacter(Guid lobbyId, CharacterViewModel model)
+    public async Task<ResponseModel> AddCharacterAsync(Guid lobbyId, CharacterViewModel model)
     {
-        throw new NotImplementedException();
+        var response = new ResponseModel();
+        var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
+        
+        var result = await _fIleService.SaveAsync(model.File, "character");
+        if (!result.IsSuccess) return result;
+        
+        var data = result.Data as FileModel;
+        var path = data.RelativePath;
+
+        var character = new Character
+        {
+            Id = new Guid(),
+            Name = model.Name,
+            Description = model.Description,
+            RelativePath = path,
+            UserId = userId
+        };
+
+        _db.CharacterPositions.Add(new ()
+        {
+            CharacterId = character.Id,
+            Character = character,
+            LobbyId = lobbyId
+        });
+
+        var res = await _db.SaveChangesAsync();
+        
+        if (res > 0) response.SetSuccess(new CharacterViewModel(character));
+
+        return response;
     }
 
-    public async Task<ResponseModel> AddMap(Guid lobbyId, MapViewModel model)
+    public async Task<ResponseModel> AddMapAsync(Guid lobbyId, MapViewModel model)
     {
-        throw new NotImplementedException();
+        var response = new ResponseModel();
+        var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
+        
+        var result = await _fIleService.SaveAsync(model.File, "map");
+        if (!result.IsSuccess) return result;
+        
+        var data = result.Data as FileModel;
+        var path = data.RelativePath;
+
+        var map = new Map
+        {
+            Id = new Guid(),
+            Name = model.Name,
+            Description = model.Description,
+            RelativePath = path,
+            UserId = userId
+        };
+
+        _db.LobbyMaps.Add(new ()
+        {
+            LobbyId = map.Id,
+            Map = map,
+        });
+
+        var res = await _db.SaveChangesAsync();
+        
+        if (res > 0) response.SetSuccess(new MapViewModel(map));
+
+        return response;
     }
 
     public List<Item> GetItems(Guid lobbyId)
     {
-        return _db.ItemLobby
+        return _db.ItemPositions
             .Where(w => w.LobbyId == lobbyId)
             .Select(s => new Item()
             {
@@ -208,16 +294,43 @@ public class LobbyService : ILobbyService
 
     public List<Creature> GetCreatures(Guid lobbyId)
     {
-        throw new NotImplementedException();
+        return _db.CreaturePositions
+            .Where(w => w.LobbyId == lobbyId)
+            .Select(s => new Creature()
+            {
+                Id = s.Creature.Id,
+                Name = s.Creature.Name,
+                Description = s.Creature.Description,
+                RelativePath = s.Creature.RelativePath
+            })
+            .ToList();
     }
 
     public List<Character> GetCharacters(Guid lobbyId)
     {
-        throw new NotImplementedException();
+        return _db.CharacterPositions
+            .Where(w => w.LobbyId == lobbyId)
+            .Select(s => new Character()
+            {
+                Id = s.Character.Id,
+                Name = s.Character.Name,
+                Description = s.Character.Description,
+                RelativePath = s.Character.RelativePath
+            })
+            .ToList();
     }
 
     public List<Map> GetMaps(Guid lobbyId)
     {
-        throw new NotImplementedException();
+        return _db.LobbyMaps
+            .Where(w => w.LobbyId == lobbyId)
+            .Select(s => new Map()
+            {
+                Id = s.Map.Id,
+                Name = s.Map.Name,
+                Description = s.Map.Description,
+                RelativePath = s.Map.RelativePath
+            })
+            .ToList();
     }
 }

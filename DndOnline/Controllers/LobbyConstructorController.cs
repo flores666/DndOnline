@@ -105,27 +105,33 @@ public class LobbyConstructorController : Controller
     public PartialViewResult NewCreature()
     {
         var model = new List<CreatureViewModel>();
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
-        var sessionVal = HttpContext.Session.GetString("LobbyCreatures");
-        if (!string.IsNullOrEmpty(sessionVal))
+        var draft = _lobbyService.GetCreatures(new Guid(lobbyId));
+        
+        if (draft != null)
         {
-            // model = JsonSerializer.Deserialize<List<CreatureViewModel>>(sessionVal);
+            model = draft.Select(s => new CreatureViewModel()
+            {
+                Name = s.Name,
+                Description = s.Description,
+                FilePath = s.RelativePath
+            }).ToList();
         }
 
         return PartialView("Partial/NewCreatures", model);
     }
 
     [HttpPost]
-    public ResponseModel NewCreature(CreatureViewModel model)
+    public async Task<ResponseModel> NewCreature(CreatureViewModel model)
     {
         var response = new ResponseModel();
-
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
+        
         if (!string.IsNullOrEmpty(model.Name))
         {
-            
+            response = await _lobbyService.AddCreatureAsync(new Guid(lobbyId), model);
         }
-
-        response.SetSuccess(model);
 
         return response;
     }
@@ -133,35 +139,32 @@ public class LobbyConstructorController : Controller
     public PartialViewResult NewCharacter()
     {
         var model = new List<CharacterViewModel>();
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
-        var sessionVal = HttpContext.Session.GetString("LobbyCharacters");
-        if (!string.IsNullOrEmpty(sessionVal))
+        var draft = _lobbyService.GetCharacters(new Guid(lobbyId));
+        
+        if (draft != null)
         {
-            model = JsonSerializer.Deserialize<List<CharacterViewModel>>(sessionVal);
+            model = draft.Select(s => new CharacterViewModel()
+            {
+                Name = s.Name,
+                Description = s.Description,
+                FilePath = s.RelativePath
+            }).ToList();
         }
 
         return PartialView("Partial/NewCharacter", model);
     }
 
     [HttpPost]
-    public ResponseModel NewCharacter(CharacterViewModel model)
+    public async Task<ResponseModel> NewCharacter(CharacterViewModel model)
     {
         var response = new ResponseModel();
-
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
+        
         if (!string.IsNullOrEmpty(model.Name))
         {
-            var enemiesList = new List<CharacterViewModel>();
-            var sessionVal = HttpContext.Session.GetString("LobbyCharacters");
-
-            if (!string.IsNullOrEmpty(sessionVal))
-            {
-                enemiesList = JsonSerializer.Deserialize<List<CharacterViewModel>>(sessionVal);
-            }
-
-            enemiesList.Add(model);
-
-            HttpContext.Session.SetString("LobbyCharacters", JsonSerializer.Serialize(enemiesList));
-            response.SetSuccess(model);
+            response = await _lobbyService.AddCharacterAsync(new Guid(lobbyId), model);
         }
 
         return response;

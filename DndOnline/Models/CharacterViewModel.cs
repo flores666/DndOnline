@@ -1,11 +1,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using DndOnline.DataAccess.Objects;
 
 namespace DndOnline.Models;
 
 public class CharacterViewModel
 {
-    
     [DisplayName("Имя персонажа")]
     [Required(ErrorMessage = "Поле '{0}' обязательно для заполнения")]
     [MaxLength(50, ErrorMessage = "Недопустимое количество символов")]
@@ -15,4 +15,13 @@ public class CharacterViewModel
     public string? Description { get; set; }
     public string? FilePath { get; set; }
     public IFormFile? File { get; set; }
+
+    public CharacterViewModel() { }
+    
+    public CharacterViewModel(Character character)
+    {
+        Name = character.Name;
+        Description = character.Description;
+        FilePath = character.RelativePath;
+    }
 }
