@@ -19,17 +19,10 @@ public class Lobby
     public List<Item> Items { get; set; } 
     public List<Map> Maps { get; set; }
 
-    [JsonIgnore]
-    public IEnumerable<CreaturePosition> CreatureLobby { get; set; } = new List<CreaturePosition>();
-    
-    [JsonIgnore]
-    public IEnumerable<CharacterPosition> CharacterLobby { get; set; } = new List<CharacterPosition>();
-    
-    [JsonIgnore]
-    public IEnumerable<LobbyMap> MapLobby { get; set; } = new List<LobbyMap>();
-    
-    [JsonIgnore]
-    public IEnumerable<ItemPosition> ItemLobby { get; set; } = new List<ItemPosition>();
+    public IEnumerable<CreaturePosition> CreaturePositions { get; set; } = new List<CreaturePosition>();
+    public IEnumerable<CharacterPosition> CharacterPositions { get; set; } = new List<CharacterPosition>();
+    public IEnumerable<ItemPosition> ItemPositions { get; set; } = new List<ItemPosition>();
+    public IEnumerable<LobbyMap> LobbyMaps { get; set; } = new List<LobbyMap>();
 
     public Lobby()
     {
