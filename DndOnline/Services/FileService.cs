@@ -11,7 +11,7 @@ public class FileService : IFileService
     private readonly string _imagesAllowed;
     
     private readonly string _currentDirectory;
-    private readonly string _directory;
+    private readonly string _contentDirectory;
 
     private readonly ILogger _logger;
 
@@ -22,7 +22,7 @@ public class FileService : IFileService
         _imagesAllowed = configuration.GetSection("Files").GetSection("ImagesAllowed").Value;
         
         _currentDirectory = Directory.GetCurrentDirectory();
-        _directory = Path.Combine(_currentDirectory, "wwwroot", "Content");
+        _contentDirectory = Path.Combine(_currentDirectory, "wwwroot", "Content");
         
         _logger = logger;
     }
@@ -51,14 +51,14 @@ public class FileService : IFileService
         var caption = Path.GetFileNameWithoutExtension(file.FileName);
         var fileId = Guid.NewGuid();
         
-        var fullPath = Path.Combine(_directory, GetFolder(type));
-        var relativePath = Path.Combine("Content", GetFolder(type), fileId.ToString(), ".png");
+        var relativePath = Path.Combine(GetFolder(type), fileId + ".png");
+        var fullPath = Path.Combine(_contentDirectory, relativePath);
         
         var fileInfo = new FileModel
         {
             Id = fileId,
             Caption = caption,
-            RelativePath = relativePath,
+            RelativePath = Path.Combine("Content", relativePath),
             Size = file.Length,
             Extension = fileExtension
         };
@@ -66,7 +66,7 @@ public class FileService : IFileService
         try
         {
             // сохраняем файл
-            using (var filestream = new FileStream(fullPath, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite))
+            using (var filestream = new FileStream(fullPath, FileMode.Create))
             {
                 await file.CopyToAsync(filestream);
             }
@@ -86,7 +86,7 @@ public class FileService : IFileService
             {
                 Id = fileInfo.Id,
                 Caption = fileInfo.Caption,
-                RelativePath = relativePath,
+                RelativePath = Path.Combine("Content", relativePath),
                 Size = fileInfo.Size
             });
 
