@@ -40,7 +40,7 @@ public class HomeController : Controller
     {
         IEnumerable<LobbyFormViewModel> model = new List<LobbyFormViewModel>();
         
-        var lobbies = _lobbyService.GetLobbies(input);
+        var lobbies = _lobbyService.GetLobbies(input: input);
         model = lobbies.Select(s => new LobbyFormViewModel
         {
             Id = s.Id,

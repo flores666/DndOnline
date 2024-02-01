@@ -58,24 +58,18 @@ public class LobbyService : ILobbyService
             .FirstOrDefault(w => w.MasterId == userId && w.Status.Status == status);
     }
 
-    public List<Lobby> GetLobbies(int page = 1, int pageSize = 20)
-    {
-        return _db.Lobbies
-            .Include(i => i.Players)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-    }
-
-    public List<Lobby> GetLobbies(string input, int page = 1, int pageSize = 20)
+    public List<Lobby> GetLobbies(int page = 1, int pageSize = 20, string input = null)
     {
         var query = _db.Lobbies.AsQueryable();
 
         if (!string.IsNullOrEmpty(input))
             query = query
-                .Where(w => w.Name.ToLower().Contains(input.ToLower()));
+                .Where(w => w.Name.Contains(input, StringComparison.CurrentCultureIgnoreCase));
 
         return query
+            .Where(w => w.Status.Status == LobbyStatusType.WaitingForPlayers ||
+                        w.Status.Status == LobbyStatusType.ReadyToStart ||
+                        w.Status.Status == LobbyStatusType.Paused)
             .Include(i => i.Players)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -147,10 +141,10 @@ public class LobbyService : ILobbyService
     {
         var response = new ResponseModel();
         var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
-        
+
         var result = await _fIleService.SaveAsync(model.File, "item");
         if (!result.IsSuccess) return result;
-        
+
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
@@ -163,15 +157,14 @@ public class LobbyService : ILobbyService
             UserId = userId
         };
 
-        _db.ItemPositions.Add(new ()
+        _db.ItemPositions.Add(new()
         {
-            ItemId = item.Id,
             Item = item,
             LobbyId = lobbyId
         });
 
         var res = await _db.SaveChangesAsync();
-        
+
         if (res > 0) response.SetSuccess(new ItemViewModel(item));
 
         return response;
@@ -181,10 +174,10 @@ public class LobbyService : ILobbyService
     {
         var response = new ResponseModel();
         var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
-        
+
         var result = await _fIleService.SaveAsync(model.File, "creature");
         if (!result.IsSuccess) return result;
-        
+
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
@@ -197,15 +190,14 @@ public class LobbyService : ILobbyService
             UserId = userId
         };
 
-        _db.CreaturePositions.Add(new ()
+        _db.CreaturePositions.Add(new()
         {
-            CreatureId = creature.Id,
             Creature = creature,
             LobbyId = lobbyId
         });
 
         var res = await _db.SaveChangesAsync();
-        
+
         if (res > 0) response.SetSuccess(new CreatureViewModel(creature));
 
         return response;
@@ -215,10 +207,10 @@ public class LobbyService : ILobbyService
     {
         var response = new ResponseModel();
         var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
-        
+
         var result = await _fIleService.SaveAsync(model.File, "character");
         if (!result.IsSuccess) return result;
-        
+
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
@@ -231,15 +223,14 @@ public class LobbyService : ILobbyService
             UserId = userId
         };
 
-        _db.CharacterPositions.Add(new ()
+        _db.CharacterPositions.Add(new()
         {
-            CharacterId = character.Id,
             Character = character,
             LobbyId = lobbyId
         });
 
         var res = await _db.SaveChangesAsync();
-        
+
         if (res > 0) response.SetSuccess(new CharacterViewModel(character));
 
         return response;
@@ -249,10 +240,10 @@ public class LobbyService : ILobbyService
     {
         var response = new ResponseModel();
         var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
-        
+
         var result = await _fIleService.SaveAsync(model.File, "map");
         if (!result.IsSuccess) return result;
-        
+
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
@@ -265,14 +256,14 @@ public class LobbyService : ILobbyService
             UserId = userId
         };
 
-        _db.LobbyMaps.Add(new ()
+        _db.LobbyMaps.Add(new()
         {
             LobbyId = map.Id,
             Map = map,
         });
 
         var res = await _db.SaveChangesAsync();
-        
+
         if (res > 0) response.SetSuccess(new MapViewModel(map));
 
         return response;
