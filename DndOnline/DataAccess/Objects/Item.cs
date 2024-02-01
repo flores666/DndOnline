@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace DndOnline.DataAccess.Objects;
 
@@ -16,5 +17,7 @@ public class Item
     public string RelativePath { get; set; }
 
     public List<Lobby> Lobbies { get; set; }
+    
+    [JsonIgnore]
     public IEnumerable<ItemLobby> ItemLobby { get; set; } = new List<ItemLobby>();
 }

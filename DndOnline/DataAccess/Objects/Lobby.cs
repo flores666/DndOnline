@@ -1,4 +1,6 @@
-﻿namespace DndOnline.DataAccess.Objects;
+﻿using Newtonsoft.Json;
+
+namespace DndOnline.DataAccess.Objects;
 
 public class Lobby
 {
@@ -14,9 +16,16 @@ public class Lobby
     public List<Item> Items { get; set; } 
     public List<Map> Maps { get; set; }
 
+    [JsonIgnore]
     public IEnumerable<CreatureLobby> CreatureLobby { get; set; } = new List<CreatureLobby>();
+    
+    [JsonIgnore]
     public IEnumerable<CharacterLobby> CharacterLobby { get; set; } = new List<CharacterLobby>();
+    
+    [JsonIgnore]
     public IEnumerable<MapLobby> MapLobby { get; set; } = new List<MapLobby>();
+    
+    [JsonIgnore]
     public IEnumerable<ItemLobby> ItemLobby { get; set; } = new List<ItemLobby>();
 
     public Lobby()
