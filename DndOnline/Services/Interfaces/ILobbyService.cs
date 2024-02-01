@@ -10,6 +10,7 @@ public interface ILobbyService
     public Lobby GetLobby(string name);
     public Lobby GetLobby(Guid id);
     public Lobby GetLobby(Guid userId, LobbyStatusType status);
+    public Lobby GetLobbyFull(Guid id);
     public List<Lobby> GetLobbies(int page = 1, int pageSize = 20, string input = null);
     public ResponseModel ConnectUser(string userName);
     public ResponseModel ConnectUser(Guid userId, Lobby lobby);

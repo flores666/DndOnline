@@ -71,18 +71,30 @@ public class LobbyService : ILobbyService
 
     public Lobby GetLobby(string name)
     {
-        return _db.Lobbies.Include(i => i.Players).FirstOrDefault(f => f.Name == name);
+        return _db.Lobbies.FirstOrDefault(f => f.Name == name);
     }
 
     public Lobby GetLobby(Guid id)
     {
-        return _db.Lobbies.Include(i => i.Players).FirstOrDefault(f => f.Id == id);
+        return _db.Lobbies.FirstOrDefault(f => f.Id == id);
     }
 
     public Lobby GetLobby(Guid userId, LobbyStatusType status)
     {
         return _db.Lobbies
             .FirstOrDefault(w => w.MasterId == userId && w.Status.Status == status);
+    }
+
+    public Lobby GetLobbyFull(Guid id)
+    {
+        return _db.Lobbies
+            .Include(w => w.Players)
+            .Include(w => w.Status)
+            .Include(w => w.Characters)
+            .Include(w => w.Creatues)
+            .Include(w => w.Items)
+            .Include(w => w.Maps)
+            .FirstOrDefault(w => w.Id == id);
     }
 
     public List<Lobby> GetLobbies(int page = 1, int pageSize = 20, string input = null)

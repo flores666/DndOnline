@@ -28,7 +28,7 @@ public class LobbyController : Controller
 
     public IActionResult Index(Guid id)
     {
-        var lobby = _lobbyService.GetLobby(id);
+        var lobby = _lobbyService.GetLobbyFull(id);
         
         if (lobby == null)
         {

@@ -1,7 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
     handleCard3d(3);
 
-    $('#lobby_search').donetyping( function () {
+    $('#lobby_search').donetyping(function () {
         let input = $('#lobby_search').val();
         $.ajax({
             url: "/Home/SearchLobby",
@@ -19,11 +19,11 @@
     $('#new_lobby').on('click', function () {
         window.location.href = '/lobby-constructor';
     });
+});
 
-    $('.lobby-list-item').on('click', function () {
-        let id = this.id;
-        window.location.href = '/lobby/' + id;
-    });
+$(document).on('click', '.lobby-list-item', function () {
+    let id = this.id;
+    window.location.href = '/lobby/' + id;
 });
 
 $(document).on('input', 'textarea', function () {
