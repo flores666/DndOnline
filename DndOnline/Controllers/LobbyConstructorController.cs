@@ -91,7 +91,7 @@ public class LobbyConstructorController : Controller
             }
             
             var lobby = response.Data as Lobby;
-            return Redirect($"lobby/{lobby.Id}");
+            return Redirect($"/lobby/{lobby.Id}");
         }
         else
         {
