@@ -1,6 +1,6 @@
 namespace DndOnline.DataAccess.Objects;
 
-public class CreatureLobby
+public class CreaturePosition
 {
     public Guid CreatureId { get; set; }
     public Creature Creature  { get; set; }

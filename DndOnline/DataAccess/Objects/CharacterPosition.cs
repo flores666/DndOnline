@@ -1,9 +1,9 @@
 namespace DndOnline.DataAccess.Objects;
 
-public class ItemLobby
+public class CharacterPosition
 {
-    public Guid ItemId { get; set; }
-    public Item Item { get; set; }
+    public Guid CharacterId { get; set; }
+    public Character Character { get; set; }
     public Guid LobbyId { get; set; }
     public Lobby Lobby { get; set; }
     public double X { get; set; } = 0.0;

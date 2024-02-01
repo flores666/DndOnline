@@ -20,5 +20,5 @@ public class Creature
     public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
     
     [JsonIgnore]
-    public IEnumerable<CreatureLobby> CreatureLobby { get; set; } = new List<CreatureLobby>();
+    public IEnumerable<CreaturePosition> CreatureLobby { get; set; } = new List<CreaturePosition>();
 }

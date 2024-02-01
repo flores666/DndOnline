@@ -19,5 +19,5 @@ public class Map
     public List<Lobby> Lobbies { get; set; }
     
     [JsonIgnore]
-    public IEnumerable<MapLobby> MapLobby { get; set; } = new List<MapLobby>();
+    public IEnumerable<LobbyMap> MapLobby { get; set; } = new List<LobbyMap>();
 }

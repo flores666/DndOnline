@@ -15,10 +15,10 @@ public class DndAppDbContext : DbContext
     public DbSet<Map> Maps { get; set; }
     public DbSet<Item> Items { get; set; }
 
-    public DbSet<CreatureLobby> CreatureLobby { get; set; }
-    public DbSet<CharacterLobby> CharacterLobby { get; set; }
-    public DbSet<ItemLobby> ItemLobby { get; set; }
-    public DbSet<MapLobby> MapLobby { get; set; }
+    public DbSet<CreaturePosition> CreaturePositions { get; set; }
+    public DbSet<CharacterPosition> CharacterPositions { get; set; }
+    public DbSet<ItemPosition> ItemPositions { get; set; }
+    public DbSet<LobbyMap> LobbyMaps { get; set; }
 
     public DndAppDbContext()
     {
@@ -36,7 +36,7 @@ public class DndAppDbContext : DbContext
             .Entity<Creature>()
             .HasMany(c => c.Lobbies)
             .WithMany(s => s.Creatues)
-            .UsingEntity<CreatureLobby>(
+            .UsingEntity<CreaturePosition>(
                 j => j
                     .HasOne(pt => pt.Lobby)
                     .WithMany(p => p.CreatureLobby)
@@ -50,7 +50,7 @@ public class DndAppDbContext : DbContext
                     j.Property(pt => pt.X).HasDefaultValue(0.0);
                     j.Property(pt => pt.Y).HasDefaultValue(0.0);
                     j.HasKey(t => new { EnemyId = t.CreatureId, t.LobbyId });
-                    j.ToTable("CreatureLobby");
+                    j.ToTable("CreaturePositions");
                 });
 
         #endregion
@@ -61,7 +61,7 @@ public class DndAppDbContext : DbContext
             .Entity<Character>()
             .HasMany(c => c.Lobbies)
             .WithMany(s => s.Characters)
-            .UsingEntity<CharacterLobby>(
+            .UsingEntity<CharacterPosition>(
                 j => j
                     .HasOne(pt => pt.Lobby)
                     .WithMany(p => p.CharacterLobby)
@@ -75,7 +75,7 @@ public class DndAppDbContext : DbContext
                     j.Property(pt => pt.X).HasDefaultValue(0.0);
                     j.Property(pt => pt.Y).HasDefaultValue(0.0);
                     j.HasKey(t => new { t.CharacterId, t.LobbyId });
-                    j.ToTable("CharacterLobby");
+                    j.ToTable("CharacterPositions");
                 });
 
         #endregion
@@ -86,7 +86,7 @@ public class DndAppDbContext : DbContext
             .Entity<Item>()
             .HasMany(c => c.Lobbies)
             .WithMany(s => s.Items)
-            .UsingEntity<ItemLobby>(
+            .UsingEntity<ItemPosition>(
                 j => j
                     .HasOne(pt => pt.Lobby)
                     .WithMany(p => p.ItemLobby)
@@ -100,7 +100,7 @@ public class DndAppDbContext : DbContext
                     j.Property(pt => pt.X).HasDefaultValue(0.0);
                     j.Property(pt => pt.Y).HasDefaultValue(0.0);
                     j.HasKey(t => new { t.ItemId, t.LobbyId });
-                    j.ToTable("ItemLobby");
+                    j.ToTable("ItemPositions");
                 });
 
         #endregion
@@ -111,7 +111,7 @@ public class DndAppDbContext : DbContext
             .Entity<Map>()
             .HasMany(c => c.Lobbies)
             .WithMany(s => s.Maps)
-            .UsingEntity<MapLobby>(
+            .UsingEntity<LobbyMap>(
                 j => j
                     .HasOne(pt => pt.Lobby)
                     .WithMany(p => p.MapLobby)
@@ -123,7 +123,7 @@ public class DndAppDbContext : DbContext
                 j =>
                 {
                     j.HasKey(t => new { t.MapId, t.LobbyId });
-                    j.ToTable("MapLobby");
+                    j.ToTable("LobbyMaps");
                 });
         
         #endregion

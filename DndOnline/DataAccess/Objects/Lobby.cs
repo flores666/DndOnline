@@ -17,16 +17,16 @@ public class Lobby
     public List<Map> Maps { get; set; }
 
     [JsonIgnore]
-    public IEnumerable<CreatureLobby> CreatureLobby { get; set; } = new List<CreatureLobby>();
+    public IEnumerable<CreaturePosition> CreatureLobby { get; set; } = new List<CreaturePosition>();
     
     [JsonIgnore]
-    public IEnumerable<CharacterLobby> CharacterLobby { get; set; } = new List<CharacterLobby>();
+    public IEnumerable<CharacterPosition> CharacterLobby { get; set; } = new List<CharacterPosition>();
     
     [JsonIgnore]
-    public IEnumerable<MapLobby> MapLobby { get; set; } = new List<MapLobby>();
+    public IEnumerable<LobbyMap> MapLobby { get; set; } = new List<LobbyMap>();
     
     [JsonIgnore]
-    public IEnumerable<ItemLobby> ItemLobby { get; set; } = new List<ItemLobby>();
+    public IEnumerable<ItemPosition> ItemLobby { get; set; } = new List<ItemPosition>();
 
     public Lobby()
     {

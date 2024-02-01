@@ -1,6 +1,6 @@
 namespace DndOnline.DataAccess.Objects;
 
-public class MapLobby
+public class LobbyMap
 {
     public Guid MapId { get; set; }
     public Guid LobbyId { get; set; }

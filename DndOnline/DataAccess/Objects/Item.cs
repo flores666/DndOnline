@@ -19,5 +19,5 @@ public class Item
     public List<Lobby> Lobbies { get; set; }
     
     [JsonIgnore]
-    public IEnumerable<ItemLobby> ItemLobby { get; set; } = new List<ItemLobby>();
+    public IEnumerable<ItemPosition> ItemLobby { get; set; } = new List<ItemPosition>();
 }
