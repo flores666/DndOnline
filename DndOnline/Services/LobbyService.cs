@@ -172,7 +172,7 @@ public class LobbyService : ILobbyService
 
         res += await _db.SaveChangesAsync();
         
-        if (res > 0) response.SetSuccess(item);
+        if (res > 0) response.SetSuccess(new ItemViewModel(item));
 
         return response;
     }

@@ -117,7 +117,7 @@ $(document).on('input', 'input', function () {
 function addItem(model) {
     let name = model.name;
     let desc = model.description;
-    let pic = model.relativePath;
+    let pic = model.filePath;
     
     let card3d = $('<div></div>');
     card3d.addClass('lobby-creation-item card card3d');

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using DndOnline.DataAccess.Objects;
 
 namespace DndOnline.Models;
 
@@ -14,4 +15,13 @@ public class ItemViewModel
     [DisplayName("Описание")]
     public string Description { get; set; }
     public IFormFile? File { get; set; }
+
+    public ItemViewModel() { }
+
+    public ItemViewModel(Item item)
+    {
+        Name = item.Name;
+        Description = item.Description;
+        FilePath = item.RelativePath;
+    }
 }
