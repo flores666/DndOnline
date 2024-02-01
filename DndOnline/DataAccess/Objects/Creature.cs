@@ -15,6 +15,8 @@ public class Creature
     
     [Required] 
     public string RelativePath { get; set; }
+    
+    public Guid UserId { get; set; }
 
     [JsonIgnore]
     public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();

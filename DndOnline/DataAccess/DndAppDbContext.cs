@@ -49,7 +49,7 @@ public class DndAppDbContext : DbContext
                 {
                     j.Property(pt => pt.X).HasDefaultValue(0.0);
                     j.Property(pt => pt.Y).HasDefaultValue(0.0);
-                    j.HasKey(t => new { EnemyId = t.CreatureId, t.LobbyId });
+                    j.HasKey(t => new { t.CreatureId, t.LobbyId });
                     j.ToTable("CreaturePositions");
                 });
 

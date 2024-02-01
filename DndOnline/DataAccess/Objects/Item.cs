@@ -16,6 +16,8 @@ public class Item
     [Required] 
     public string RelativePath { get; set; }
 
+    public Guid UserId { get; set; }
+
     public List<Lobby> Lobbies { get; set; }
     
     [JsonIgnore]
