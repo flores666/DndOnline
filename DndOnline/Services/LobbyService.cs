@@ -20,8 +20,9 @@ public class LobbyService : ILobbyService
         _fIleService = fs;
     }
 
-    public Lobby CreateLobby(LobbyFormViewModel model)
+    public ResponseModel CreateLobby(LobbyFormViewModel model)
     {
+        var response = new ResponseModel();
         var masterId = _httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value;
 
         var lobby = new Lobby()
@@ -35,6 +36,21 @@ public class LobbyService : ILobbyService
 
         if (model.Id != Guid.Empty)
         {
+            var existingLobby = GetLobby(model.Id);
+            if (existingLobby != null)
+            {
+                if (existingLobby.StatusId is LobbyStatusType.WaitingForPlayers
+                    or LobbyStatusType.ReadyToStart
+                    or LobbyStatusType.Paused)
+                {
+                    response.Message = "Лобби с таким названием уже существует. Придумайте новое";
+                    return response;
+                }
+
+                _db.Entry(existingLobby).State = EntityState.Detached;
+            }
+
+            lobby.StatusId = LobbyStatusType.WaitingForPlayers;
             _db.Lobbies.Update(lobby);
         }
         else
@@ -42,8 +58,10 @@ public class LobbyService : ILobbyService
             _db.Lobbies.Add(lobby);
         }
 
-        _db.SaveChanges();
-        return lobby;
+        var res = _db.SaveChanges();
+        if (res > 0) response.SetSuccess(lobby);
+
+        return response;
     }
 
     public ResponseModel DeleteLobby()

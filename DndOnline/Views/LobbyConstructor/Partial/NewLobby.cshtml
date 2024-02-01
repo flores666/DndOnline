@@ -10,6 +10,8 @@
     </div>
 
     <form id="page-form" method="post" enctype="multipart/form-data" asp-action="NewLobby">
+        @Html.HiddenFor(m => m.Id)
+        @Html.HiddenFor(m => m.Master)
         <div class="row">
             <div class="col-9">
                 <label asp-for="Name"></label>

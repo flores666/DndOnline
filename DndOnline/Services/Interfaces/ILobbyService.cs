@@ -5,7 +5,7 @@ namespace DndOnline.Services.Interfaces;
 
 public interface ILobbyService
 {
-    public Lobby CreateLobby(LobbyFormViewModel model);
+    public ResponseModel CreateLobby(LobbyFormViewModel model);
     public ResponseModel DeleteLobby();
     public Lobby GetLobby(string name);
     public Lobby GetLobby(Guid id);

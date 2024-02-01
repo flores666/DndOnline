@@ -53,7 +53,7 @@ public class LobbyConstructorController : Controller
         {
             _lobbyService.CreateLobby(model);
         }
-        
+
         HttpContext.Session.SetString("DraftLobbyName", model.Name);
         HttpContext.Session.SetString("DraftLobbyId", model.Id.ToString());
         return View(model);
@@ -74,25 +74,24 @@ public class LobbyConstructorController : Controller
             MaxPlayers = draftLobby.MaxPlayers,
             Description = draftLobby.Description
         };
-        
+
         return PartialView("Partial/NewLobby", model);
     }
 
     [HttpPost]
     public IActionResult NewLobby(LobbyFormViewModel model)
     {
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            try
+            var response = _lobbyService.CreateLobby(model);
+            if (!response.IsSuccess)
             {
-                var lobby = _lobbyService.CreateLobby(model);
-                return RedirectToAction("Index", new { id = lobby.Id });
+                ViewBag.Alert = response.Message;
+                return View("Index", model);
             }
-            catch (DbUpdateException ex)
-            {
-                var baseEx = ex.GetBaseException() as Npgsql.PostgresException;
-                if (baseEx.SqlState == "23505") ViewBag.Alert = "Лобби с таким названием уже существует";
-            }
+            
+            var lobby = response.Data as Lobby;
+            return Redirect($"lobby/{lobby.Id}");
         }
         else
         {
@@ -108,7 +107,7 @@ public class LobbyConstructorController : Controller
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
         var draft = _lobbyService.GetCreatures(new Guid(lobbyId));
-        
+
         if (draft != null)
         {
             model = draft.Select(s => new CreatureViewModel()
@@ -127,7 +126,7 @@ public class LobbyConstructorController : Controller
     {
         var response = new ResponseModel();
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-        
+
         if (!string.IsNullOrEmpty(model.Name))
         {
             response = await _lobbyService.AddCreatureAsync(new Guid(lobbyId), model);
@@ -142,7 +141,7 @@ public class LobbyConstructorController : Controller
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
         var draft = _lobbyService.GetCharacters(new Guid(lobbyId));
-        
+
         if (draft != null)
         {
             model = draft.Select(s => new CharacterViewModel()
@@ -161,7 +160,7 @@ public class LobbyConstructorController : Controller
     {
         var response = new ResponseModel();
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-        
+
         if (!string.IsNullOrEmpty(model.Name))
         {
             response = await _lobbyService.AddCharacterAsync(new Guid(lobbyId), model);
@@ -176,7 +175,7 @@ public class LobbyConstructorController : Controller
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
         var draft = _lobbyService.GetItems(new Guid(lobbyId));
-        
+
         if (draft != null)
         {
             model = draft.Select(s => new ItemViewModel()
@@ -195,7 +194,7 @@ public class LobbyConstructorController : Controller
     {
         var response = new ResponseModel();
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-        
+
         if (!string.IsNullOrEmpty(model.Name))
         {
             response = await _lobbyService.AddItemAsync(new Guid(lobbyId), model);
