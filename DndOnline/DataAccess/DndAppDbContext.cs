@@ -39,7 +39,7 @@ public class DndAppDbContext : DbContext
             .UsingEntity<CreaturePosition>(
                 j => j
                     .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.CreatureLobby)
+                    .WithMany(p => p.CreaturePositions)
                     .HasForeignKey(pt => pt.LobbyId),
                 j => j
                     .HasOne(pt => pt.Creature)
@@ -64,7 +64,7 @@ public class DndAppDbContext : DbContext
             .UsingEntity<CharacterPosition>(
                 j => j
                     .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.CharacterLobby)
+                    .WithMany(p => p.CharacterPositions)
                     .HasForeignKey(pt => pt.LobbyId),
                 j => j
                     .HasOne(pt => pt.Character)
@@ -89,7 +89,7 @@ public class DndAppDbContext : DbContext
             .UsingEntity<ItemPosition>(
                 j => j
                     .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.ItemLobby)
+                    .WithMany(p => p.ItemPositions)
                     .HasForeignKey(pt => pt.LobbyId),
                 j => j
                     .HasOne(pt => pt.Item)
@@ -114,7 +114,7 @@ public class DndAppDbContext : DbContext
             .UsingEntity<LobbyMap>(
                 j => j
                     .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.MapLobby)
+                    .WithMany(p => p.LobbyMaps)
                     .HasForeignKey(pt => pt.LobbyId),
                 j => j
                     .HasOne(pt => pt.Map)
