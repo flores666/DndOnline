@@ -94,41 +94,6 @@ function handleCard3d(THRESHOLD) {
     }
 }
 
-// Базовое пустое модальное окно.
-// Родитель - .modal, конент - .modal-content. 
-// Изначально по центре
-function createBaseModal() {
-    let modal = document.createElement('div');
-    let modalContent = document.createElement('div');
-    modalContent.classList.add('modal-content');
-    modal.classList.add('modal');
-    modalContent.style.width = '70em';
-
-    // let closeBtn = document.createElement('span');
-    // closeBtn.classList.add('close-modal');
-    // closeBtn.innerHTML = '&times;';
-    //
-    // modalContent.appendChild(closeBtn);
-    modal.appendChild(modalContent);
-
-    document.body.appendChild(modal);
-
-    // closeBtn.onclick = function () {
-    //     modal.style.display = 'none';
-    //     document.body.removeChild(modal);
-    // };
-
-    window.onclick = function (event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-            document.body.removeChild(modal);
-        }
-    };
-
-    modal.style.display = 'block';
-    return modalContent;
-}
-
 $(document).on('change', '.input-file input[type=file]', function () {
     let dt = new DataTransfer();
     let $files_list = $(this).closest('.input-file').next();
