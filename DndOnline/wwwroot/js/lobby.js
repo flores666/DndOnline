@@ -27,18 +27,31 @@ $(document).ready(function () {
     }).catch(function (err) {
         return console.error(err.toString());
     });
-
-    function getElementFromUl(ulId, targetValue) {
-        let myList = document.getElementById(ulId);
-        let listItems = myList.getElementsByTagName("li");
-        let foundItem = null;
-
-        for (let i = 0; i < listItems.length; i++) {
-            if (listItems[i].innerHTML === targetValue) {
-                foundItem = listItems[i];
-                break;
-            }
-        }
-        return foundItem;
-    }
 });
+
+$(document).on('click', '.list-header', function () {
+    let listBody = $(this).parent().find('.list-body');
+    
+    if (listBody.hasClass('hidden')) {
+        listBody.removeClass('hidden');
+    }
+    else listBody.addClass('hidden');
+    
+    let span = $(this).find('span');
+    if (span.hasClass('plus')) span.attr('class', 'minus');
+    else span.attr('class', 'plus');
+});
+
+function getElementFromUl(ulId, targetValue) {
+    let myList = document.getElementById(ulId);
+    let listItems = myList.getElementsByTagName("li");
+    let foundItem = null;
+
+    for (let i = 0; i < listItems.length; i++) {
+        if (listItems[i].innerHTML === targetValue) {
+            foundItem = listItems[i];
+            break;
+        }
+    }
+    return foundItem;
+}

@@ -1,20 +1,23 @@
 ﻿@model DndOnline.DataAccess.Objects.Lobby
 
-@if (Model != null)
-{
-    <h1>Название - @Model.Name</h1>
-    <h1>Ведущий - @Model.MasterId</h1>
-    <h1>Статус - @Model.Status.ToString()</h1>
-    <h1>Макс кол-во игроков @Model.MaxPlayers</h1>
-    <h1>Игроки:</h1>
-    <ul id="player_list">
-        @foreach (var item in Model.Players)
-        {
-            <li>@item.Name</li>
-        }
-    </ul>
+@{
+    Layout = "_LobbyLayout";
 }
 
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/lobby.js"></script>
+<div class="container-width">
+    @if (Model != null)
+    {
+        <h1>Название - @Model.Name</h1>
+        <h1>Ведущий - @Model.MasterId</h1>
+        <h1>Статус - @Model.Status.Name</h1>
+        <h1>Макс кол-во игроков @Model.MaxPlayers</h1>
+        <h1>Игроки:</h1>
+        <ul id="player_list">
+            @foreach (var item in Model.Players)
+            {
+                <li>@item.Name</li>
+            }
+        </ul>
+    }
+
+</div>

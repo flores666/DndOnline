@@ -1,21 +1,60 @@
 @model DndOnline.DataAccess.Objects.Lobby
 
-@if (Model != null)
-{
-    <h1>Название - @Model.Name</h1>
-    <h1>Ведущий - @Model.MasterId (Вы)</h1>
-    <h1>Статус - @Model.Status.ToString()</h1>
-    <h1>Макс кол-во игроков @Model.MaxPlayers</h1>
-    <h1>Игроки:</h1>
-    <ul id="player_list">
-        @foreach (var item in Model.Players)
-        {
-            <li>@item.Name</li>
-        }
-    </ul>
+@{
+    Layout = "_LobbyLayout";
 }
 
-<script src="~/lib/signalr/dist/browser/signalr.js"></script>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/lobby.js"></script>
+<div class="container">
+    <canvas>
+
+    </canvas>
+</div>
+
+<div class="tools">
+    <div class="top">
+        <a class="exit" href="/" title="Выйти">
+            <img src="/img/logout.png"/>
+        </a>
+    </div>
+    <ul class="list">
+        <ul id="player_list" class="list-item">
+            <div class="list-header"><span class="plus"></span> Игроки </div>
+            <div class="list-body hidden">
+                @foreach (var player in Model.Players)
+                {
+                    <li class="list-item-child">@player.Name</li>
+                }
+            </div>
+        </ul>
+        <ul class="list-item">
+            <div class="list-header"><span class="plus"></span> Персонажи </div>
+            <div class="list-body hidden">
+                @foreach (var character in Model.Characters)
+                {
+                    <li class="list-item-child">@character.Name</li>
+                }
+            </div>
+        </ul>
+        <ul class="list-item">
+            <div class="list-header"><span class="plus"></span> Существа </div>
+            <div class="list-body hidden">
+                @foreach (var creature in Model.Creatues)
+                {
+                    <li class="list-item-child">@creature.Name</li>
+                }
+            </div>
+        </ul>
+        <ul class="list-item">
+            <div class="list-header"><span class="plus"></span> Предметы </div>
+            <div class="list-body hidden">
+                @foreach (var item in Model.Items)
+                {
+                    <li class="list-item-child">@item.Name</li>
+                }
+            </div>
+        </ul>
+    </ul>
+</div>
+
+
 <script src="~/js/lobbyMaster.js"></script>

@@ -1,0 +1,129 @@
+:root {
+    --font-ubuntu-regular: 'Ubuntu', sans-serif;
+    --font-ubuntu-medium: 'Ubuntu Medium', sans-serif;
+    --white: #f4f4f4;
+    --tekhelet: #3D348B;
+    --darker: #121212;
+    --dark: #181818;
+    --grey: rgba(140, 140, 140, 0.53);
+    --light-grey: rgba(175, 175, 175, 0.7);
+    --border: 1px solid rgba(140, 140, 140, 0.14);
+}
+
+html {
+    font-size: 18px;
+    font-family: var(--font-ubuntu-regular);
+    background-color: var(--darker);
+    letter-spacing: 1px;
+    height: 100vh !important;
+}
+
+body {
+    background-color: var(--darker);
+    margin: 0;
+}
+
+html * {
+    color: var(--white) !important;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 18px;
+    }
+}
+
+.header p, h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-ubuntu-medium) !important;
+    font-weight: bold;
+    margin: 0;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 80% 20%;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.unset {
+    all: unset;
+}
+
+.unset:hover {
+    all: unset;
+}
+
+.container {
+    background-color: var(--darker);
+    min-height: 100vh;
+}
+
+.tools {
+    background-color: var(--dark);
+    min-height: 100%;
+}
+
+.top {
+    padding: 8px;
+    margin: 0;
+    display: flex;
+    border-bottom: var(--border);
+    justify-content: end;
+}
+
+.exit {
+    margin: 0;
+    padding: 0;
+}
+
+.exit img {
+    height: 1.5em;
+    width: 1.5em;
+}
+
+ul, li {
+    list-style-type: none;
+}
+
+.list {
+    padding-right: 40px;
+}
+
+.list-item {
+    padding: 5px 0 5px 0;
+}
+
+.list-header {
+    padding-bottom: 5px;
+    border-bottom: var(--border);
+}
+
+.list-item-child {
+    padding: 5px 0 0 20px;
+}
+
+.plus {
+    font-size: 26px;
+    margin: 0;
+    padding: 0;
+}
+
+.plus::before {
+    content: '+';
+}
+
+.minus::before {
+    content: '-';
+}
+
+.hidden {
+    display: none;
+}
+
+canvas {
+    height: 99%;
+    width: 99%;
+}

@@ -41,7 +41,7 @@ public class LobbyController : Controller
         if (!result.IsSuccess) RedirectToAction("Index", "Home");
 
         HttpContext.Session.SetString("lobbyId", id.ToString());
-
+        ViewBag.Title = lobby.Name;
         return lobby.MasterId == new Guid(userId) ? View("LobbyMaster", lobby) : View(lobby);
     }
 }
