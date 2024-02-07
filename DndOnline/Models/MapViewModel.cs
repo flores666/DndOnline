@@ -13,13 +13,4 @@ public class MapViewModel
     public string Description { get; set; }
     public string FilePath { get; set; }
     public IFormFile? File { get; set; }
-
-    public MapViewModel() { }
-    
-    public MapViewModel(Map map)
-    {
-        Name = map.Name;
-        Description = map.Description;
-        FilePath = map.RelativePath;
-    }
 }

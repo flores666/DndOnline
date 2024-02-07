@@ -10,15 +10,12 @@ public class DndAppDbContext : DbContext
     public DbSet<Lobby> Lobbies { get; set; }
     public DbSet<LobbyStatus> LobbyStatuses { get; set; }
 
-    public DbSet<Character> Characters { get; set; }
-    public DbSet<Creature> Creatures { get; set; }
-    public DbSet<Map> Maps { get; set; }
-    public DbSet<Item> Items { get; set; }
-
-    public DbSet<CreaturePosition> CreaturePositions { get; set; }
-    public DbSet<CharacterPosition> CharacterPositions { get; set; }
-    public DbSet<ItemPosition> ItemPositions { get; set; }
-    public DbSet<LobbyMap> LobbyMaps { get; set; }
+    public DbSet<Entity> Entities { get; set; }
+    public DbSet<EntityLocation> EntityLocations { get; set; }
+    public DbSet<EntityType> EntityTypes { get; set; }
+    public DbSet<EntityAttribute> EntityAttributes { get; set; }
+    public DbSet<EntityAttributeValue> EntityAttributeValues { get; set; }
+    public DbSet<EntityTypePicture> EntityTypePictures { get; set; }
 
     public DndAppDbContext()
     {
@@ -30,103 +27,52 @@ public class DndAppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        #region CreatureLobby
+        #region EntityLocations
 
         modelBuilder
-            .Entity<Creature>()
+            .Entity<Entity>()
             .HasMany(c => c.Lobbies)
-            .WithMany(s => s.Creatues)
-            .UsingEntity<CreaturePosition>(
+            .WithMany(s => s.Entities)
+            .UsingEntity<EntityLocation>(
                 j => j
                     .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.CreaturePositions)
+                    .WithMany(p => p.EntityLocations)
                     .HasForeignKey(pt => pt.LobbyId),
                 j => j
-                    .HasOne(pt => pt.Creature)
-                    .WithMany(t => t.CreatureLobby)
-                    .HasForeignKey(pt => pt.CreatureId),
+                    .HasOne(pt => pt.Entity)
+                    .WithMany(t => t.EntityLocations)
+                    .HasForeignKey(pt => pt.EntityId),
                 j =>
                 {
                     j.Property(pt => pt.X).HasDefaultValue(0.0);
                     j.Property(pt => pt.Y).HasDefaultValue(0.0);
-                    j.HasKey(t => new { t.CreatureId, t.LobbyId });
-                    j.ToTable("CreaturePositions");
+                    j.HasKey(t => new { t.EntityId, t.LobbyId });
+                    j.ToTable("EntityLocations");
                 });
 
         #endregion
 
-        #region CharacterLobby
+        #region EntityAttributeValue
 
-        modelBuilder
-            .Entity<Character>()
-            .HasMany(c => c.Lobbies)
-            .WithMany(s => s.Characters)
-            .UsingEntity<CharacterPosition>(
-                j => j
-                    .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.CharacterPositions)
-                    .HasForeignKey(pt => pt.LobbyId),
-                j => j
-                    .HasOne(pt => pt.Character)
-                    .WithMany(t => t.CharacterLobby)
-                    .HasForeignKey(pt => pt.CharacterId),
-                j =>
-                {
-                    j.Property(pt => pt.X).HasDefaultValue(0.0);
-                    j.Property(pt => pt.Y).HasDefaultValue(0.0);
-                    j.HasKey(t => new { t.CharacterId, t.LobbyId });
-                    j.ToTable("CharacterPositions");
-                });
+        // Устанавливаем составной ключ для таблицы связи EntityAttributeValue
+        modelBuilder.Entity<EntityAttributeValue>()
+            .HasKey(eav => new { eav.EntityTypeId, eav.AttributeId });
+
+        // Определяем связь между EntityType и EntityAttributeValue
+        modelBuilder.Entity<EntityAttributeValue>()
+            .HasOne(eav => eav.EntityType)
+            .WithMany(et => et.EntityAttributeValues)
+            .HasForeignKey(eav => eav.EntityTypeId);
+
+        // Определяем связь между EntityAttribute и EntityAttributeValue
+        modelBuilder.Entity<EntityAttributeValue>()
+            .HasOne(eav => eav.Attribute)
+            .WithMany()
+            .HasForeignKey(eav => eav.AttributeId);
 
         #endregion
 
-        #region ItemLobby
-
-        modelBuilder
-            .Entity<Item>()
-            .HasMany(c => c.Lobbies)
-            .WithMany(s => s.Items)
-            .UsingEntity<ItemPosition>(
-                j => j
-                    .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.ItemPositions)
-                    .HasForeignKey(pt => pt.LobbyId),
-                j => j
-                    .HasOne(pt => pt.Item)
-                    .WithMany(t => t.ItemLobby)
-                    .HasForeignKey(pt => pt.ItemId),
-                j =>
-                {
-                    j.Property(pt => pt.X).HasDefaultValue(0.0);
-                    j.Property(pt => pt.Y).HasDefaultValue(0.0);
-                    j.HasKey(t => new { t.ItemId, t.LobbyId });
-                    j.ToTable("ItemPositions");
-                });
-
-        #endregion
-
-        #region MapLobby
-
-        modelBuilder
-            .Entity<Map>()
-            .HasMany(c => c.Lobbies)
-            .WithMany(s => s.Maps)
-            .UsingEntity<LobbyMap>(
-                j => j
-                    .HasOne(pt => pt.Lobby)
-                    .WithMany(p => p.LobbyMaps)
-                    .HasForeignKey(pt => pt.LobbyId),
-                j => j
-                    .HasOne(pt => pt.Map)
-                    .WithMany(t => t.MapLobby)
-                    .HasForeignKey(pt => pt.MapId),
-                j =>
-                {
-                    j.HasKey(t => new { t.MapId, t.LobbyId });
-                    j.ToTable("LobbyMaps");
-                });
-
-        #endregion
+        #region LobbyStatusDefaultValues
 
         modelBuilder.Entity<LobbyStatus>().HasData(
             new LobbyStatus { Status = LobbyStatusType.Draft, Name = "Черновик" },
@@ -137,5 +83,109 @@ public class DndAppDbContext : DbContext
             new LobbyStatus { Status = LobbyStatusType.Closed, Name = "Закрыто" },
             new LobbyStatus { Status = LobbyStatusType.Completed, Name = "Заверешно" }
         );
+
+        #endregion
+
+        #region EntitiesDefaultValues
+
+        // Генерация идентификаторов
+        var entityId1 = Guid.NewGuid();
+        var entityId2 = Guid.NewGuid();
+        var entityId3 = Guid.NewGuid();
+        var entityId4 = Guid.NewGuid();
+        var entityId5 = Guid.NewGuid();
+
+        var humanId = Guid.NewGuid();
+        var elfId = Guid.NewGuid();
+        var dwarfId = Guid.NewGuid();
+        var orcId = Guid.NewGuid();
+        var goblinId = Guid.NewGuid();
+
+        var strengthId = Guid.NewGuid();
+        var dexterityId = Guid.NewGuid();
+        var constitutionId = Guid.NewGuid();
+        var intelligenceId = Guid.NewGuid();
+        var wisdomId = Guid.NewGuid();
+
+        modelBuilder.Entity<EntityType>().HasData(
+            new EntityType { Id = humanId, Name = "Human" },
+            new EntityType { Id = elfId, Name = "Elf" },
+            new EntityType { Id = dwarfId, Name = "Dwarf" },
+            new EntityType { Id = orcId, Name = "Orc" },
+            new EntityType { Id = goblinId, Name = "Goblin" }
+        );
+
+        modelBuilder.Entity<EntityAttribute>().HasData(
+            new EntityAttribute { Id = strengthId, Name = "Strength" },
+            new EntityAttribute { Id = dexterityId, Name = "Dexterity" },
+            new EntityAttribute { Id = constitutionId, Name = "Constitution" },
+            new EntityAttribute { Id = intelligenceId, Name = "Intelligence" },
+            new EntityAttribute { Id = wisdomId, Name = "Wisdom" }
+        );
+
+        modelBuilder.Entity<EntityAttributeValue>().HasData(
+            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = strengthId, Value = "10" },
+            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = dexterityId, Value = "12" },
+            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = constitutionId, Value = "11" },
+            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = intelligenceId, Value = "14" },
+            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = wisdomId, Value = "13" }
+        );
+
+        modelBuilder.Entity<Entity>().HasData(
+            new Entity { Id = entityId1, Name = "Человек", Description = "Описание человека", TypeId = humanId },
+            new Entity { Id = entityId2, Name = "Эльф", Description = "Описание эльфа", TypeId = elfId },
+            new Entity { Id = entityId3, Name = "Дварф", Description = "Описание дварфа", TypeId = dwarfId },
+            new Entity { Id = entityId4, Name = "Орк", Description = "Описание орка", TypeId = orcId },
+            new Entity { Id = entityId5, Name = "Гоблин", Description = "Описание гоблина", TypeId = goblinId }
+        );
+
+        // Генерация идентификаторов для типов сущностей
+        var itemType = Guid.NewGuid();
+
+        // Генерация идентификаторов для атрибутов
+        var weightAttribute = Guid.NewGuid();
+        var durabilityAttribute = Guid.NewGuid();
+        var damageAttribute = Guid.NewGuid();
+        var priceAttribute = Guid.NewGuid();
+
+        // Заполнение таблицы EntityType
+        modelBuilder.Entity<EntityType>().HasData(
+            new EntityType { Id = itemType, Name = "Предмет" }
+        );
+
+        // Заполнение таблицы EntityAttribute
+        modelBuilder.Entity<EntityAttribute>().HasData(
+            new EntityAttribute { Id = weightAttribute, Name = "Вес" },
+            new EntityAttribute { Id = durabilityAttribute, Name = "Прочность" },
+            new EntityAttribute { Id = damageAttribute, Name = "Урон" },
+            new EntityAttribute { Id = priceAttribute, Name = "Цена" }
+        );
+
+        // Заполнение таблицы EntityAttributeValue
+        modelBuilder.Entity<EntityAttributeValue>().HasData(
+            // Значения атрибутов для типа "Предмет"
+            new EntityAttributeValue { EntityTypeId = itemType, AttributeId = weightAttribute, Value = "5 кг" },
+            new EntityAttributeValue { EntityTypeId = itemType, AttributeId = durabilityAttribute, Value = "Средняя" },
+            new EntityAttributeValue { EntityTypeId = itemType, AttributeId = priceAttribute, Value = "100 золотых" }
+        );
+
+        modelBuilder.Entity<Entity>().HasData(
+            new Entity { Id = Guid.NewGuid(), Name = "Меч", Description = "Описание меча", TypeId = itemType },
+            new Entity { Id = Guid.NewGuid(), Name = "Щит", Description = "Описание щита", TypeId = itemType },
+            new Entity { Id = Guid.NewGuid(), Name = "Посох", Description = "Описание посоха", TypeId = itemType },
+            new Entity { Id = Guid.NewGuid(), Name = "Лук", Description = "Описание лука", TypeId = itemType },
+            new Entity { Id = Guid.NewGuid(), Name = "Кольцо", Description = "Описание кольца", TypeId = itemType }
+        );
+
+        modelBuilder.Entity<EntityTypePicture>().HasData(
+            new EntityTypePicture { EntityTypeId = itemType, Path = "/content/default.png"},
+            new EntityTypePicture { EntityTypeId = humanId, Path = "/content/default.png"},
+            new EntityTypePicture { EntityTypeId = elfId, Path = "/content/default.png"},
+            new EntityTypePicture { EntityTypeId = dwarfId, Path = "/content/default.png"},
+            new EntityTypePicture { EntityTypeId = orcId, Path = "/content/default.png"},
+            new EntityTypePicture { EntityTypeId = goblinId, Path = "/content/default.png"}
+        );
+        
+        #endregion
     }
 }

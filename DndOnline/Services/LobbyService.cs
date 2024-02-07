@@ -90,10 +90,7 @@ public class LobbyService : ILobbyService
         return _db.Lobbies
             .Include(w => w.Players)
             .Include(w => w.Status)
-            .Include(w => w.Characters)
-            .Include(w => w.Creatues)
-            .Include(w => w.Items)
-            .Include(w => w.Maps)
+            .Include(w => w.Entities)
             .FirstOrDefault(w => w.Id == id);
     }
 
@@ -188,24 +185,23 @@ public class LobbyService : ILobbyService
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
-        var item = new Item
+        var item = new ItemViewModel
         {
-            Id = new Guid(),
             Name = model.Name,
             Description = model.Description,
-            RelativePath = path,
-            UserId = userId
+            // RelativePath = path,
+            // UserId = userId
         };
 
-        _db.ItemPositions.Add(new()
-        {
-            Item = item,
-            LobbyId = lobbyId
-        });
+        // _db.ItemPositions.Add(new()
+        // {
+        //     Item = item,
+        //     LobbyId = lobbyId
+        // });
 
         var res = await _db.SaveChangesAsync();
 
-        if (res > 0) response.SetSuccess(new ItemViewModel(item));
+        if (res > 0) response.SetSuccess(item);
 
         return response;
     }
@@ -221,24 +217,23 @@ public class LobbyService : ILobbyService
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
-        var creature = new Creature
+        var creature = new CreatureViewModel
         {
-            Id = new Guid(),
             Name = model.Name,
             Description = model.Description,
-            RelativePath = path,
-            UserId = userId
+            // RelativePath = path,
+            // UserId = userId
         };
 
-        _db.CreaturePositions.Add(new()
-        {
-            Creature = creature,
-            LobbyId = lobbyId
-        });
+        // _db.CreaturePositions.Add(new()
+        // {
+        //     Creature = creature,
+        //     LobbyId = lobbyId
+        // });
 
         var res = await _db.SaveChangesAsync();
 
-        if (res > 0) response.SetSuccess(new CreatureViewModel(creature));
+        if (res > 0) response.SetSuccess(creature);
 
         return response;
     }
@@ -254,24 +249,23 @@ public class LobbyService : ILobbyService
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
-        var character = new Character
+        var character = new CharacterViewModel
         {
-            Id = new Guid(),
             Name = model.Name,
             Description = model.Description,
-            RelativePath = path,
-            UserId = userId
+            // RelativePath = path,
+            // UserId = userId
         };
 
-        _db.CharacterPositions.Add(new()
-        {
-            Character = character,
-            LobbyId = lobbyId
-        });
+        // _db.CharacterPositions.Add(new()
+        // {
+        //     Character = character,
+        //     LobbyId = lobbyId
+        // });
 
         var res = await _db.SaveChangesAsync();
 
-        if (res > 0) response.SetSuccess(new CharacterViewModel(character));
+        if (res > 0) response.SetSuccess(character);
 
         return response;
     }
@@ -287,31 +281,51 @@ public class LobbyService : ILobbyService
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
-        var map = new Map
+        var map = new MapViewModel
         {
-            Id = new Guid(),
             Name = model.Name,
             Description = model.Description,
-            RelativePath = path,
-            UserId = userId
+            // RelativePath = path,
+            // UserId = userId
         };
 
-        _db.LobbyMaps.Add(new()
-        {
-            LobbyId = map.Id,
-            Map = map,
-        });
+        // _db.LobbyMaps.Add(new()
+        // {
+        //     LobbyId = map.Id,
+        //     Map = map,
+        // });
 
         var res = await _db.SaveChangesAsync();
 
-        if (res > 0) response.SetSuccess(new MapViewModel(map));
+        if (res > 0) response.SetSuccess(map);
 
         return response;
     }
 
-    public List<Item> GetItems(Guid lobbyId)
+    public List<ItemViewModel> GetItems(Guid lobbyId)
     {
-        return _db.ItemPositions
+        throw new NotImplementedException();
+    }
+
+    public List<CreatureViewModel> GetCreatures(Guid lobbyId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<CharacterViewModel> GetCharacters(Guid lobbyId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public List<MapViewModel> GetMaps(Guid lobbyId)
+    {
+        throw new NotImplementedException();
+    }
+
+    /*
+    public List<ItemViewModel> GetItems(Guid lobbyId)
+    {
+        return _db.EntityLocations
             .Where(w => w.LobbyId == lobbyId)
             .Select(s => new Item()
             {
@@ -363,5 +377,5 @@ public class LobbyService : ILobbyService
                 RelativePath = s.Map.RelativePath
             })
             .ToList();
-    }
+    }*/
 }

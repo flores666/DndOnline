@@ -114,7 +114,7 @@ public class LobbyConstructorController : Controller
             {
                 Name = s.Name,
                 Description = s.Description,
-                FilePath = s.RelativePath
+                // FilePath = s.RelativePath
             }).ToList();
         }
 
@@ -148,7 +148,7 @@ public class LobbyConstructorController : Controller
             {
                 Name = s.Name,
                 Description = s.Description,
-                FilePath = s.RelativePath
+                // FilePath = s.RelativePath
             }).ToList();
         }
 
@@ -182,7 +182,7 @@ public class LobbyConstructorController : Controller
             {
                 Name = s.Name,
                 Description = s.Description,
-                FilePath = s.RelativePath
+                // FilePath = s.RelativePath
             }).ToList();
         }
 
