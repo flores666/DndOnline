@@ -11,11 +11,12 @@ public class DndAppDbContext : DbContext
     public DbSet<LobbyStatus> LobbyStatuses { get; set; }
 
     public DbSet<Entity> Entities { get; set; }
-    public DbSet<EntityLocation> EntityLocations { get; set; }
-    public DbSet<EntityType> EntityTypes { get; set; }
-    public DbSet<EntityAttribute> EntityAttributes { get; set; }
-    public DbSet<EntityAttributeValue> EntityAttributeValues { get; set; }
-    public DbSet<EntityTypePicture> EntityTypePictures { get; set; }
+    public DbSet<EntityLocation> Locations { get; set; }
+    public DbSet<EntityType> Types { get; set; }
+    public DbSet<EntitySubType> SubTypes { get; set; }
+    public DbSet<EntityAttribute> Attributes { get; set; }
+    public DbSet<EntityAttributeValue> AttributeValues { get; set; }
+    public DbSet<EntitySubTypePicture> Pictures { get; set; }
 
     public DndAppDbContext()
     {
@@ -40,14 +41,14 @@ public class DndAppDbContext : DbContext
                     .HasForeignKey(pt => pt.LobbyId),
                 j => j
                     .HasOne(pt => pt.Entity)
-                    .WithMany(t => t.EntityLocations)
+                    .WithMany(t => t.Locations)
                     .HasForeignKey(pt => pt.EntityId),
                 j =>
                 {
                     j.Property(pt => pt.X).HasDefaultValue(0.0);
                     j.Property(pt => pt.Y).HasDefaultValue(0.0);
                     j.HasKey(t => new { t.EntityId, t.LobbyId });
-                    j.ToTable("EntityLocations");
+                    j.ToTable("Locations");
                 });
 
         #endregion
@@ -56,13 +57,13 @@ public class DndAppDbContext : DbContext
 
         // Устанавливаем составной ключ для таблицы связи EntityAttributeValue
         modelBuilder.Entity<EntityAttributeValue>()
-            .HasKey(eav => new { eav.EntityTypeId, eav.AttributeId });
+            .HasKey(eav => new {EntityTypeId = eav.TypeId, eav.AttributeId });
 
         // Определяем связь между EntityType и EntityAttributeValue
         modelBuilder.Entity<EntityAttributeValue>()
-            .HasOne(eav => eav.EntityType)
-            .WithMany(et => et.EntityAttributeValues)
-            .HasForeignKey(eav => eav.EntityTypeId);
+            .HasOne(eav => eav.Type)
+            .WithMany(et => et.AttributeValues)
+            .HasForeignKey(eav => eav.TypeId);
 
         // Определяем связь между EntityAttribute и EntityAttributeValue
         modelBuilder.Entity<EntityAttributeValue>()
@@ -86,106 +87,63 @@ public class DndAppDbContext : DbContext
 
         #endregion
 
+        
         #region EntitiesDefaultValues
 
-        // Генерация идентификаторов
-        var entityId1 = Guid.NewGuid();
-        var entityId2 = Guid.NewGuid();
-        var entityId3 = Guid.NewGuid();
-        var entityId4 = Guid.NewGuid();
-        var entityId5 = Guid.NewGuid();
-
-        var humanId = Guid.NewGuid();
-        var elfId = Guid.NewGuid();
-        var dwarfId = Guid.NewGuid();
-        var orcId = Guid.NewGuid();
-        var goblinId = Guid.NewGuid();
-
-        var strengthId = Guid.NewGuid();
-        var dexterityId = Guid.NewGuid();
-        var constitutionId = Guid.NewGuid();
-        var intelligenceId = Guid.NewGuid();
-        var wisdomId = Guid.NewGuid();
-
-        modelBuilder.Entity<EntityType>().HasData(
-            new EntityType { Id = humanId, Name = "Human" },
-            new EntityType { Id = elfId, Name = "Elf" },
-            new EntityType { Id = dwarfId, Name = "Dwarf" },
-            new EntityType { Id = orcId, Name = "Orc" },
-            new EntityType { Id = goblinId, Name = "Goblin" }
-        );
-
+        var attributeId1 = Guid.NewGuid();
+        var attributeId2 = Guid.NewGuid();
+        
+        // Заполнение таблицы Attributes
         modelBuilder.Entity<EntityAttribute>().HasData(
-            new EntityAttribute { Id = strengthId, Name = "Strength" },
-            new EntityAttribute { Id = dexterityId, Name = "Dexterity" },
-            new EntityAttribute { Id = constitutionId, Name = "Constitution" },
-            new EntityAttribute { Id = intelligenceId, Name = "Intelligence" },
-            new EntityAttribute { Id = wisdomId, Name = "Wisdom" }
+            new EntityAttribute { Id = attributeId1, Name = "Strength" },
+            new EntityAttribute { Id = attributeId2, Name = "Dexterity" }
         );
 
-        modelBuilder.Entity<EntityAttributeValue>().HasData(
-            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = strengthId, Value = "10" },
-            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = dexterityId, Value = "12" },
-            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = constitutionId, Value = "11" },
-            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = intelligenceId, Value = "14" },
-            new EntityAttributeValue { EntityTypeId = humanId, AttributeId = wisdomId, Value = "13" }
-        );
-
-        modelBuilder.Entity<Entity>().HasData(
-            new Entity { Id = entityId1, Name = "Человек", Description = "Описание человека", TypeId = humanId },
-            new Entity { Id = entityId2, Name = "Эльф", Description = "Описание эльфа", TypeId = elfId },
-            new Entity { Id = entityId3, Name = "Дварф", Description = "Описание дварфа", TypeId = dwarfId },
-            new Entity { Id = entityId4, Name = "Орк", Description = "Описание орка", TypeId = orcId },
-            new Entity { Id = entityId5, Name = "Гоблин", Description = "Описание гоблина", TypeId = goblinId }
-        );
-
-        // Генерация идентификаторов для типов сущностей
-        var itemType = Guid.NewGuid();
-
-        // Генерация идентификаторов для атрибутов
-        var weightAttribute = Guid.NewGuid();
-        var durabilityAttribute = Guid.NewGuid();
-        var damageAttribute = Guid.NewGuid();
-        var priceAttribute = Guid.NewGuid();
-
-        // Заполнение таблицы EntityType
+        var typeId1 = Guid.NewGuid();
+        var typeId2 = Guid.NewGuid();
+        
+        // Заполнение таблицы Types
         modelBuilder.Entity<EntityType>().HasData(
-            new EntityType { Id = itemType, Name = "Предмет" }
+            new EntityType { Id = typeId1, Name = "Creature" },
+            new EntityType { Id = typeId2, Name = "Item" }
         );
 
-        // Заполнение таблицы EntityAttribute
-        modelBuilder.Entity<EntityAttribute>().HasData(
-            new EntityAttribute { Id = weightAttribute, Name = "Вес" },
-            new EntityAttribute { Id = durabilityAttribute, Name = "Прочность" },
-            new EntityAttribute { Id = damageAttribute, Name = "Урон" },
-            new EntityAttribute { Id = priceAttribute, Name = "Цена" }
-        );
-
-        // Заполнение таблицы EntityAttributeValue
+        // Заполнение таблицы AttributeValues
         modelBuilder.Entity<EntityAttributeValue>().HasData(
-            // Значения атрибутов для типа "Предмет"
-            new EntityAttributeValue { EntityTypeId = itemType, AttributeId = weightAttribute, Value = "5 кг" },
-            new EntityAttributeValue { EntityTypeId = itemType, AttributeId = durabilityAttribute, Value = "Средняя" },
-            new EntityAttributeValue { EntityTypeId = itemType, AttributeId = priceAttribute, Value = "100 золотых" }
+            new EntityAttributeValue { TypeId = typeId1, AttributeId = attributeId1, Value = "18" },
+            new EntityAttributeValue { TypeId = typeId2, AttributeId = attributeId2, Value = "16" }
         );
 
+        var subTypeId1 = Guid.NewGuid();
+        var subTypeId2 = Guid.NewGuid();
+        var subTypeId3 = Guid.NewGuid();
+        var subTypeId4 = Guid.NewGuid();
+        
+        // Заполнение таблицы SubTypes
+        modelBuilder.Entity<EntitySubType>().HasData(
+            new EntitySubType { Id = subTypeId1, TypeId = typeId1, Name = "Warrior", Description = "A strong warrior class." },
+            new EntitySubType { Id = subTypeId2, TypeId = typeId1, Name = "Rogue", Description = "A rogue class." },
+            new EntitySubType { Id = subTypeId3, TypeId = typeId2, Name = "Gloves", Description = "Cool gloves." },
+            new EntitySubType { Id = subTypeId4, TypeId = typeId2, Name = "Helmet", Description = "Cool helmet." }
+        );
+
+        // Заполнение таблицы Entities
         modelBuilder.Entity<Entity>().HasData(
-            new Entity { Id = Guid.NewGuid(), Name = "Меч", Description = "Описание меча", TypeId = itemType },
-            new Entity { Id = Guid.NewGuid(), Name = "Щит", Description = "Описание щита", TypeId = itemType },
-            new Entity { Id = Guid.NewGuid(), Name = "Посох", Description = "Описание посоха", TypeId = itemType },
-            new Entity { Id = Guid.NewGuid(), Name = "Лук", Description = "Описание лука", TypeId = itemType },
-            new Entity { Id = Guid.NewGuid(), Name = "Кольцо", Description = "Описание кольца", TypeId = itemType }
+            new Entity { Id = Guid.NewGuid(), Name = "A human warrior", Description = "A human warrior", TypeId = typeId1},
+            new Entity { Id = Guid.NewGuid(), Name = "An orc brute", Description = "An orc brute", TypeId = typeId1},
+            new Entity { Id = Guid.NewGuid(), Name = "Iron Gauntlets.", Description = "An orc brute", TypeId = typeId2},
+            new Entity { Id = Guid.NewGuid(), Name = "Siege Helmet.", Description = "An orc brute", TypeId = typeId2}
         );
 
-        modelBuilder.Entity<EntityTypePicture>().HasData(
-            new EntityTypePicture { EntityTypeId = itemType, Path = "/content/default.png"},
-            new EntityTypePicture { EntityTypeId = humanId, Path = "/content/default.png"},
-            new EntityTypePicture { EntityTypeId = elfId, Path = "/content/default.png"},
-            new EntityTypePicture { EntityTypeId = dwarfId, Path = "/content/default.png"},
-            new EntityTypePicture { EntityTypeId = orcId, Path = "/content/default.png"},
-            new EntityTypePicture { EntityTypeId = goblinId, Path = "/content/default.png"}
+        // Заполнение таблицы Pictures
+        modelBuilder.Entity<EntitySubTypePicture>().HasData(
+            new EntitySubTypePicture { SubTypeId = subTypeId1, Path = "/content/default.png" },
+            new EntitySubTypePicture { SubTypeId = subTypeId2, Path = "/content/default.png" },
+            new EntitySubTypePicture { SubTypeId = subTypeId3, Path = "/content/default.png" },
+            new EntitySubTypePicture { SubTypeId = subTypeId4, Path = "/content/default.png" }
         );
         
         #endregion
+        
     }
 }

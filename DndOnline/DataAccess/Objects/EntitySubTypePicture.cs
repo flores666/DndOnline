@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DndOnline.DataAccess.Objects;
 
-public class EntityTypePicture
+public class EntitySubTypePicture
 {
     [Key]
-    [ForeignKey("EntityType")]
-    public Guid EntityTypeId { get; set; }
-    public EntityType EntityType { get; set; }
+    [ForeignKey("SubType")]
+    public Guid SubTypeId { get; set; }
+    public EntitySubType SubType { get; set; }
     public string Path { get; set; }
 }

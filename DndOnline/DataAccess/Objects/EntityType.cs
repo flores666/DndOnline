@@ -5,6 +5,6 @@ public class EntityType
     public Guid Id { get; set; }
     public string Name { get; set; }
     
-    public IEnumerable<EntityAttributeValue> EntityAttributeValues { get; set; } = new List<EntityAttributeValue>();
-    public IEnumerable<EntityTypePicture> EntityTypePictures { get; set; } = new List<EntityTypePicture>();
+    public IEnumerable<EntityAttributeValue> AttributeValues { get; set; } = new List<EntityAttributeValue>();
+    public IEnumerable<EntitySubType> SubTypes { get; set; } = new List<EntitySubType>();
 }

@@ -12,5 +12,5 @@ public class Entity
     public Guid TypeId { get; set; }
     public EntityType Type { get; set; }
     public List<Lobby> Lobbies { get; set; } = new List<Lobby>();
-    public IEnumerable<EntityLocation> EntityLocations { get; set; } = new List<EntityLocation>();
+    public IEnumerable<EntityLocation> Locations { get; set; } = new List<EntityLocation>();
 }
