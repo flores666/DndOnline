@@ -14,15 +14,15 @@ public class Lobby
     public int MaxPlayers { get; set; }
     public Guid MasterId { get; set; }
     public List<User> Players { get; set; } 
-    public List<Entity> Entities { get; set; }
-
-    public IEnumerable<EntityLocation> EntityLocations { get; set; } = new List<EntityLocation>();
+    public IEnumerable<Entity> Entities { get; set; } = new List<Entity>();
+    public IEnumerable<Map> Maps { get; set; } = new List<Map>();
+    public IEnumerable<Location> EntityLocations { get; set; } = new List<Location>();
+    public IEnumerable<LobbyMap> LobbyMaps { get; set; } = new List<LobbyMap>();
 
     public Lobby()
     {
         MaxPlayers = 6;
         StatusId = LobbyStatusType.Draft;
         Players = new List<User>();
-        Entities = new List<Entity>();
     }
 }

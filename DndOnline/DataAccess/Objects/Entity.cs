@@ -7,10 +7,9 @@ public class Entity
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
-    
-    [ForeignKey("Type")]
-    public Guid TypeId { get; set; }
-    public EntityType Type { get; set; }
-    public List<Lobby> Lobbies { get; set; } = new List<Lobby>();
-    public IEnumerable<EntityLocation> Locations { get; set; } = new List<EntityLocation>();
+    [ForeignKey("Picture")]
+    public Guid PictureId { get; set; }
+    public Picture Picture { get; set; }
+    public IEnumerable<Location> Locations { get; set; } = new List<Location>();
+    public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
 }
