@@ -8,18 +8,13 @@ $(document).ready(function () {
 });
 
 <!-- Обработка добавляения нового элемента -->
-$(document).on('click', '#add-item', async function () {
-    let modal = await getPartialContentAsync('/LobbyConstructor/ItemPartialForm');
+$(document).on('click', '#add-entity', async function () {
+    let modal = await getPartialContentAsync('/LobbyConstructor/EntityPartialForm');
     $('body').prepend(modal);
 });
 
-$(document).on('click', '#add-creature', async function () {
-    let modal = await getPartialContentAsync('/LobbyConstructor/CreaturePartialForm');
-    $('body').prepend(modal);
-});
-
-$(document).on('click', '#add-character', async function () {
-    let modal = await getPartialContentAsync('/LobbyConstructor/CharacterPartialForm');
+$(document).on('click', '#add-map', async function () {
+    let modal = await getPartialContentAsync('/LobbyConstructor/MapPartialForm');
     $('body').prepend(modal);
 });
 
@@ -47,14 +42,11 @@ $(document).on('submit', '.creation-form', async function (event) {
     let response;
 
     switch (form.id) {
-        case "character-form":
-            response = await sendRequestAsync('POST', '/LobbyConstructor/NewCharacter', model);
+        case "entity-form":
+            response = await sendRequestAsync('POST', '/LobbyConstructor/NewEntity', model);
             break;
-        case "creature-form":
-            response = await sendRequestAsync('POST', '/LobbyConstructor/NewCreature', model);
-            break;
-        case "item-form":
-            response = await sendRequestAsync('POST', '/LobbyConstructor/NewItem', model);
+        case "map-form":
+            response = await sendRequestAsync('POST', '/LobbyConstructor/NewMap', model);
             break;
         default:
             response = null;

@@ -4,15 +4,15 @@ using DndOnline.DataAccess.Objects;
 
 namespace DndOnline.Models;
 
-public class CharacterViewModel
+public class EntityViewModel
 {
-    [DisplayName("Имя персонажа")]
+    [DisplayName("Название предмета")]
     [Required(ErrorMessage = "Поле '{0}' обязательно для заполнения")]
     [MaxLength(50, ErrorMessage = "Недопустимое количество символов")]
     public string Name { get; set; }
+    public string FilePath { get; set; }
     
     [DisplayName("Описание")]
-    public string? Description { get; set; }
-    public string? FilePath { get; set; }
+    public string Description { get; set; }
     public IFormFile? File { get; set; }
 }

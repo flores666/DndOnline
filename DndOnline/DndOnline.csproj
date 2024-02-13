@@ -35,9 +35,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\Content\Characters\" />
-      <Folder Include="wwwroot\Content\Creatures\" />
-      <Folder Include="wwwroot\Content\Items\" />
+      <Folder Include="wwwroot\Content\Entities\" />
       <Folder Include="wwwroot\Content\Maps\" />
     </ItemGroup>
 

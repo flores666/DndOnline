@@ -173,72 +173,8 @@ public class LobbyService : ILobbyService
 
         return response;
     }
-
-    public async Task<ResponseModel> AddItemAsync(Guid lobbyId, ItemViewModel model)
-    {
-        var response = new ResponseModel();
-        var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
-
-        var result = await _fIleService.SaveAsync(model.File, "item");
-        if (!result.IsSuccess) return result;
-
-        var data = result.Data as FileModel;
-        var path = data.RelativePath;
-
-        var item = new ItemViewModel
-        {
-            Name = model.Name,
-            Description = model.Description,
-            // RelativePath = path,
-            // UserId = userId
-        };
-
-        // _db.ItemPositions.Add(new()
-        // {
-        //     Item = item,
-        //     LobbyId = lobbyId
-        // });
-
-        var res = await _db.SaveChangesAsync();
-
-        if (res > 0) response.SetSuccess(item);
-
-        return response;
-    }
-
-    public async Task<ResponseModel> AddCreatureAsync(Guid lobbyId, CreatureViewModel model)
-    {
-        var response = new ResponseModel();
-        var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
-
-        var result = await _fIleService.SaveAsync(model.File, "creature");
-        if (!result.IsSuccess) return result;
-
-        var data = result.Data as FileModel;
-        var path = data.RelativePath;
-
-        var creature = new CreatureViewModel
-        {
-            Name = model.Name,
-            Description = model.Description,
-            // RelativePath = path,
-            // UserId = userId
-        };
-
-        // _db.CreaturePositions.Add(new()
-        // {
-        //     Creature = creature,
-        //     LobbyId = lobbyId
-        // });
-
-        var res = await _db.SaveChangesAsync();
-
-        if (res > 0) response.SetSuccess(creature);
-
-        return response;
-    }
-
-    public async Task<ResponseModel> AddCharacterAsync(Guid lobbyId, CharacterViewModel model)
+    
+    public async Task<ResponseModel> AddEntityAsync(Guid lobbyId, EntityViewModel model)
     {
         var response = new ResponseModel();
         var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
@@ -249,7 +185,7 @@ public class LobbyService : ILobbyService
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
-        var character = new CharacterViewModel
+        var character = new EntityViewModel
         {
             Name = model.Name,
             Description = model.Description,
@@ -302,80 +238,20 @@ public class LobbyService : ILobbyService
         return response;
     }
 
-    public List<ItemViewModel> GetItems(Guid lobbyId)
+    public List<EntityViewModel> GetEntities(Guid lobbyId)
     {
-        throw new NotImplementedException();
-    }
-
-    public List<CreatureViewModel> GetCreatures(Guid lobbyId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public List<CharacterViewModel> GetCharacters(Guid lobbyId)
-    {
-        throw new NotImplementedException();
+        return _db.Locations.Where(w => w.LobbyId == lobbyId)
+            .Select(s => new EntityViewModel
+            {
+                Name = s.Entity.Name,
+                Description = s.Entity.Description,
+                FilePath = s.Entity.Picture.Path
+            })
+            .ToList();
     }
 
     public List<MapViewModel> GetMaps(Guid lobbyId)
     {
         throw new NotImplementedException();
     }
-
-    /*
-    public List<ItemViewModel> GetItems(Guid lobbyId)
-    {
-        return _db.EntityLocations
-            .Where(w => w.LobbyId == lobbyId)
-            .Select(s => new Item()
-            {
-                Id = s.Item.Id,
-                Name = s.Item.Name,
-                Description = s.Item.Description,
-                RelativePath = s.Item.RelativePath
-            })
-            .ToList();
-    }
-
-    public List<Creature> GetCreatures(Guid lobbyId)
-    {
-        return _db.CreaturePositions
-            .Where(w => w.LobbyId == lobbyId)
-            .Select(s => new Creature()
-            {
-                Id = s.Creature.Id,
-                Name = s.Creature.Name,
-                Description = s.Creature.Description,
-                RelativePath = s.Creature.RelativePath
-            })
-            .ToList();
-    }
-
-    public List<Character> GetCharacters(Guid lobbyId)
-    {
-        return _db.CharacterPositions
-            .Where(w => w.LobbyId == lobbyId)
-            .Select(s => new Character()
-            {
-                Id = s.Character.Id,
-                Name = s.Character.Name,
-                Description = s.Character.Description,
-                RelativePath = s.Character.RelativePath
-            })
-            .ToList();
-    }
-
-    public List<Map> GetMaps(Guid lobbyId)
-    {
-        return _db.LobbyMaps
-            .Where(w => w.LobbyId == lobbyId)
-            .Select(s => new Map()
-            {
-                Id = s.Map.Id,
-                Name = s.Map.Name,
-                Description = s.Map.Description,
-                RelativePath = s.Map.RelativePath
-            })
-            .ToList();
-    }*/
 }

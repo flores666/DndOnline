@@ -89,7 +89,7 @@ public class LobbyConstructorController : Controller
                 ViewBag.Alert = response.Message;
                 return View("Index", model);
             }
-            
+
             var lobby = response.Data as Lobby;
             return Redirect($"/lobby/{lobby.Id}");
         }
@@ -101,16 +101,30 @@ public class LobbyConstructorController : Controller
         return PartialView("Index", model);
     }
 
-    public PartialViewResult NewCreature()
+    [HttpPost]
+    public async Task<ResponseModel> NewEntity(EntityViewModel model)
     {
-        var model = new List<CreatureViewModel>();
+        var response = new ResponseModel();
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
-        var draft = _lobbyService.GetCreatures(new Guid(lobbyId));
+        if (!string.IsNullOrEmpty(model.Name))
+        {
+            response = await _lobbyService.AddEntityAsync(new Guid(lobbyId), model);
+        }
+
+        return response;
+    }
+
+    public IActionResult NewEntity()
+    {
+        var model = new List<EntityViewModel>();
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
+
+        var draft = _lobbyService.GetEntities(new Guid(lobbyId));
 
         if (draft != null)
         {
-            model = draft.Select(s => new CreatureViewModel()
+            model = draft.Select(s => new EntityViewModel()
             {
                 Name = s.Name,
                 Description = s.Description,
@@ -118,103 +132,16 @@ public class LobbyConstructorController : Controller
             }).ToList();
         }
 
-        return PartialView("Partial/NewCreatures", model);
+        return PartialView("Partial/NewEntity", model);
     }
 
-    [HttpPost]
-    public async Task<ResponseModel> NewCreature(CreatureViewModel model)
+    public PartialViewResult NewMap()
     {
-        var response = new ResponseModel();
-        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-
-        if (!string.IsNullOrEmpty(model.Name))
-        {
-            response = await _lobbyService.AddCreatureAsync(new Guid(lobbyId), model);
-        }
-
-        return response;
+        return PartialView("Partial/NewMap");
     }
 
-    public PartialViewResult NewCharacter()
+    public PartialViewResult EntityPartialForm()
     {
-        var model = new List<CharacterViewModel>();
-        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-
-        var draft = _lobbyService.GetCharacters(new Guid(lobbyId));
-
-        if (draft != null)
-        {
-            model = draft.Select(s => new CharacterViewModel()
-            {
-                Name = s.Name,
-                Description = s.Description,
-                // FilePath = s.RelativePath
-            }).ToList();
-        }
-
-        return PartialView("Partial/NewCharacter", model);
-    }
-
-    [HttpPost]
-    public async Task<ResponseModel> NewCharacter(CharacterViewModel model)
-    {
-        var response = new ResponseModel();
-        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-
-        if (!string.IsNullOrEmpty(model.Name))
-        {
-            response = await _lobbyService.AddCharacterAsync(new Guid(lobbyId), model);
-        }
-
-        return response;
-    }
-
-    public IActionResult NewItem()
-    {
-        var model = new List<ItemViewModel>();
-        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-
-        var draft = _lobbyService.GetItems(new Guid(lobbyId));
-
-        if (draft != null)
-        {
-            model = draft.Select(s => new ItemViewModel()
-            {
-                Name = s.Name,
-                Description = s.Description,
-                // FilePath = s.RelativePath
-            }).ToList();
-        }
-
-        return PartialView("Partial/NewItem", model);
-    }
-
-    [HttpPost]
-    public async Task<ResponseModel> NewItem(ItemViewModel model)
-    {
-        var response = new ResponseModel();
-        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-
-        if (!string.IsNullOrEmpty(model.Name))
-        {
-            response = await _lobbyService.AddItemAsync(new Guid(lobbyId), model);
-        }
-
-        return response;
-    }
-
-    public PartialViewResult CreaturePartialForm()
-    {
-        return PartialView("Partial/CreaturePartialView");
-    }
-
-    public PartialViewResult CharacterPartialForm()
-    {
-        return PartialView("Partial/CharacterPartialView");
-    }
-
-    public PartialViewResult ItemPartialForm()
-    {
-        return PartialView("Partial/ItemPartialView");
+        return PartialView("Partial/EntityPartialView");
     }
 }
