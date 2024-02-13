@@ -6,7 +6,7 @@ namespace DndOnline.Models;
 
 public class EntityViewModel
 {
-    [DisplayName("Название предмета")]
+    [DisplayName("Название токена")]
     [Required(ErrorMessage = "Поле '{0}' обязательно для заполнения")]
     [MaxLength(50, ErrorMessage = "Недопустимое количество символов")]
     public string Name { get; set; }

@@ -1,4 +1,4 @@
-@*@model DndOnline.DataAccess.Objects.Lobby
+@model DndOnline.DataAccess.Objects.Lobby
 
 @{
     Layout = "_LobbyLayout";
@@ -24,29 +24,11 @@
             </div>
         </ul>
         <ul class="list-item">
-            <div class="list-header"><span class="plus"></span> Персонажи </div>
+            <div class="list-header"><span class="plus"></span> Токены </div>
             <div class="list-body hidden">
-                @foreach (var character in Model.Characters)
+                @foreach (var character in Model.Entities)
                 {
                     <li class="list-item-child">@character.Name</li>
-                }
-            </div>
-        </ul>
-        <ul class="list-item">
-            <div class="list-header"><span class="plus"></span> Существа </div>
-            <div class="list-body hidden">
-                @foreach (var creature in Model.Creatues)
-                {
-                    <li class="list-item-child">@creature.Name</li>
-                }
-            </div>
-        </ul>
-        <ul class="list-item">
-            <div class="list-header"><span class="plus"></span> Предметы </div>
-            <div class="list-body hidden">
-                @foreach (var item in Model.Items)
-                {
-                    <li class="list-item-child">@item.Name</li>
                 }
             </div>
         </ul>
@@ -54,4 +36,4 @@
 </div>
 
 
-<script src="~/js/lobbyMaster.js"></script>*@
+<script src="~/js/lobbyMaster.js"></script>

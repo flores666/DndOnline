@@ -102,9 +102,7 @@ public class FileService : IFileService
     {
         return type.ToLower() switch
         {
-            "creature" => "Creatures",
-            "character" => "Characters",
-            "item" => "Items",
+            "entity" => "Entities",
             "map" => "Maps",
             _ => "img"
         };

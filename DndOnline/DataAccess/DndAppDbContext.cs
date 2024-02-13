@@ -12,6 +12,7 @@ public class DndAppDbContext : DbContext
 
     public DbSet<Entity> Entities { get; set; }
     public DbSet<Location> Locations { get; set; }
+    public DbSet<LobbyMap> LobbyMaps { get; set; }
     public DbSet<Picture> Pictures { get; set; }
 
     public DndAppDbContext()

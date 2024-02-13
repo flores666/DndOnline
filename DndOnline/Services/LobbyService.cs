@@ -173,35 +173,49 @@ public class LobbyService : ILobbyService
 
         return response;
     }
-    
+
     public async Task<ResponseModel> AddEntityAsync(Guid lobbyId, EntityViewModel model)
     {
         var response = new ResponseModel();
         var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
 
-        var result = await _fIleService.SaveAsync(model.File, "character");
+        var result = await _fIleService.SaveAsync(model.File, "entity");
         if (!result.IsSuccess) return result;
 
         var data = result.Data as FileModel;
         var path = data.RelativePath;
 
-        var character = new EntityViewModel
+        var entity = new EntityViewModel
         {
             Name = model.Name,
             Description = model.Description,
-            // RelativePath = path,
-            // UserId = userId
+            FilePath = path
         };
 
-        // _db.CharacterPositions.Add(new()
-        // {
-        //     Character = character,
-        //     LobbyId = lobbyId
-        // });
+        var picId = new Guid();
+
+        _db.Locations.Add(new()
+        {
+            Entity = new Entity
+            {
+                Id = new Guid(),
+                Name = entity.Name,
+                Description = entity.Description,
+                Picture = _db.Pictures.FirstOrDefault(w => w.Path == entity.FilePath) ??
+                          new Picture
+                          {
+                              Id = picId,
+                              Path = entity.FilePath,
+                              UserId = userId
+                          },
+                UserId = userId
+            },
+            LobbyId = lobbyId
+        });
 
         var res = await _db.SaveChangesAsync();
 
-        if (res > 0) response.SetSuccess(character);
+        if (res > 0) response.SetSuccess(entity);
 
         return response;
     }
@@ -221,15 +235,19 @@ public class LobbyService : ILobbyService
         {
             Name = model.Name,
             Description = model.Description,
-            // RelativePath = path,
+            FilePath = path,
             // UserId = userId
         };
 
-        // _db.LobbyMaps.Add(new()
-        // {
-        //     LobbyId = map.Id,
-        //     Map = map,
-        // });
+        _db.LobbyMaps.Add(new()
+        {
+            LobbyId = lobbyId,
+            Map = new()
+            {
+                Id = new Guid(),
+                Name = map.Name,
+            },
+        });
 
         var res = await _db.SaveChangesAsync();
 
