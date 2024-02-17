@@ -4,36 +4,54 @@
     Layout = "_LobbyLayout";
 }
 
-<div class="container">
-</div>
-
-<div class="tools">
-    <div class="top">
-        <a class="exit" href="/" title="Выйти">
+<div class="top">
+    <div class="left">
+        @foreach (var item in Model.Maps)
+        {
+            <div class="tab selected">
+                <p>
+                    @(item.Name.Length > 20 ? item.Name.Substring(0, 20) : item.Name)
+                </p>
+            </div>
+        }
+        <div class="tab">
+            <p>
+                Дом
+            </p>
+        </div>
+    </div>
+    <div class="right">
+        <a class="exit float-end" href="/" title="Выйти">
             <img src="/img/logout.png"/>
         </a>
     </div>
-    <ul class="list">
-        <ul id="player_list" class="list-item">
-            <div class="list-header"><span class="plus"></span> Игроки </div>
-            <div class="list-body hidden">
-                @foreach (var player in Model.Players)
-                {
-                    <li class="list-item-child">@player.Name</li>
-                }
-            </div>
-        </ul>
-        <ul class="list-item">
-            <div class="list-header"><span class="plus"></span> Токены </div>
-            <div class="list-body hidden">
-                @foreach (var character in Model.Entities)
-                {
-                    <li class="list-item-child">@character.Name</li>
-                }
-            </div>
-        </ul>
-    </ul>
 </div>
 
+<div class="container">
+    <div class="game"></div>
+
+    <div class="tools">
+        <ul class="list">
+            <ul id="player_list" class="list-item">
+                <div class="list-header"><span class="minus"></span> Игроки </div>
+                <div class="list-body">
+                    @foreach (var player in Model.Players)
+                    {
+                        <li class="list-item-child">@player.Name</li>
+                    }
+                </div>
+            </ul>
+            <ul class="list-item">
+                <div class="list-header"><span class="minus"></span> Токены </div>
+                <div class="list-body">
+                    @foreach (var character in Model.Entities)
+                    {
+                        <li class="list-item-child">@character.Name</li>
+                    }
+                </div>
+            </ul>
+        </ul>
+    </div>
+</div>
 
 <script src="~/js/lobbyMaster.js"></script>

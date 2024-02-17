@@ -36,7 +36,6 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\Content\Entities\" />
-      <Folder Include="wwwroot\Content\Maps\" />
     </ItemGroup>
 
     <ItemGroup>

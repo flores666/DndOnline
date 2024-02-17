@@ -91,6 +91,7 @@ public class LobbyService : ILobbyService
             .Include(w => w.Players)
             .Include(w => w.Status)
             .Include(w => w.Entities)
+            .Include(w => w.Maps)
             .FirstOrDefault(w => w.Id == id);
     }
 

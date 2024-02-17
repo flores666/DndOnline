@@ -43,8 +43,6 @@ html * {
 }
 
 main {
-    display: grid;
-    grid-template-columns: 81.6% 18.4%;
     height: 100%;
     margin: 0;
     padding: 0;
@@ -62,31 +60,75 @@ main {
     all: unset;
 }
 
-.container {
+.game {
     background-color: var(--darker);
 }
 
-.tools {
-    background-color: var(--dark);
-    min-height: 100%;
+.container {
+    display: grid;
+    grid-template-columns: 80% 20%;
+    height: 100%;
 }
 
 .top {
-    padding: 8px;
-    margin: 0;
-    display: flex;
-    border-bottom: var(--border);
-    justify-content: end;
+    display: grid;
+    grid-template-columns: 80% 20%;
+    height: 2.6em;
+    vertical-align: middle;
+    
+    .right {
+        padding: 8px 8px 0 0;
+        margin: 0;
+        display: flex;
+        gap: 4px;
+        border-bottom: var(--border);
+        justify-content: end;
+
+        .exit {
+            margin: 0;
+            padding: 0;
+        }
+
+        .exit img {
+            height: 1.5em;
+            width: 1.5em;
+        }
+    }
+    
+    .left {
+        display: flex;
+        gap: 4px;
+        overflow: scroll;
+        
+        .tab {
+            text-align: center;
+            vertical-align: middle;
+            width: 5em;
+            cursor: pointer;
+        }
+        
+        .tab p {
+            margin: 0.65em;
+        }
+        
+        .selected {
+            cursor: default;
+            background-color: var(--dark);
+        }
+        
+        .tab:hover {
+            background-color: var(--dark);
+        }
+    }
 }
 
-.exit {
-    margin: 0;
-    padding: 0;
+.left::-webkit-scrollbar {
+    display: none;
 }
 
-.exit img {
-    height: 1.5em;
-    width: 1.5em;
+.tools {
+    background-color: var(--darker);
+    min-height: 100%;
 }
 
 ul, li {

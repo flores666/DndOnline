@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    let container = $('.container');
+    let container = $('.game');
     const maxFPS = 30;
     // Задаем начальный масштаб
     let startScale = {x: 1, y: 1};
@@ -139,8 +139,8 @@ function createGrid(num) {
 }
 
 // Базовое пустое модальное окно.
-// Родитель - .modal, конент - .modal-content. 
-// Изначально по центре
+// Родитель - .modal, контент - .modal-content. 
+// Изначально по центру
 function createBaseModal() {
     let modal = document.createElement('div');
     let modalContent = document.createElement('div');
@@ -183,8 +183,8 @@ $(document).on('change', '.input-file input[type=file]', function () {
                 '</div>';
             $files_list.append(new_file_input);
         }
-    }
-    ;
+    };
+    
     this.files = dt.files;
 });
 
