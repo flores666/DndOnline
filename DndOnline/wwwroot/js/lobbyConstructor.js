@@ -89,11 +89,11 @@ function validateBaseForm(form) {
         result = false;
     }
 
-    let description = $(form).find('[name="Description"]');
+    let description = $(form).find('[name="Description"]')[0];
     if (description != null) {
         let descLabel = $(form).getLabelValue('Description');
         
-        if (description.val().length > 5000) {
+        if (description.value.length > 5000) {
             if (spans.length == 0) {
                 alert.text(`Поле \"${descLabel}\" имеет недопустимое количество символов`);
                 description.parent().after(alert);

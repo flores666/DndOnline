@@ -12,8 +12,8 @@ public class DndAppDbContext : DbContext
 
     public DbSet<Entity> Entities { get; set; }
     public DbSet<Location> Locations { get; set; }
-    public DbSet<LobbyMap> LobbyMaps { get; set; }
     public DbSet<Picture> Pictures { get; set; }
+    public DbSet<Scene> Scenes { get; set; }
 
     public DndAppDbContext()
     {
@@ -25,7 +25,7 @@ public class DndAppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        #region Locations
+        /*#region Locations
 
         modelBuilder
             .Entity<Entity>()
@@ -53,10 +53,10 @@ public class DndAppDbContext : DbContext
         #region MapsInLobby
 
         modelBuilder
-            .Entity<Map>()
+            .Entity<Location>()
             .HasMany(c => c.Lobbies)
             .WithMany(s => s.Maps)
-            .UsingEntity<LobbyMap>(
+            .UsingEntity<MapLocations>(
                 j => j
                     .HasOne(pt => pt.Lobby)
                     .WithMany(p => p.LobbyMaps)
@@ -71,7 +71,7 @@ public class DndAppDbContext : DbContext
                     j.ToTable("LobbyMaps");
                 });
 
-        #endregion
+        #endregion*/
         
         #region LobbyStatusDefaultValues
 

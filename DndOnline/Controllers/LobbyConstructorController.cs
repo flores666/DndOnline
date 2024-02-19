@@ -32,7 +32,6 @@ public class LobbyConstructorController : Controller
 
         var model = new LobbyFormViewModel
         {
-            Id = Guid.NewGuid(),
             Master = userName,
             Name = userName + "`s game"
         };
@@ -160,7 +159,7 @@ public class LobbyConstructorController : Controller
         var response = new ResponseModel();
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
-        if (!string.IsNullOrEmpty(model.Name) && !string.IsNullOrEmpty(model.FilePath))
+        if (!string.IsNullOrEmpty(model.Name))
         {
             response = await _lobbyService.AddMapAsync(new Guid(lobbyId), model);
         }

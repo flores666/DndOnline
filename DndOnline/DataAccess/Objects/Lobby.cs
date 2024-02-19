@@ -14,10 +14,8 @@ public class Lobby
     public int MaxPlayers { get; set; }
     public Guid MasterId { get; set; }
     public List<User> Players { get; set; } 
-    public IEnumerable<Entity> Entities { get; set; } = new List<Entity>();
-    public IEnumerable<Map> Maps { get; set; } = new List<Map>();
-    public IEnumerable<Location> EntityLocations { get; set; } = new List<Location>();
-    public IEnumerable<LobbyMap> LobbyMaps { get; set; } = new List<LobbyMap>();
+    public ICollection<Entity> Entities { get; set; } = new List<Entity>();
+    public ICollection<Location> Maps { get; set; } = new List<Location>();
 
     public Lobby()
     {

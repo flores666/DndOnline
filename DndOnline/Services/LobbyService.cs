@@ -27,7 +27,7 @@ public class LobbyService : ILobbyService
 
         var lobby = new Lobby()
         {
-            Id = model.Id == Guid.Empty ? new Guid() : model.Id,
+            Id = model.Id == Guid.Empty ? Guid.NewGuid() : model.Id,
             Name = model.Name,
             MasterId = new Guid(masterId),
             MaxPlayers = model.MaxPlayers,
@@ -185,38 +185,37 @@ public class LobbyService : ILobbyService
 
         var data = result.Data as FileModel;
         var path = data.RelativePath;
+        var picId = Guid.NewGuid();
 
-        var entity = new EntityViewModel
+        var entity = new Entity
         {
+            Id = Guid.NewGuid(),
             Name = model.Name,
             Description = model.Description,
-            FilePath = path
+            Picture = _db.Pictures.FirstOrDefault(w => w.Path == path) ??
+                      new Picture
+                      {
+                          Id = picId,
+                          Path = path,
+                          UserId = userId
+                      },
+            PictureId = picId,
+            UserId = userId
         };
 
-        var picId = new Guid();
+        _db.Entities.Add(entity);
+        var lobby = _db.Lobbies
+            .Include(lobby => lobby.Entities)
+            .FirstOrDefault(w => w.Id == lobbyId);
+        lobby?.Entities.Add(entity);
 
-        _db.Locations.Add(new()
-        {
-            Entity = new Entity
-            {
-                Id = new Guid(),
-                Name = entity.Name,
-                Description = entity.Description,
-                Picture = _db.Pictures.FirstOrDefault(w => w.Path == entity.FilePath) ??
-                          new Picture
-                          {
-                              Id = picId,
-                              Path = entity.FilePath,
-                              UserId = userId
-                          },
-                UserId = userId
-            },
-            LobbyId = lobbyId
-        });
-
+        _db.Lobbies.Update(lobby);
         var res = await _db.SaveChangesAsync();
-
-        if (res > 0) response.SetSuccess(entity);
+        if (res > 0)
+        {
+            model.FilePath = path;
+            response.SetSuccess(model);
+        }
 
         return response;
     }
@@ -231,46 +230,59 @@ public class LobbyService : ILobbyService
 
         var data = result.Data as FileModel;
         var path = data.RelativePath;
-
-        var map = new MapViewModel
+        var locId = Guid.NewGuid();
+        var location = new Location()
         {
+            Id = locId,
             Name = model.Name,
-            Description = model.Description,
-            FilePath = path,
-            // UserId = userId
+            Path = path,
+            UserId = userId
         };
 
-        _db.LobbyMaps.Add(new()
-        {
-            LobbyId = lobbyId,
-            Map = new()
-            {
-                Id = new Guid(),
-                Name = map.Name,
-            },
-        });
+        _db.Locations.Add(location);
+        var lobby = _db.Lobbies
+            .Include(lobby => lobby.Maps)
+            .FirstOrDefault(w => w.Id == lobbyId);
+        lobby?.Maps.Add(location);
+        _db.Lobbies.Update(lobby);
 
         var res = await _db.SaveChangesAsync();
-
-        if (res > 0) response.SetSuccess(map);
+        if (res > 0)
+        {
+            model.FilePath = path;
+            response.SetSuccess(model);
+        }
 
         return response;
     }
 
     public List<EntityViewModel> GetEntities(Guid lobbyId)
     {
-        return _db.Locations.Where(w => w.LobbyId == lobbyId)
-            .Select(s => new EntityViewModel
-            {
-                Name = s.Entity.Name,
-                Description = s.Entity.Description,
-                FilePath = s.Entity.Picture.Path
-            })
-            .ToList();
+        var entities = _db.Lobbies
+            .Include(lobby => lobby.Entities)
+            .ThenInclude(entity => entity.Picture)
+            .FirstOrDefault(w => w.Id == lobbyId)?
+            .Entities;
+
+        return entities?.Select(s => new EntityViewModel
+        {
+            Name = s.Name,
+            Description = s.Description,
+            FilePath = s.Picture.Path
+        }).ToList() ?? new List<EntityViewModel>();
     }
 
     public List<MapViewModel> GetMaps(Guid lobbyId)
     {
-        throw new NotImplementedException();
+        var maps = _db.Lobbies
+            .Include(lobby => lobby.Maps)
+            .FirstOrDefault(w => w.Id == lobbyId)?.Maps;
+
+        return maps?.Select(s => new MapViewModel
+            {
+                Name = s.Name,
+                FilePath = s.Path
+            })
+            .ToList() ?? new List<MapViewModel>();
     }
 }

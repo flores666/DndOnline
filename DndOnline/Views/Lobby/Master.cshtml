@@ -8,7 +8,7 @@
     <div class="left tabs">
         @foreach (var item in Model.Maps)
         {
-            <div class="tab nav-scene" data-src="@item.Path">
+            <div class="tab nav-scene" data-src="/@item.Path">
                 <p>
                     @(item.Name.Length > 20 ? item.Name.Substring(0, 20) : item.Name)
                 </p>

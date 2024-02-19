@@ -1,11 +1,14 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
 namespace DndOnline.DataAccess.Objects;
 
 public class Location
 {
-    public Guid EntityId { get; set; }
-    public Entity Entity { get; set; }
-    public Guid LobbyId { get; set; }
-    public Lobby Lobby { get; set; }
-    public double? X { get; set; }
-    public double? Y { get; set; }
+    public Guid Id { get; set; }
+    [ForeignKey("User")]
+    public Guid UserId { get; set; }
+    public User User { get; set; }
+    public string? Name { get; set; }
+    public string Path { get; set; }
+    public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
 }
