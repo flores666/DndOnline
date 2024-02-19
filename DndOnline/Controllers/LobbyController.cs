@@ -42,6 +42,6 @@ public class LobbyController : Controller
 
         HttpContext.Session.SetString("lobbyId", id.ToString());
         ViewBag.Title = lobby.Name;
-        return lobby.MasterId == new Guid(userId) ? View("LobbyMaster", lobby) : View(lobby);
+        return lobby.MasterId == new Guid(userId) ? View("Master", lobby) : View(lobby);
     }
 }
