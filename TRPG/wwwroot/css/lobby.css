@@ -66,13 +66,13 @@ main {
 
 .container {
     display: grid;
-    grid-template-columns: 80% 20%;
+    grid-template-columns: 82% 18%;
     height: 100%;
 }
 
 .top {
     display: grid;
-    grid-template-columns: 80% 20%;
+    grid-template-columns: 82% 18%;
     height: 2.6em;
     vertical-align: middle;
     

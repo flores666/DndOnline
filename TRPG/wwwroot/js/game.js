@@ -1,6 +1,20 @@
 $(document).ready(function () {
-    let container = $('.game');
+    let game = $('.game');
     const maxFPS = 30;
+    let app = new PIXI.Application({
+        width: game.innerWidth(),
+        height: game.innerHeight(),
+        antialias: true,
+        maxFPS: maxFPS
+    });
+
+    game.append(app.view);
+
+    processInterface(game, app);
+    processGame(game, app);
+});
+
+function processGame(container, app) {
     // Задаем начальный масштаб
     let startScale = {x: 1, y: 1};
 
@@ -9,13 +23,6 @@ $(document).ready(function () {
     let prevX = 0;
     let prevY = 0;
 
-    let app = new PIXI.Application({
-        width: container.innerWidth(),
-        height: container.innerHeight(),
-        antialias: true,
-        maxFPS: maxFPS
-    });
-
     container.on('resize', function () {
         app.renderer.resize(container.innerWidth(), container.innerHeight());
     })
@@ -23,7 +30,6 @@ $(document).ready(function () {
     let grid = createGrid(50);
 
     app.stage.addChild(grid);
-    container.append(app.view);
 
     app.view.addEventListener('mousedown', (event) => {
         isSceneDragging = true;
@@ -35,14 +41,14 @@ $(document).ready(function () {
         isSceneDragging = false;
     });
 
-    app.view.addEventListener('mousemove', (event) => drag(event));
+    app.view.addEventListener('mousemove', (event) => dragScene(event));
 
     // Добавляем обработчик события колеса мыши для зума
-    app.view.addEventListener('wheel', (event) => scale(event));
+    app.view.addEventListener('wheel', (event) => zoomScene(event));
 
     // Создаем контейнер для хранения изображений
-    let imagesContainer = new PIXI.Container();
-    app.stage.addChild(imagesContainer);
+    // let imagesContainer = new PIXI.Container();
+    // app.stage.addChild(imagesContainer);
 
     // Добавляем обработчики событий для перетаскивания изображений
     app.view.addEventListener('dragover', (event) => {
@@ -52,7 +58,7 @@ $(document).ready(function () {
     app.view.addEventListener('drop', (event) => processFilePasting(event));
 
     //перемещение по сцене курсором
-    function drag(event) {
+    function dragScene(event) {
         if (isSceneDragging) {
             const deltaX = event.clientX - prevX;
             const deltaY = event.clientY - prevY;
@@ -70,7 +76,7 @@ $(document).ready(function () {
     }
 
     // обработка зума
-    function scale(event) {
+    function zoomScene(event) {
         // Определяем направление вращения колеса мыши (вверх или вниз)
         const delta = event.deltaY > 0 ? -0.1 : 0.1;
 
@@ -116,7 +122,61 @@ $(document).ready(function () {
             }
         })
     }
-});
+}
+
+function processInterface(container, app) {
+    $(document).on('click', '.tab', function (event) {
+        if ($(this).hasClass('selected') || !$(this).hasClass('nav-scene')) return;
+
+        let selected = Array.from($('.tabs > .tab')).find(item => item.classList.contains('selected'));
+        $(selected).removeClass('selected');
+
+        $(this).addClass('selected');
+
+        let bcg = PIXI.Sprite.from(this.dataset.src);
+        app.stage.addChild(bcg);
+
+    });
+    
+    $('.export').on('click', async function () {
+        let raw = getSceneData();
+        let json = JSON.stringify(raw, replacerFunc());
+        //await sendRequestAsync('POST', '', JSON.stringify(data));
+
+        app.stage.children.forEach(child => child instanceof PIXI.Graphics ? child.destroy() : child);
+        let data = JSON.parse(json);
+        
+        //restoreScene(data);
+    });
+
+    function getSceneData() {
+        let sceneData = {};
+
+        sceneData.graphics = [];
+        app.stage.children.forEach(child => {
+            if (child instanceof PIXI.Sprite) {
+                sceneData.graphics.push({
+                    texture: child.texture, // Сохраняем текстуру спрайта
+                    position: {x: child.x, y: child.y}, // Сохраняем позицию спрайта
+                    // Здесь можно добавить другие свойства спрайта, которые вы хотите сохранить
+                });
+            }
+        });
+
+        return sceneData;
+    }
+
+    function restoreScene(sceneData) {
+        // спрайты
+        sceneData.graphics.forEach(spriteData => {
+            let texture = PIXI.Texture.from(spriteData.texture.baseTexture.cacheId);
+            let sprite = new PIXI.Sprite(texture);
+            sprite.position.set(spriteData.position.x, spriteData.position.y);
+            app.stage.addChild(sprite);
+        });
+    }
+
+}
 
 // разметка
 function createGrid(num) {
@@ -184,7 +244,7 @@ $(document).on('change', '.input-file input[type=file]', function () {
             $files_list.append(new_file_input);
         }
     };
-    
+
     this.files = dt.files;
 });
 
@@ -279,3 +339,16 @@ async function compressImage(file, maxSizeInBytes, callback) {
         reader.readAsDataURL(file);
     });
 }
+
+const replacerFunc = () => {
+    const visited = new WeakSet();
+    return (key, value) => {
+        if (typeof value === "object" && value !== null) {
+            if (visited.has(value)) {
+                return;
+            }
+            visited.add(value);
+        }
+        return value;
+    };
+};

@@ -1,23 +1,26 @@
-@model DndOnline.DataAccess.Objects.Lobby
+@model TRPG.DataAccess.Objects.Lobby
 
 @{
     Layout = "_LobbyLayout";
 }
 
 <div class="top">
-    <div class="left">
+    <div class="left tabs">
         @foreach (var item in Model.Maps)
         {
-            <div class="tab selected">
+            <div class="tab nav-scene" data-src="@item.Path">
                 <p>
                     @(item.Name.Length > 20 ? item.Name.Substring(0, 20) : item.Name)
                 </p>
             </div>
         }
-        <div class="tab">
+        <div class="tab selected">
             <p>
-                Дом
+                Болото
             </p>
+        </div>
+        <div class="tab export">
+            <p>Экспорт</p>
         </div>
     </div>
     <div class="right">
