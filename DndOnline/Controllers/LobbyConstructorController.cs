@@ -32,7 +32,7 @@ public class LobbyConstructorController : Controller
 
         var model = new LobbyFormViewModel
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Master = userName,
             Name = userName + "`s game"
         };
@@ -128,7 +128,7 @@ public class LobbyConstructorController : Controller
             {
                 Name = s.Name,
                 Description = s.Description,
-                // FilePath = s.RelativePath
+                FilePath = s.FilePath
             }).ToList();
         }
 
@@ -137,11 +137,44 @@ public class LobbyConstructorController : Controller
 
     public PartialViewResult NewMap()
     {
-        return PartialView("Partial/NewMap");
+        var model = new List<MapViewModel>();
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
+
+        var draft = _lobbyService.GetMaps(new Guid(lobbyId));
+
+        if (draft != null)
+        {
+            model = draft.Select(s => new MapViewModel()
+            {
+                Name = s.Name,
+                FilePath = s.FilePath
+            }).ToList();
+        }
+
+        return PartialView("Partial/NewMap", model);
+    }
+
+    [HttpPost]
+    public async Task<ResponseModel> NewMap(MapViewModel model)
+    {
+        var response = new ResponseModel();
+        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
+
+        if (!string.IsNullOrEmpty(model.Name) && !string.IsNullOrEmpty(model.FilePath))
+        {
+            response = await _lobbyService.AddMapAsync(new Guid(lobbyId), model);
+        }
+
+        return response;
     }
 
     public PartialViewResult EntityPartialForm()
     {
         return PartialView("Partial/EntityPartialView");
+    }
+
+    public PartialViewResult MapPartialForm()
+    {
+        return PartialView("Partial/MapPartialView");
     }
 }

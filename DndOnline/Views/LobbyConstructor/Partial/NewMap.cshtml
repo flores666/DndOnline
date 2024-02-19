@@ -1,0 +1,36 @@
+@model List<MapViewModel>
+@{
+    var defaultImgPath = "Content/default.png";
+}
+
+<div id="new-map" class="lobby-creation-item-container">
+    <div id="add-map" class="lobby-creation-item card card3d new-item">
+        <p>+</p>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="lobby-creation-item card-width card3d" title="Нажмите чтобы увидеть подробное описание">
+            <div class="lobby-creation-item-name d-flex">
+                <p>@item.Name</p>
+            </div>
+
+            <div class="lobby-creation-item-file">
+                <img src="@(Url.Content(item.FilePath) ?? defaultImgPath)" alt="img"/>
+            </div>
+        </div>
+    }
+
+    <div class="lobby-creation-item card card3d" title="Нажмите чтобы увидеть подробное описание">
+        <div class="lobby-creation-item-name d-flex">
+            <p>Болота</p>
+        </div>
+
+        <div class="lobby-creation-item-file">
+            <img src="@(Url.Content(defaultImgPath))" alt="img"/>
+        </div> 
+    </div>
+</div>
+
+<script>
+    handleCard3d(2.5);
+</script>

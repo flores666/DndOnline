@@ -126,6 +126,22 @@ main {
     background-color: var(--darker);
 }
 
+#new-map {
+    .card {
+        width: 36.5em !important;
+        height: 28em;
+    }
+
+    .lobby-creation-item-file {
+        width: 100%;
+        
+        img {
+            max-height: 20em;
+            max-width: 22em;
+        }
+    }
+}
+
 a:hover {
     color: white;
 }
