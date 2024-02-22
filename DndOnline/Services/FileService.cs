@@ -33,7 +33,7 @@ public class FileService : IFileService
         var allowedToSave = true;
 
         //размер не больше 500кб
-        if (file.Length > int.Parse(_fileMaxSize))
+        if (file.Length > int.Parse(_fileMaxSize) && type != "map")
         {
             result.Message = $"Размер файла {file.FileName} превышает допустимый.";
             allowedToSave = false;

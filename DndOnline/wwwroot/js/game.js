@@ -140,8 +140,12 @@ function processInterface(container, app) {
     
     $('.export').on('click', async function () {
         let raw = getSceneData();
-        let json = JSON.stringify(raw, replacerFunc());
-        //await sendRequestAsync('POST', '', JSON.stringify(data));
+        let json = JSON.stringify(raw);
+        let fd = new FormData();
+        fd.append('json', json);
+
+        let res = await fetch('/lobby/saveScene', {method: 'POST', body: fd});
+        debugger
 
         app.stage.children.forEach(child => child instanceof PIXI.Graphics ? child.destroy() : child);
         let data = JSON.parse(json);
@@ -151,15 +155,14 @@ function processInterface(container, app) {
 
     function getSceneData() {
         let sceneData = {};
+        let sprite = {};
 
         sceneData.graphics = [];
         app.stage.children.forEach(child => {
             if (child instanceof PIXI.Sprite) {
-                sceneData.graphics.push({
-                    texture: child.texture, // Сохраняем текстуру спрайта
-                    position: {x: child.x, y: child.y}, // Сохраняем позицию спрайта
-                    // Здесь можно добавить другие свойства спрайта, которые вы хотите сохранить
-                });
+                sprite.texture = child.texture.baseTexture.cacheId;
+                sprite.position = { x: child.x, y: child.y };
+                sceneData.graphics.push(sprite);
             }
         });
 
@@ -175,7 +178,6 @@ function processInterface(container, app) {
             app.stage.addChild(sprite);
         });
     }
-
 }
 
 // разметка
@@ -283,6 +285,7 @@ async function sendRequestAsync(method, url, data) {
                 ajaxOptions.processData = false;
                 ajaxOptions.contentType = false;
             }
+            ajaxOptions.contentType = "application/json";
             ajaxOptions.data = data;
         }
 

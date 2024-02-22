@@ -5,7 +5,6 @@ using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 
 namespace DndOnline.Controllers;
 
@@ -24,8 +23,10 @@ public class LobbyController : Controller
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         ViewBag.Title = "Лобби";
+        TempData.Keep("lobbyId");
     }
 
+    [HttpGet("/lobby/{id?}")]
     public IActionResult Index(Guid id)
     {
         var lobby = _lobbyService.GetLobbyFull(id);
@@ -41,7 +42,17 @@ public class LobbyController : Controller
         if (!result.IsSuccess) RedirectToAction("Index", "Home");
 
         HttpContext.Session.SetString("lobbyId", id.ToString());
+        TempData["lobbyId"] = id;
         ViewBag.Title = lobby.Name;
         return lobby.MasterId == new Guid(userId) ? View("Master", lobby) : View(lobby);
+    }
+
+    [HttpPost]
+    public async Task<ResponseModel> SaveScene(string json)
+    {
+        var lobbyId = new Guid(TempData["lobbyId"].ToString());
+        
+        ResponseModel response = await _lobbyService.SaveSceneAsync(lobbyId, json);
+        return response;
     }
 }

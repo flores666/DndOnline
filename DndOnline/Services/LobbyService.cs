@@ -285,4 +285,39 @@ public class LobbyService : ILobbyService
             })
             .ToList() ?? new List<MapViewModel>();
     }
+
+    /// <summary>
+    /// Сохранить состояние сцены
+    /// </summary>
+    /// <param name="id">id лобби</param>
+    /// <param name="json"></param>
+    /// <returns></returns>
+    public async Task<ResponseModel> SaveSceneAsync(Guid id, string json)
+    {
+        var response = new ResponseModel();
+
+        var scene = _db.Scenes
+            .FirstOrDefault(w => w.LobbyId == id);
+
+        if (scene != null)
+        {
+            scene.Data = json;
+            _db.Scenes.Update(scene);
+        }
+        else
+        {
+            await _db.Scenes.AddAsync(new Scene
+            {
+                Id = Guid.NewGuid(),
+                LobbyId = id,
+                Data = json
+            });
+        }
+
+        var res = await _db.SaveChangesAsync();
+
+        if (res > 0) response.SetSuccess();
+        
+        return response;
+    }
 }

@@ -32,7 +32,7 @@ $(document).on('submit', '.creation-form', async function (event) {
     let model = new FormData(form);
 
     let img = $(form).find('[name="File"]')[0].files[0];
-    if (img != null) {
+    if (img != null && form.id != 'map-form') {
         await compressImage(img, 512 * 1024, function (compressedFile) {
             let newFile = new File([compressedFile], img.name, {type: 'image/jpeg', lastModified: Date.now()});
             model.set('File', newFile);
