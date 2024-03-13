@@ -10,5 +10,5 @@ public class Location
     public User User { get; set; }
     public string? Name { get; set; }
     public string Path { get; set; }
-    public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
+    // public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
 }

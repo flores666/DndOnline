@@ -13,5 +13,5 @@ public class Entity
     [ForeignKey("User")]
     public Guid UserId { get; set; }
     public User User { get; set; }
-    public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
+    // public IEnumerable<Lobby> Lobbies { get; set; } = new List<Lobby>();
 }

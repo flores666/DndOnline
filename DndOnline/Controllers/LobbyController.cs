@@ -44,15 +44,21 @@ public class LobbyController : Controller
         HttpContext.Session.SetString("lobbyId", id.ToString());
         TempData["lobbyId"] = id;
         ViewBag.Title = lobby.Name;
-        return lobby.MasterId == new Guid(userId) ? View("Master", lobby) : View(lobby);
+        var isMaster = lobby.MasterId == new Guid(userId);
+
+        if (!isMaster) return View(lobby);
+        
+        ViewBag.Tokens = _lobbyService.GetEntities(Guid.Parse(userId));
+        return View("Master", lobby);
+
     }
 
     [HttpPost]
-    public async Task<ResponseModel> SaveScene(string json)
+    public async Task<ResponseModel> SaveScene(string json, Guid sceneId)
     {
         var lobbyId = new Guid(TempData["lobbyId"].ToString());
         
-        ResponseModel response = await _lobbyService.SaveSceneAsync(lobbyId, json);
+        ResponseModel response = await _lobbyService.SaveSceneAsync(sceneId, json, lobbyId);
         return response;
     }
 }

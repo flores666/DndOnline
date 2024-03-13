@@ -138,16 +138,17 @@ function processInterface(container, app) {
 
     });
     
-    $('.export').on('click', async function () {
+    $('.export-scene').on('click', async function () {
         let raw = getSceneData();
         let json = JSON.stringify(raw);
+        let sceneId = $('.selected')[0].dataset.id;
         let fd = new FormData();
         fd.append('json', json);
+        fd.append('sceneId', sceneId);
 
         let res = await fetch('/lobby/saveScene', {method: 'POST', body: fd});
-        debugger
 
-        app.stage.children.forEach(child => child instanceof PIXI.Graphics ? child.destroy() : child);
+        app.stage.children.forEach(child => child instanceof PIXI.Sprite ? child.destroy() : child);
         let data = JSON.parse(json);
         
         //restoreScene(data);

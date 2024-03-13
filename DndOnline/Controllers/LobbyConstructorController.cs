@@ -50,7 +50,12 @@ public class LobbyConstructorController : Controller
         }
         else
         {
-            _lobbyService.CreateLobby(model);
+            var res = _lobbyService.CreateLobby(model);
+            if (res.IsSuccess)
+            {
+                model = res.Data as LobbyFormViewModel;
+            }
+            else return Redirect("/");
         }
 
         HttpContext.Session.SetString("DraftLobbyName", model.Name);
@@ -89,7 +94,7 @@ public class LobbyConstructorController : Controller
                 return View("Index", model);
             }
 
-            var lobby = response.Data as Lobby;
+            var lobby = response.Data as LobbyFormViewModel;
             return Redirect($"/lobby/{lobby.Id}");
         }
         else
@@ -117,7 +122,7 @@ public class LobbyConstructorController : Controller
     public IActionResult NewEntity()
     {
         var model = new List<EntityViewModel>();
-        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
+        var lobbyId = User.Claims.FirstOrDefault(w => w.Type == "id").Value;
 
         var draft = _lobbyService.GetEntities(new Guid(lobbyId));
 
@@ -139,7 +144,7 @@ public class LobbyConstructorController : Controller
         var model = new List<MapViewModel>();
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
-        var draft = _lobbyService.GetMaps(new Guid(lobbyId));
+        var draft = _lobbyService.GetScenes(new Guid(lobbyId));
 
         if (draft != null)
         {

@@ -14,13 +14,14 @@ public class Lobby
     public int MaxPlayers { get; set; }
     public Guid MasterId { get; set; }
     public List<User> Players { get; set; } 
-    public ICollection<Entity> Entities { get; set; } = new List<Entity>();
-    public ICollection<Location> Maps { get; set; } = new List<Location>();
+    // public ICollection<Entity> Entities { get; set; } = new List<Entity>();
+    public ICollection<Scene> Scenes { get; set; }
 
     public Lobby()
     {
         MaxPlayers = 6;
         StatusId = LobbyStatusType.Draft;
         Players = new List<User>();
+        Scenes = new List<Scene>();
     }
 }

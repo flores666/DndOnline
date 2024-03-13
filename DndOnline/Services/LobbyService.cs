@@ -59,7 +59,13 @@ public class LobbyService : ILobbyService
         }
 
         var res = _db.SaveChanges();
-        if (res > 0) response.SetSuccess(lobby);
+        if (res > 0) response.SetSuccess(new LobbyFormViewModel
+        {
+            Id = lobby.Id,
+            Description = lobby.Description,
+            Name = lobby.Name,
+            MaxPlayers = lobby.MaxPlayers,
+        });
 
         return response;
     }
@@ -90,8 +96,8 @@ public class LobbyService : ILobbyService
         return _db.Lobbies
             .Include(w => w.Players)
             .Include(w => w.Status)
-            .Include(w => w.Entities)
-            .Include(w => w.Maps)
+            // .Include(w => w.Entities)
+            .Include(w => w.Scenes)
             .FirstOrDefault(w => w.Id == id);
     }
 
@@ -204,12 +210,12 @@ public class LobbyService : ILobbyService
         };
 
         _db.Entities.Add(entity);
-        var lobby = _db.Lobbies
+        /*var lobby = _db.Lobbies
             .Include(lobby => lobby.Entities)
             .FirstOrDefault(w => w.Id == lobbyId);
-        lobby?.Entities.Add(entity);
+        lobby?.Entities.Add(entity);*/
 
-        _db.Lobbies.Update(lobby);
+        // _db.Lobbies.Update(lobby);
         var res = await _db.SaveChangesAsync();
         if (res > 0)
         {
@@ -240,11 +246,6 @@ public class LobbyService : ILobbyService
         };
 
         _db.Locations.Add(location);
-        var lobby = _db.Lobbies
-            .Include(lobby => lobby.Maps)
-            .FirstOrDefault(w => w.Id == lobbyId);
-        lobby?.Maps.Add(location);
-        _db.Lobbies.Update(lobby);
 
         var res = await _db.SaveChangesAsync();
         if (res > 0)
@@ -256,13 +257,10 @@ public class LobbyService : ILobbyService
         return response;
     }
 
-    public List<EntityViewModel> GetEntities(Guid lobbyId)
+    public List<EntityViewModel> GetEntities(Guid userId)
     {
-        var entities = _db.Lobbies
-            .Include(lobby => lobby.Entities)
-            .ThenInclude(entity => entity.Picture)
-            .FirstOrDefault(w => w.Id == lobbyId)?
-            .Entities;
+        var entities = _db.Entities
+            .Where(w => w.UserId == userId);
 
         return entities?.Select(s => new EntityViewModel
         {
@@ -272,32 +270,32 @@ public class LobbyService : ILobbyService
         }).ToList() ?? new List<EntityViewModel>();
     }
 
-    public List<MapViewModel> GetMaps(Guid lobbyId)
+    public List<MapViewModel> GetScenes(Guid lobbyId)
     {
         var maps = _db.Lobbies
-            .Include(lobby => lobby.Maps)
-            .FirstOrDefault(w => w.Id == lobbyId)?.Maps;
+            .Include(lobby => lobby.Scenes)
+            .FirstOrDefault(w => w.Id == lobbyId)?.Scenes;
 
         return maps?.Select(s => new MapViewModel
             {
+                
                 Name = s.Name,
-                FilePath = s.Path
             })
             .ToList() ?? new List<MapViewModel>();
     }
 
     /// <summary>
-    /// Сохранить состояние сцены
+    /// Сохранить состояние сцены. Создает новую либо обновляет текущую
     /// </summary>
-    /// <param name="id">id лобби</param>
-    /// <param name="json"></param>
+    /// <param name="id">id сцены</param>
+    /// <param name="json">json сцены</param>
     /// <returns></returns>
-    public async Task<ResponseModel> SaveSceneAsync(Guid id, string json)
+    public async Task<ResponseModel> SaveSceneAsync(Guid id, string json, Guid lobbyId)
     {
         var response = new ResponseModel();
 
         var scene = _db.Scenes
-            .FirstOrDefault(w => w.LobbyId == id);
+            .FirstOrDefault(w => w.Id == id);
 
         if (scene != null)
         {
@@ -309,7 +307,7 @@ public class LobbyService : ILobbyService
             await _db.Scenes.AddAsync(new Scene
             {
                 Id = Guid.NewGuid(),
-                LobbyId = id,
+                LobbyId = lobbyId,
                 Data = json
             });
         }

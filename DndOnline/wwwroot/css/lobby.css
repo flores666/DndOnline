@@ -80,16 +80,17 @@ main {
         padding: 8px 8px 0 0;
         margin: 0;
         display: flex;
-        gap: 4px;
+        gap: 6px;
         border-bottom: var(--border);
         justify-content: end;
 
-        .exit {
+        * {
             margin: 0;
             padding: 0;
+            cursor: pointer;
         }
 
-        .exit img {
+        * img {
             height: 1.5em;
             width: 1.5em;
         }
@@ -101,13 +102,20 @@ main {
         overflow: scroll;
 
         .tab {
+            display: flex;
+            justify-content: center;
             text-align: center;
+            align-items: center;
             vertical-align: middle;
             width: 5em;
             cursor: pointer;
+            
+            .plus {
+                font-size: 26px;
+            }
         }
 
-        .tab p {
+        .tab * {
             margin: 0.65em;
         }
 
@@ -152,8 +160,7 @@ ul, li {
     padding: 5px 0 0 20px;
 }
 
-.plus {
-    font-size: 26px;
+.plus, .minus {
     margin: 0;
     padding: 0;
 }
@@ -177,7 +184,7 @@ ul, li {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .modal-content {
@@ -194,10 +201,12 @@ ul, li {
 .input-file-row {
     display: inline-block;
 }
+
 .input-file {
     position: relative;
     display: inline-block;
 }
+
 .input-file span {
     position: relative;
     display: inline-block;
@@ -218,6 +227,7 @@ ul, li {
     margin: 0;
     transition: background-color 0.2s;
 }
+
 .input-file input[type=file] {
     position: absolute;
     z-index: -1;
@@ -229,7 +239,7 @@ ul, li {
 
 /* Focus */
 .input-file input[type=file]:focus + span {
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
 }
 
 /* Disabled */
@@ -244,6 +254,7 @@ ul, li {
     justify-content: center;
     align-content: center;
 }
+
 .input-file-list-item {
     display: inline-block;
     margin: 0 15px 15px;
@@ -251,9 +262,11 @@ ul, li {
     vertical-align: top;
     position: relative;
 }
+
 .input-file-list-item img {
     width: 150px;
 }
+
 .input-file-list-name {
     text-align: center;
     display: block;
@@ -261,6 +274,7 @@ ul, li {
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
 .input-file-list-remove {
     color: #000000;
     text-decoration: none;

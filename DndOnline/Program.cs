@@ -13,10 +13,10 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AuthServiceDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("default")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("default")).UseSnakeCaseNamingConvention());
 
 builder.Services.AddDbContext<DndAppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("default")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("default")).UseSnakeCaseNamingConvention());
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -30,7 +30,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
 });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 builder.Services.AddSignalR();
 

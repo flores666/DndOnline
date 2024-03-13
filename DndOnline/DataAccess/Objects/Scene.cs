@@ -5,6 +5,8 @@ namespace DndOnline.DataAccess.Objects;
 public class Scene
 {
     public Guid Id { get; set; }
+
+    public string Name { get; set; }
     
     [ForeignKey("Lobby")]
     public Guid LobbyId { get; set; }
@@ -12,7 +14,7 @@ public class Scene
     /// <summary>
     /// json сцены
     /// </summary>
-    public string Data { get; set; }
+    public string? Data { get; set; }
     /// <summary>
     /// порядковый номер
     /// </summary>
