@@ -135,7 +135,6 @@ function processInterface(container, app) {
 
         let bcg = PIXI.Sprite.from(this.dataset.src);
         app.stage.addChild(bcg);
-
     });
     
     $('.export-scene').on('click', async function () {

@@ -49,6 +49,7 @@ public class LobbyController : Controller
         if (!isMaster) return View(lobby);
         
         ViewBag.Tokens = _lobbyService.GetEntities(Guid.Parse(userId));
+        ViewBag.Maps = _lobbyService.GetMaps(Guid.Parse(userId));
         return View("Master", lobby);
 
     }

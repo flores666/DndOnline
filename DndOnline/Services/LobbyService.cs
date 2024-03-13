@@ -59,13 +59,14 @@ public class LobbyService : ILobbyService
         }
 
         var res = _db.SaveChanges();
-        if (res > 0) response.SetSuccess(new LobbyFormViewModel
-        {
-            Id = lobby.Id,
-            Description = lobby.Description,
-            Name = lobby.Name,
-            MaxPlayers = lobby.MaxPlayers,
-        });
+        if (res > 0)
+            response.SetSuccess(new LobbyFormViewModel
+            {
+                Id = lobby.Id,
+                Description = lobby.Description,
+                Name = lobby.Name,
+                MaxPlayers = lobby.MaxPlayers,
+            });
 
         return response;
     }
@@ -270,18 +271,18 @@ public class LobbyService : ILobbyService
         }).ToList() ?? new List<EntityViewModel>();
     }
 
-    public List<MapViewModel> GetScenes(Guid lobbyId)
+    public List<SceneViewModel> GetScenes(Guid lobbyId)
     {
-        var maps = _db.Lobbies
+        var scenes = _db.Lobbies
             .Include(lobby => lobby.Scenes)
             .FirstOrDefault(w => w.Id == lobbyId)?.Scenes;
 
-        return maps?.Select(s => new MapViewModel
+        return scenes?.Select(s => new SceneViewModel()
             {
-                
                 Name = s.Name,
+                Data = s.Data,
             })
-            .ToList() ?? new List<MapViewModel>();
+            .ToList() ?? new List<SceneViewModel>();
     }
 
     /// <summary>
@@ -315,7 +316,21 @@ public class LobbyService : ILobbyService
         var res = await _db.SaveChangesAsync();
 
         if (res > 0) response.SetSuccess();
-        
+
         return response;
+    }
+
+    public List<MapViewModel> GetMaps(Guid userId)
+    {
+        var maps = _db.Locations
+            .Where(w => w.UserId == userId)
+            .ToList();
+
+        return maps?.Select(s => new MapViewModel
+            {
+                Name = s.Name,
+                FilePath = s.Path,
+            })
+            .ToList() ?? new List<MapViewModel>();
     }
 }

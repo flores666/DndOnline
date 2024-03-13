@@ -51,6 +51,15 @@
                     }
                 </div>
             </ul>
+            <ul class="list-item">
+                <div class="list-header"><span class="minus"></span> Карты </div>
+                <div class="list-body">
+                    @foreach (var map in ViewBag.Maps)
+                    {
+                        <li class="list-item-child">@map.Name</li>
+                    }
+                </div>
+            </ul>
         </ul>
     </div>
 </div>

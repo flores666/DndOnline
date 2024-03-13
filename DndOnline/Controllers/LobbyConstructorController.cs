@@ -144,7 +144,7 @@ public class LobbyConstructorController : Controller
         var model = new List<MapViewModel>();
         var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
 
-        var draft = _lobbyService.GetScenes(new Guid(lobbyId));
+        var draft = _lobbyService.GetMaps(new Guid(lobbyId));
 
         if (draft != null)
         {
