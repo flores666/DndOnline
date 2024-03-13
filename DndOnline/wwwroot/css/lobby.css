@@ -291,3 +291,53 @@ ul, li {
     line-height: 16px;
     border-radius: 50%;
 }
+
+.input-field {
+    height: 1em;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    background-color: var(--dark);
+    color: var(--white);
+}
+
+.input-field:focus {
+    border-color: var(--grey);
+    outline: #ffffff thin;
+    box-shadow: 0 0 0 1px var(--grey);
+    background-color: var(--dark);
+}
+
+.input-field:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.input-field[type="text"] {
+    padding-left: 6px;
+}
+
+.form-label {
+    margin-bottom: 1em !important;
+}
+
+.form-control-lg {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.btn {
+    border: 1px solid var(--dark);
+    border-radius: 8px;
+    padding: 7px 13px;
+    background-color: var(--tekhelet);
+    color: var(--white);
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: var(--tekhelet);
+    color: var(--white);
+}

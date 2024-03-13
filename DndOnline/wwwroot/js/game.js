@@ -136,7 +136,7 @@ function processInterface(container, app) {
         let bcg = PIXI.Sprite.from(this.dataset.src);
         app.stage.addChild(bcg);
     });
-    
+
     $('.export-scene').on('click', async function () {
         let raw = getSceneData();
         let json = JSON.stringify(raw);
@@ -149,7 +149,7 @@ function processInterface(container, app) {
 
         app.stage.children.forEach(child => child instanceof PIXI.Sprite ? child.destroy() : child);
         let data = JSON.parse(json);
-        
+
         //restoreScene(data);
     });
 
@@ -161,7 +161,7 @@ function processInterface(container, app) {
         app.stage.children.forEach(child => {
             if (child instanceof PIXI.Sprite) {
                 sprite.texture = child.texture.baseTexture.cacheId;
-                sprite.position = { x: child.x, y: child.y };
+                sprite.position = {x: child.x, y: child.y};
                 sceneData.graphics.push(sprite);
             }
         });
@@ -178,6 +178,40 @@ function processInterface(container, app) {
             app.stage.addChild(sprite);
         });
     }
+
+    $('#add-scene').on('click', function () {
+        let modal = createBaseModal(35, 5);
+        $(modal).append('<div id="scene-name-label">');
+        $('#scene-name-label').css('text-align', 'center');
+        $('#scene-name-label').css('margin-bottom', '1em');
+        $('#scene-name-label').text('Введите название сцены');
+        
+        $(modal).append('<div id="scene-name-input-div">');
+        $('#scene-name-input-div').append('<input id="scene-name-input" type="text" name="sceneName" class="form-control-lg input-field"/>');
+        $('#scene-name-input-div').css('display', 'flex');
+        $('#scene-name-input-div').css('gap', '1em');
+        
+        $('#scene-name-input').css('font-size', '16px');
+        $('#scene-name-input').css('width', '80%');
+        
+        $('#scene-name-input-div').append('<button id="save-btn" class="btn">');
+        $('#save-btn').css('width', '20%');
+        $('#save-btn').css('font-size', '16px');
+        $('#save-btn').text("Сохранить");
+        
+        $('#save-btn').on('click', async function () {
+            let value = $('#scene-name-input').val();
+            let fd = new FormData();
+            
+            fd.append('name', value);
+            let response = await fetch('/lobby/createScene', {method: 'POST', body: fd});
+            let result = await response.json();
+            
+            if (response.ok && result.isSuccess) {
+                console.log('asd');
+            }
+        });
+    });
 }
 
 // разметка
@@ -202,13 +236,15 @@ function createGrid(num) {
 
 // Базовое пустое модальное окно.
 // Родитель - .modal, контент - .modal-content. 
-// Изначально по центру
-function createBaseModal() {
+// Изначально по центру. 
+// width и height измеряются в em
+function createBaseModal(width, height) {
     let modal = document.createElement('div');
     let modalContent = document.createElement('div');
     modalContent.classList.add('modal-content');
     modal.classList.add('modal');
-    modalContent.style.width = '70em';
+    modalContent.style.width = width == null ? '70em' : width + 'em';
+    modalContent.style.height = height == null ? '5em' : height + 'em';
 
     modal.appendChild(modalContent);
 
@@ -245,7 +281,8 @@ $(document).on('change', '.input-file input[type=file]', function () {
                 '</div>';
             $files_list.append(new_file_input);
         }
-    };
+    }
+    ;
 
     this.files = dt.files;
 });

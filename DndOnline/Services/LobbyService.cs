@@ -291,7 +291,7 @@ public class LobbyService : ILobbyService
     /// <param name="id">id сцены</param>
     /// <param name="json">json сцены</param>
     /// <returns></returns>
-    public async Task<ResponseModel> SaveSceneAsync(Guid id, string json, Guid lobbyId)
+    public async Task<ResponseModel> SaveSceneAsync(Guid id, string json, Guid lobbyId, string? name = null)
     {
         var response = new ResponseModel();
 
@@ -309,7 +309,8 @@ public class LobbyService : ILobbyService
             {
                 Id = Guid.NewGuid(),
                 LobbyId = lobbyId,
-                Data = json
+                Data = json,
+                Name = name ?? "сцена"
             });
         }
 

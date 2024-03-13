@@ -62,4 +62,13 @@ public class LobbyController : Controller
         ResponseModel response = await _lobbyService.SaveSceneAsync(sceneId, json, lobbyId);
         return response;
     }
+
+    [HttpPost]
+    public async Task<ResponseModel> CreateScene(string name)
+    {
+        var lobbyId = new Guid(TempData["lobbyId"].ToString());
+        
+        ResponseModel response = await _lobbyService.SaveSceneAsync(Guid.Empty, "", lobbyId, name);
+        return response;
+    }
 }

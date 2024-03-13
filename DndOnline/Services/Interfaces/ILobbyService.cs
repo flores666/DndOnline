@@ -19,6 +19,6 @@ public interface ILobbyService
     public Task<ResponseModel> AddMapAsync(Guid lobbyId, MapViewModel model);
     public List<EntityViewModel> GetEntities(Guid userId);
     public List<SceneViewModel> GetScenes(Guid lobbyId);
-    public Task<ResponseModel> SaveSceneAsync(Guid sceneId, string json, Guid lobbyId);
+    public Task<ResponseModel> SaveSceneAsync(Guid sceneId, string json, Guid lobbyId, string? name = null);
     public List<MapViewModel> GetMaps(Guid userId);
 }
