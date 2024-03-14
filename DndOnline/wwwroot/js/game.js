@@ -274,6 +274,7 @@ function processInterface(container, app) {
                 if (lastNav.length == 0) {
                     $('#add-scene').before(tab);
                 } else lastNav.after(tab);
+                
                 tab.click();
             }
         });
