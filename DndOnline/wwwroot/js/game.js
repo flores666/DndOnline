@@ -269,7 +269,11 @@ function processInterface(container, app) {
                 p.text(result.data.name);
                 tab.append(p);
                 $('.modal').remove();
-                $('.left.tabs').find('.tab.nav-scene').last().after(tab);
+                
+                let lastNav = $('.left.tabs').find('.tab.nav-scene').last();
+                if (lastNav.length == 0) {
+                    $('#add-scene').before(tab);
+                } else lastNav.after(tab);
                 tab.click();
             }
         });

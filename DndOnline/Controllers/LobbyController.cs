@@ -36,6 +36,7 @@ public class LobbyController : Controller
             return RedirectToAction("Index", "Home");
         }
 
+        lobby.Scenes = lobby.Scenes.OrderBy(o => o.Sort).ToList();
         var userId = HttpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value;
 
         var result = _lobbyService.ConnectUser(new Guid(userId), lobby);
@@ -76,7 +77,7 @@ public class LobbyController : Controller
         var response = new ResponseModel();
         var scene = await _lobbyService.GetSceneAsync(id);
         if (scene != null) response.SetSuccess(scene);
-        
+
         return response;
     }
 }
