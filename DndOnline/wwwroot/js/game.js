@@ -126,11 +126,11 @@ function processGame(container, app) {
 
 function processInterface(container, app) {
     $(document).on('click', '.nav-scene', async function (event) {
+        if ($(this).hasClass('selected') || !$(this).hasClass('nav-scene')) return;
+        
         let loader = new Loader();
         loader.show();
-
-        if ($(this).hasClass('selected') || !$(this).hasClass('nav-scene')) return;
-
+        
         let selected = Array.from($('.tabs > .tab')).find(item => item.classList.contains('selected'));
         $(selected).removeClass('selected');
 
