@@ -125,7 +125,7 @@ function processGame(container, app) {
 }
 
 function processInterface(container, app) {
-    $(document).on('click', '.tab', async function (event) {
+    $(document).on('click', '.nav-scene', async function (event) {
         let loader = new Loader();
         loader.show();
 
@@ -256,21 +256,22 @@ function processInterface(container, app) {
         $('#save-btn').text("Сохранить");
 
         $('#save-btn').on('click', async function () {
-            let loader = new Loader();
-            loader.show();
-
             let value = $('#scene-name-input').val();
             let fd = new FormData();
 
             fd.append('name', value);
             let response = await fetch('/lobby/createScene', {method: 'POST', body: fd});
             let result = await response.json();
-
+            
             if (response.ok && result.isSuccess) {
-                await changeScene(result.data.id);
+                let tab = $('<div class="tab nav-scene" data-id="' + result.data.id + '">');
+                let p = $('<p>');
+                p.text(result.data.name);
+                tab.append(p);
+                $('.modal').remove();
+                $('.left.tabs').find('.tab.nav-scene').last().after(tab);
+                tab.click();
             }
-
-            loader.hide();
         });
     });
 }
