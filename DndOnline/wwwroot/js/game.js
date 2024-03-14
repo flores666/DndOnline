@@ -125,7 +125,10 @@ function processGame(container, app) {
 }
 
 function processInterface(container, app) {
-    $(document).on('click', '.tab', function (event) {
+    $(document).on('click', '.tab', async function (event) {
+        let loader = new Loader();
+        loader.show();
+
         if ($(this).hasClass('selected') || !$(this).hasClass('nav-scene')) return;
 
         let selected = Array.from($('.tabs > .tab')).find(item => item.classList.contains('selected'));
@@ -133,11 +136,13 @@ function processInterface(container, app) {
 
         $(this).addClass('selected');
 
-        let bcg = PIXI.Sprite.from(this.dataset.src);
-        app.stage.addChild(bcg);
+        await changeScene(this.dataset.id);
+        loader.hide();
     });
 
-    $('.export-scene').on('click', async function () {
+    $('.export-scene').on('click', async () => await saveScene());
+
+    async function saveScene() {
         let raw = getSceneData();
         let json = JSON.stringify(raw);
         let sceneId = $('.selected')[0].dataset.id;
@@ -145,14 +150,15 @@ function processInterface(container, app) {
         fd.append('json', json);
         fd.append('sceneId', sceneId);
 
-        let res = await fetch('/lobby/saveScene', {method: 'POST', body: fd});
+        let response = await fetch('/lobby/saveScene', {method: 'POST', body: fd});
+        let result = await response.json();
 
-        app.stage.children.forEach(child => child instanceof PIXI.Sprite ? child.destroy() : child);
-        let data = JSON.parse(json);
+        if (response.ok && result.isSuccess) {
+            console.log('Scene saved!');
+        }
+    }
 
-        //restoreScene(data);
-    });
-
+    // Собирает и возвращает все объекты сцены
     function getSceneData() {
         let sceneData = {};
         let sprite = {};
@@ -169,14 +175,64 @@ function processInterface(container, app) {
         return sceneData;
     }
 
+    // Собирает и возвращает все объекты сцены а затем уничтожает сцену.
+    function getSceneDataAndDestroy() {
+        let sceneData = {};
+        let sprite = {};
+
+        sceneData.graphics = [];
+        app.stage.children.forEach(child => {
+            if (child instanceof PIXI.Sprite) {
+                sprite.texture = child.texture.baseTexture.cacheId;
+                sprite.position = {x: child.x, y: child.y};
+                sceneData.graphics.push(sprite);
+                child.destroy();
+            }
+        });
+
+        return sceneData;
+    }
+
+    // уничтожает все объекты сцены
+    function destroyScene() {
+        app.stage.children.forEach(child => {
+            if (child instanceof PIXI.Sprite) {
+                child.destroy();
+            }
+        });
+
+        console.log('Scene destroyed');
+    }
+
     function restoreScene(sceneData) {
         // спрайты
-        sceneData.graphics.forEach(spriteData => {
-            let texture = PIXI.Texture.from(spriteData.texture.baseTexture.cacheId);
-            let sprite = new PIXI.Sprite(texture);
-            sprite.position.set(spriteData.position.x, spriteData.position.y);
-            app.stage.addChild(sprite);
-        });
+        if (sceneData.graphics) {
+            sceneData.graphics.forEach(spriteData => {
+                let texture = PIXI.Texture.from(spriteData.texture.baseTexture.cacheId);
+                let sprite = new PIXI.Sprite(texture);
+                sprite.position.set(spriteData.position.x, spriteData.position.y);
+                app.stage.addChild(sprite);
+            });
+        }
+
+        console.log('Scene restored');
+    }
+
+    // переключить текущую сцену на новую
+    // guid сцены, хранится в dataset.id вкладки
+    async function changeScene(id) {
+        let fd = new FormData();
+        fd.append("id", id);
+
+        let response = await fetch('/lobby/getScene', {method: 'POST', body: fd});
+        let result = await response.json();
+
+        if (response.ok && result.isSuccess) {
+            let scene = result.data;
+            await saveScene();
+            destroyScene();
+            restoreScene(scene.data);
+        }
     }
 
     $('#add-scene').on('click', function () {
@@ -185,31 +241,36 @@ function processInterface(container, app) {
         $('#scene-name-label').css('text-align', 'center');
         $('#scene-name-label').css('margin-bottom', '1em');
         $('#scene-name-label').text('Введите название сцены');
-        
+
         $(modal).append('<div id="scene-name-input-div">');
         $('#scene-name-input-div').append('<input id="scene-name-input" type="text" name="sceneName" class="form-control-lg input-field"/>');
         $('#scene-name-input-div').css('display', 'flex');
         $('#scene-name-input-div').css('gap', '1em');
-        
+
         $('#scene-name-input').css('font-size', '16px');
         $('#scene-name-input').css('width', '80%');
-        
+
         $('#scene-name-input-div').append('<button id="save-btn" class="btn">');
         $('#save-btn').css('width', '20%');
         $('#save-btn').css('font-size', '16px');
         $('#save-btn').text("Сохранить");
-        
+
         $('#save-btn').on('click', async function () {
+            let loader = new Loader();
+            loader.show();
+
             let value = $('#scene-name-input').val();
             let fd = new FormData();
-            
+
             fd.append('name', value);
             let response = await fetch('/lobby/createScene', {method: 'POST', body: fd});
             let result = await response.json();
-            
+
             if (response.ok && result.isSuccess) {
-                console.log('asd');
+                await changeScene(result.data.id);
             }
+
+            loader.hide();
         });
     });
 }
@@ -321,8 +382,10 @@ async function sendRequestAsync(method, url, data) {
             if (data.getAll && data.getAll.length > 0) {
                 ajaxOptions.processData = false;
                 ajaxOptions.contentType = false;
+            } else {
+                ajaxOptions.contentType = "application/json";
             }
-            ajaxOptions.contentType = "application/json";
+
             ajaxOptions.data = data;
         }
 

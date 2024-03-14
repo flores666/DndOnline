@@ -19,7 +19,7 @@ public class LobbyController : Controller
         _lobbyService = lobbyService;
         _lobbyHubContext = lobbyHubContext;
     }
-    
+
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         ViewBag.Title = "Лобби";
@@ -30,12 +30,12 @@ public class LobbyController : Controller
     public IActionResult Index(Guid id)
     {
         var lobby = _lobbyService.GetLobbyFull(id);
-        
+
         if (lobby == null)
         {
             return RedirectToAction("Index", "Home");
         }
-        
+
         var userId = HttpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value;
 
         var result = _lobbyService.ConnectUser(new Guid(userId), lobby);
@@ -47,18 +47,17 @@ public class LobbyController : Controller
         var isMaster = lobby.MasterId == new Guid(userId);
 
         if (!isMaster) return View(lobby);
-        
+
         ViewBag.Tokens = _lobbyService.GetEntities(Guid.Parse(userId));
         ViewBag.Maps = _lobbyService.GetMaps(Guid.Parse(userId));
         return View("Master", lobby);
-
     }
 
     [HttpPost]
     public async Task<ResponseModel> SaveScene(string json, Guid sceneId)
     {
         var lobbyId = new Guid(TempData["lobbyId"].ToString());
-        
+
         ResponseModel response = await _lobbyService.SaveSceneAsync(sceneId, json, lobbyId);
         return response;
     }
@@ -67,8 +66,17 @@ public class LobbyController : Controller
     public async Task<ResponseModel> CreateScene(string name)
     {
         var lobbyId = new Guid(TempData["lobbyId"].ToString());
-        
+
         ResponseModel response = await _lobbyService.SaveSceneAsync(Guid.Empty, "", lobbyId, name);
+        return response;
+    }
+
+    public async Task<ResponseModel> GetScene(Guid id)
+    {
+        var response = new ResponseModel();
+        var scene = await _lobbyService.GetSceneAsync(id);
+        if (scene != null) response.SetSuccess(scene);
+        
         return response;
     }
 }

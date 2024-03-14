@@ -288,9 +288,9 @@ public class LobbyService : ILobbyService
     /// <summary>
     /// Сохранить состояние сцены. Создает новую либо обновляет текущую
     /// </summary>
-    /// <param name="id">id сцены</param>
+    /// <param name="id">guid сцены</param>
     /// <param name="json">json сцены</param>
-    /// <returns></returns>
+    /// <returns>объект сцены типа Scene</returns>
     public async Task<ResponseModel> SaveSceneAsync(Guid id, string json, Guid lobbyId, string? name = null)
     {
         var response = new ResponseModel();
@@ -305,18 +305,19 @@ public class LobbyService : ILobbyService
         }
         else
         {
-            await _db.Scenes.AddAsync(new Scene
+            scene = new Scene
             {
                 Id = Guid.NewGuid(),
                 LobbyId = lobbyId,
-                Data = json,
+                Data = json ?? "",
                 Name = name ?? "сцена"
-            });
+            };
+            await _db.Scenes.AddAsync(scene);
         }
 
         var res = await _db.SaveChangesAsync();
 
-        if (res > 0) response.SetSuccess();
+        if (res > 0) response.SetSuccess(scene);
 
         return response;
     }
@@ -333,5 +334,10 @@ public class LobbyService : ILobbyService
                 FilePath = s.Path,
             })
             .ToList() ?? new List<MapViewModel>();
+    }
+
+    public async Task<Scene> GetSceneAsync(Guid id)
+    {
+        return await _db.Scenes.FirstOrDefaultAsync(w => w.Id == id);
     }
 }
