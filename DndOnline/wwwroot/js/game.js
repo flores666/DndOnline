@@ -12,6 +12,7 @@ $(document).ready(function () {
 
     processInterface(game, app);
     processGame(game, app);
+    app.renderer.render(app.stage);
 });
 
 function processGame(container, app) {
@@ -55,7 +56,7 @@ function processGame(container, app) {
         event.preventDefault();
     });
 
-    app.view.addEventListener('drop', (event) => processFilePasting(event));
+    // app.view.addEventListener('drop', (event) => processFilePasting(event));
 
     //перемещение по сцене курсором
     function dragScene(event) {
@@ -125,27 +126,96 @@ function processGame(container, app) {
 }
 
 function processInterface(container, app) {
+    //Переключение между сценами
     $(document).on('click', '.nav-scene', async function (event) {
         if ($(this).hasClass('selected') || !$(this).hasClass('nav-scene')) return;
-        
+
         let loader = new Loader();
         loader.show();
-        
+
         let selected = Array.from($('.tabs > .tab')).find(item => item.classList.contains('selected'));
         $(selected).removeClass('selected');
 
         $(this).addClass('selected');
 
-        await changeScene(this.dataset.id);
+        await changeScene(selected?.dataset?.id, this.dataset.id);
         loader.hide();
     });
 
-    $('.export-scene').on('click', async () => await saveScene());
+    //Сохранение сцены
+    $('.export-scene').on('click', async () => await saveScene($('.selected')[0].dataset.id));
 
-    async function saveScene() {
+    //Добавление сцены
+    $('#add-scene').on('click', function () {
+        let modal = createBaseModal(35, 5);
+        $(modal).append('<div id="scene-name-label">');
+        $('#scene-name-label').css('text-align', 'center');
+        $('#scene-name-label').css('margin-bottom', '1em');
+        $('#scene-name-label').text('Введите название сцены');
+
+        $(modal).append('<div id="scene-name-input-div">');
+        $('#scene-name-input-div').append('<input id="scene-name-input" type="text" name="sceneName" class="form-control-lg input-field"/>');
+        $('#scene-name-input-div').css('display', 'flex');
+        $('#scene-name-input-div').css('gap', '1em');
+
+        $('#scene-name-input').css('font-size', '16px');
+        $('#scene-name-input').css('width', '80%');
+
+        $('#scene-name-input-div').append('<button id="save-btn" class="btn">');
+        $('#save-btn').css('width', '20%');
+        $('#save-btn').css('font-size', '16px');
+        $('#save-btn').text("Сохранить");
+
+        $('#save-btn').on('click', async function () {
+            let value = $('#scene-name-input').val();
+            let fd = new FormData();
+
+            fd.append('name', value);
+            let response = await fetch('/lobby/createScene', {method: 'POST', body: fd});
+            let result = await response.json();
+
+            if (response.ok && result.isSuccess) {
+                let tab = $('<div class="tab nav-scene" data-id="' + result.data.id + '">');
+                let p = $('<p>');
+                p.text(result.data.name);
+                tab.append(p);
+                $('.modal').remove();
+
+                let lastNav = $('.left.tabs').find('.tab.nav-scene').last();
+                if (lastNav.length == 0) {
+                    $('#add-scene').before(tab);
+                } else lastNav.after(tab);
+
+                tab.click();
+            }
+        });
+    });
+
+    $(document).on('dragstart', '.list-item-child_transportable', function () {
+        console.log('drag started');
+    });
+
+    $(document).on('drag', '.list-item-child_transportable', function () {
+        console.log('dragging');
+    });
+
+    $(document).on('dragend', '.list-item-child_transportable', function (event) {
+        createSprite(5, 5, this.dataset.src);
+    });
+
+    // Функция для создания спрайта на сцене PIXI.js
+    function createSprite(x, y, src) {
+        const sprite = PIXI.Sprite.from("/" + src);
+        sprite.position.set(x, y);
+        app.stage.addChild(sprite);
+        return sprite;
+    }
+
+    async function saveScene(id) {
+        if (id == null) return;
         let raw = getSceneData();
         let json = JSON.stringify(raw);
-        let sceneId = $('.selected')[0].dataset.id;
+        let sceneId = id ?? $('.selected')[0].dataset.id;
         let fd = new FormData();
         fd.append('json', json);
         fd.append('sceneId', sceneId);
@@ -204,11 +274,12 @@ function processInterface(container, app) {
         console.log('Scene destroyed');
     }
 
-    function restoreScene(sceneData) {
+    function restoreScene(sceneDataJson) {
+        let sceneData = JSON.parse(sceneDataJson);
         // спрайты
         if (sceneData.graphics) {
             sceneData.graphics.forEach(spriteData => {
-                let texture = PIXI.Texture.from(spriteData.texture.baseTexture.cacheId);
+                let texture = PIXI.Texture.from(spriteData.texture);
                 let sprite = new PIXI.Sprite(texture);
                 sprite.position.set(spriteData.position.x, spriteData.position.y);
                 app.stage.addChild(sprite);
@@ -219,66 +290,25 @@ function processInterface(container, app) {
     }
 
     // переключить текущую сцену на новую
-    // guid сцены, хранится в dataset.id вкладки
-    async function changeScene(id) {
+    // from - guid сцены с который переключаемся
+    // to - guid сцены на которую переключаемся
+    async function changeScene(from, to) {
         let fd = new FormData();
-        fd.append("id", id);
+        fd.append("id", to);
 
         let response = await fetch('/lobby/getScene', {method: 'POST', body: fd});
         let result = await response.json();
 
         if (response.ok && result.isSuccess) {
             let scene = result.data;
-            await saveScene();
-            destroyScene();
+            if (from != null) {
+                await saveScene(from);
+                destroyScene();
+            }
+
             restoreScene(scene.data);
         }
     }
-
-    $('#add-scene').on('click', function () {
-        let modal = createBaseModal(35, 5);
-        $(modal).append('<div id="scene-name-label">');
-        $('#scene-name-label').css('text-align', 'center');
-        $('#scene-name-label').css('margin-bottom', '1em');
-        $('#scene-name-label').text('Введите название сцены');
-
-        $(modal).append('<div id="scene-name-input-div">');
-        $('#scene-name-input-div').append('<input id="scene-name-input" type="text" name="sceneName" class="form-control-lg input-field"/>');
-        $('#scene-name-input-div').css('display', 'flex');
-        $('#scene-name-input-div').css('gap', '1em');
-
-        $('#scene-name-input').css('font-size', '16px');
-        $('#scene-name-input').css('width', '80%');
-
-        $('#scene-name-input-div').append('<button id="save-btn" class="btn">');
-        $('#save-btn').css('width', '20%');
-        $('#save-btn').css('font-size', '16px');
-        $('#save-btn').text("Сохранить");
-
-        $('#save-btn').on('click', async function () {
-            let value = $('#scene-name-input').val();
-            let fd = new FormData();
-
-            fd.append('name', value);
-            let response = await fetch('/lobby/createScene', {method: 'POST', body: fd});
-            let result = await response.json();
-            
-            if (response.ok && result.isSuccess) {
-                let tab = $('<div class="tab nav-scene" data-id="' + result.data.id + '">');
-                let p = $('<p>');
-                p.text(result.data.name);
-                tab.append(p);
-                $('.modal').remove();
-                
-                let lastNav = $('.left.tabs').find('.tab.nav-scene').last();
-                if (lastNav.length == 0) {
-                    $('#add-scene').before(tab);
-                } else lastNav.after(tab);
-                
-                tab.click();
-            }
-        });
-    });
 }
 
 // разметка

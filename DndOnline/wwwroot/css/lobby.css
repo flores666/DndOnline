@@ -154,10 +154,16 @@ ul, li {
 .list-header {
     padding-bottom: 5px;
     border-bottom: var(--border);
+    cursor: pointer;
 }
 
 .list-item-child {
     padding: 5px 0 0 20px;
+}
+
+.list-item-child_transportable {
+    user-select: none;
+    cursor: pointer;
 }
 
 .plus, .minus {

@@ -19,4 +19,9 @@ public class Scene
     /// порядковый номер
     /// </summary>
     public int Sort { get; set; }
+
+    public Scene()
+    {
+        Sort = 1;
+    }
 }

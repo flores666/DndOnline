@@ -45,18 +45,18 @@
             <ul class="list-item">
                 <div class="list-header"><span class="minus"></span> Токены </div>
                 <div class="list-body">
-                    @foreach (var token in ViewBag.Tokens)
+                    @foreach (var token in ViewBag.Tokens as List<EntityViewModel> ?? new List<EntityViewModel>())
                     {
-                        <li class="list-item-child">@token.Name</li>
+                        <li class="list-item-child list-item-child_transportable" draggable="true" data-src="@token.FilePath">@token.Name</li>
                     }
                 </div>
             </ul>
             <ul class="list-item">
                 <div class="list-header"><span class="minus"></span> Карты </div>
                 <div class="list-body">
-                    @foreach (var map in ViewBag.Maps)
+                    @foreach (var map in ViewBag.Maps as List<MapViewModel> ?? new List<MapViewModel>())
                     {
-                        <li class="list-item-child">@map.Name</li>
+                        <li class="list-item-child list-item-child_transportable" draggable="true" data-src="@map.FilePath">@map.Name</li>
                     }
                 </div>
             </ul>
