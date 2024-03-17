@@ -15,6 +15,8 @@ $(document).ready(function () {
     app.renderer.render(app.stage);
 });
 
+let globalDraggingItem;
+
 function processGame(container, app) {
     // Задаем начальный масштаб
     let startScale = {x: 1, y: 1};
@@ -56,7 +58,7 @@ function processGame(container, app) {
         event.preventDefault();
     });
 
-    // app.view.addEventListener('drop', (event) => processFilePasting(event));
+    app.view.addEventListener('drop', (event) => handlePasting(event));
 
     //перемещение по сцене курсором
     function dragScene(event) {
@@ -101,27 +103,44 @@ function processGame(container, app) {
     }
 
     // вставка спрайта извне путем drag and drop
-    function processFilePasting(event) {
+    function handlePasting(event) {
         event.preventDefault();
+
         // Получаем координаты события
         const x = event.clientX - app.view.getBoundingClientRect().left;
         const y = event.clientY - app.view.getBoundingClientRect().top;
 
-        // Получаем информацию о перетаскиваемых элементах
-        const file = event.dataTransfer.files[0];
-        let modal = createBaseModal();
+        switch (typeof globalDraggingItem) {
+            case "undefined" :
+                // Получаем информацию о перетаскиваемых элементах
+                const file = event.dataTransfer.files[0];
+                let modal = createBaseModal();
 
-        $(modal).on('click', '.btn', function () {
-            // Добавляем изображения на сцену
-            if (file.type.startsWith('image/')) {
-                // Создаем спрайт для изображения
-                const imageSprite = PIXI.Sprite.from(file.path);
-                // Устанавливаем позицию спрайта в место, где был сделан drop
-                imageSprite.position.set(x, y);
-                // Добавляем спрайт в контейнер
-                imagesContainer.addChild(imageSprite);
-            }
-        })
+                $(modal).on('click', '.btn', function () {
+                    // Добавляем изображения на сцену
+                    if (file.type.startsWith('image/')) {
+                        // Создаем спрайт для изображения
+                        const imageSprite = PIXI.Sprite.from(file.path);
+                        // Устанавливаем позицию спрайта в место, где был сделан drop
+                        imageSprite.position.set(x, y);
+                        // Добавляем спрайт в контейнер
+                        imagesContainer.addChild(imageSprite);
+                    }
+                })
+                break;
+            default:
+                createSprite(x, y, globalDraggingItem.dataset.src);
+                globalDraggingItem = undefined;
+                break;
+        }
+    }
+
+    // Функция для создания спрайта на сцене PIXI.js
+    function createSprite(x, y, src) {
+        const sprite = PIXI.Sprite.from("/" + src);
+        sprite.position.set(x, y);
+        app.stage.addChild(sprite);
+        return sprite;
     }
 }
 
@@ -137,7 +156,7 @@ function processInterface(container, app) {
         $(selected).removeClass('selected');
 
         $(this).addClass('selected');
-
+        
         await changeScene(selected?.dataset?.id, this.dataset.id);
         loader.hide();
     });
@@ -191,25 +210,10 @@ function processInterface(container, app) {
         });
     });
 
-    $(document).on('dragstart', '.list-item-child_transportable', function () {
+    $(document).on('dragstart', '.list-item-child_transportable', function (event) {
+        globalDraggingItem = this;
         console.log('drag started');
     });
-
-    $(document).on('drag', '.list-item-child_transportable', function () {
-        console.log('dragging');
-    });
-
-    $(document).on('dragend', '.list-item-child_transportable', function (event) {
-        createSprite(5, 5, this.dataset.src);
-    });
-
-    // Функция для создания спрайта на сцене PIXI.js
-    function createSprite(x, y, src) {
-        const sprite = PIXI.Sprite.from("/" + src);
-        sprite.position.set(x, y);
-        app.stage.addChild(sprite);
-        return sprite;
-    }
 
     async function saveScene(id) {
         if (id == null) return;
@@ -231,16 +235,18 @@ function processInterface(container, app) {
     // Собирает и возвращает все объекты сцены
     function getSceneData() {
         let sceneData = {};
-        let sprite = {};
 
         sceneData.graphics = [];
-        app.stage.children.forEach(child => {
-            if (child instanceof PIXI.Sprite) {
-                sprite.texture = child.texture.baseTexture.cacheId;
-                sprite.position = {x: child.x, y: child.y};
+        let children = app.stage.children;
+
+        for (let i = 0; i < children.length; i++) {
+            if (children[i] instanceof PIXI.Sprite) {
+                let sprite = {};
+                sprite.texture = children[i].texture.baseTexture.cacheId;
+                sprite.position = {x: children[i].x, y: children[i].y};
                 sceneData.graphics.push(sprite);
             }
-        });
+        }
 
         return sceneData;
     }
@@ -248,11 +254,11 @@ function processInterface(container, app) {
     // Собирает и возвращает все объекты сцены а затем уничтожает сцену.
     function getSceneDataAndDestroy() {
         let sceneData = {};
-        let sprite = {};
 
         sceneData.graphics = [];
         app.stage.children.forEach(child => {
             if (child instanceof PIXI.Sprite) {
+                let sprite = {};
                 sprite.texture = child.texture.baseTexture.cacheId;
                 sprite.position = {x: child.x, y: child.y};
                 sceneData.graphics.push(sprite);
@@ -265,32 +271,34 @@ function processInterface(container, app) {
 
     // уничтожает все объекты сцены
     function destroyScene() {
-        app.stage.children.forEach(child => {
-            if (child instanceof PIXI.Sprite) {
-                child.destroy();
+        let children = app.stage.children;
+        for (let i = 0; i < children.length; i++) {
+            if (children[i] instanceof PIXI.Sprite) {
+                children[i].destroy();
             }
-        });
+        };
 
         console.log('Scene destroyed');
     }
 
     function restoreScene(sceneDataJson) {
+        if (sceneDataJson === "") return;
         let sceneData = JSON.parse(sceneDataJson);
         // спрайты
         if (sceneData.graphics) {
-            sceneData.graphics.forEach(spriteData => {
-                let texture = PIXI.Texture.from(spriteData.texture);
+            for (let i = 0; i < sceneData.graphics.length; i++) {
+                let texture = PIXI.Texture.from(sceneData.graphics[i].texture);
                 let sprite = new PIXI.Sprite(texture);
-                sprite.position.set(spriteData.position.x, spriteData.position.y);
+                sprite.position.set(sceneData.graphics[i].position.x, sceneData.graphics[i].position.y);
                 app.stage.addChild(sprite);
-            });
+            }
         }
 
         console.log('Scene restored');
     }
 
     // переключить текущую сцену на новую
-    // from - guid сцены с который переключаемся
+    // from - guid сцены с которой переключаемся
     // to - guid сцены на которую переключаемся
     async function changeScene(from, to) {
         let fd = new FormData();
