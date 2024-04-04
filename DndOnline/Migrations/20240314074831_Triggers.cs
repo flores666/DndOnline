@@ -98,7 +98,17 @@ namespace DndOnline.Migrations
                         execute procedure update_scene_sort_order();";
 
             migrationBuilder.Sql(sql);
-            
+
+            sql =
+                "create function newguid() returns uuid\n    language sql\nas\n$$\nselect md5(random()::text || clock_timestamp()::text)::uuid;\n$$;\n\nalter function newguid() owner to postgres;\n\n";
+
+            migrationBuilder.Sql(sql);
+
+            sql =
+                "create function update_scene_sort_order() returns trigger\n    language plpgsql\nas\n$$BEGIN\n    if (new.sort > old.sort)\n    then\n        Update scenes\n            Set sort = sort - 1\n        Where id <> new.id\n            and lobby_id = new.lobby_id\n            and sort > old.sort\n            and sort <= new.sort;\n    else\n        Update scenes\n            Set sort = sort + 1\n        Where id <> new.id\n            and lobby_id = new.lobby_id\n            and sort = new.sort;\n    end if;\n\n    RETURN NULL;\nEND;\n$$;\n\nalter function update_scene_sort_order() owner to postgres;\n\n";
+
+            migrationBuilder.Sql(sql);
+
             #endregion
         }
 
