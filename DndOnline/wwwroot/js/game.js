@@ -1,3 +1,6 @@
+let globalDraggingItem;
+let sceneObjectsContainer;
+
 $(document).ready(function () {
     let game = $('.game');
     const maxFPS = 30;
@@ -8,6 +11,7 @@ $(document).ready(function () {
         maxFPS: maxFPS
     });
 
+    sceneObjectsContainer = createObjectsContainer();
     game.append(app.view);
 
     processInterface(game, app);
@@ -15,7 +19,10 @@ $(document).ready(function () {
     app.renderer.render(app.stage);
 });
 
-let globalDraggingItem;
+function createObjectsContainer() {
+    let container = new PIXI.Container();
+    return container;
+}
 
 function processGame(container, app) {
     // Задаем начальный масштаб
@@ -50,8 +57,7 @@ function processGame(container, app) {
     app.view.addEventListener('wheel', (event) => zoomScene(event));
 
     // Создаем контейнер для хранения изображений
-    // let imagesContainer = new PIXI.Container();
-    // app.stage.addChild(imagesContainer);
+    app.stage.addChild(sceneObjectsContainer);
 
     // Добавляем обработчики событий для перетаскивания изображений
     app.view.addEventListener('dragover', (event) => {
@@ -124,7 +130,7 @@ function processGame(container, app) {
                         // Устанавливаем позицию спрайта в место, где был сделан drop
                         imageSprite.position.set(x, y);
                         // Добавляем спрайт в контейнер
-                        imagesContainer.addChild(imageSprite);
+                        sceneObjectsContainer.addChild(imageSprite);
                     }
                 })
                 break;
@@ -139,7 +145,7 @@ function processGame(container, app) {
     function createSprite(x, y, src) {
         const sprite = PIXI.Sprite.from("/" + src);
         sprite.position.set(x, y);
-        app.stage.addChild(sprite);
+        sceneObjectsContainer.addChild(sprite);
         return sprite;
     }
 }
@@ -156,7 +162,7 @@ function processInterface(container, app) {
         $(selected).removeClass('selected');
 
         $(this).addClass('selected');
-        
+
         await changeScene(selected?.dataset?.id, this.dataset.id);
         loader.hide();
     });
@@ -237,12 +243,12 @@ function processInterface(container, app) {
         let sceneData = {};
 
         sceneData.graphics = [];
-        let children = app.stage.children;
+        let children = sceneObjectsContainer.children;
 
         for (let i = 0; i < children.length; i++) {
             if (children[i] instanceof PIXI.Sprite) {
                 let sprite = {};
-                sprite.texture = children[i].texture.baseTexture.cacheId;
+                sprite.texture = children[i].texture.textureCacheIds[0];
                 sprite.position = {x: children[i].x, y: children[i].y};
                 sceneData.graphics.push(sprite);
             }
@@ -271,14 +277,10 @@ function processInterface(container, app) {
 
     // уничтожает все объекты сцены
     function destroyScene() {
-        let children = app.stage.children;
-        for (let i = 0; i < children.length; i++) {
-            if (children[i] instanceof PIXI.Sprite) {
-                children[i].destroy();
-            }
-        };
-
-        console.log('Scene destroyed');
+        app.stage.removeChild(sceneObjectsContainer);
+        sceneObjectsContainer.destroy(true);
+        sceneObjectsContainer = createObjectsContainer();
+        app.stage.addChild(sceneObjectsContainer);
     }
 
     function restoreScene(sceneDataJson) {
@@ -290,7 +292,7 @@ function processInterface(container, app) {
                 let texture = PIXI.Texture.from(sceneData.graphics[i].texture);
                 let sprite = new PIXI.Sprite(texture);
                 sprite.position.set(sceneData.graphics[i].position.x, sceneData.graphics[i].position.y);
-                app.stage.addChild(sprite);
+                sceneObjectsContainer.addChild(sprite);
             }
         }
 
@@ -387,7 +389,6 @@ $(document).on('change', '.input-file input[type=file]', function () {
             $files_list.append(new_file_input);
         }
     }
-    ;
 
     this.files = dt.files;
 });
