@@ -322,6 +322,24 @@ public class LobbyService : ILobbyService
         return response;
     }
 
+    public async Task<ResponseModel> SaveSceneAsync(Scene scene)
+    {
+        var response = new ResponseModel();
+        var dbScene = _db.Scenes.FirstOrDefault(w => w.Id == scene.Id);
+
+        if (dbScene != null)
+        {
+            dbScene = scene;
+
+            _db.Scenes.Update(dbScene);
+
+            await _db.SaveChangesAsync();
+            response.SetSuccess();
+        }
+
+        return response;
+    }
+
     public List<MapViewModel> GetMaps(Guid userId)
     {
         var maps = _db.Locations

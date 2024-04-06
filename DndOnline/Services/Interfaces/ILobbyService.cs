@@ -20,6 +20,7 @@ public interface ILobbyService
     public List<EntityViewModel> GetEntities(Guid userId);
     public List<SceneViewModel> GetScenes(Guid lobbyId);
     public Task<ResponseModel> SaveSceneAsync(Guid sceneId, string json, Guid lobbyId, string? name = null);
+    public Task<ResponseModel> SaveSceneAsync(Scene scene);
     public List<MapViewModel> GetMaps(Guid userId);
     public Task<Scene> GetSceneAsync(Guid id);
 }

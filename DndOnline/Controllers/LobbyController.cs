@@ -76,7 +76,12 @@ public class LobbyController : Controller
     {
         var response = new ResponseModel();
         var scene = await _lobbyService.GetSceneAsync(id);
-        if (scene != null) response.SetSuccess(scene);
+        if (scene != null)
+        {
+            response.SetSuccess(scene);
+            scene.LastPlayed = DateTime.Now;
+            _lobbyService.SaveSceneAsync(scene);
+        }
 
         return response;
     }

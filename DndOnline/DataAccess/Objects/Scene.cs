@@ -20,6 +20,11 @@ public class Scene
     /// </summary>
     public int Sort { get; set; }
 
+    /// <summary>
+    /// Дата последнего выбора карты
+    /// </summary>
+    public DateTime? LastPlayed { get; set; }
+    
     public Scene()
     {
         Sort = 1;

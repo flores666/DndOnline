@@ -5,10 +5,9 @@ $(document).ready(function () {
     let game = $('.game');
     const maxFPS = 30;
     let app = new PIXI.Application({
-        width: game.innerWidth(),
-        height: game.innerHeight(),
         antialias: true,
-        maxFPS: maxFPS
+        maxFPS: maxFPS,
+        resizeTo: window
     });
 
     sceneObjectsContainer = createObjectsContainer();
@@ -35,20 +34,23 @@ function processGame(container, app) {
 
     container.on('resize', function () {
         app.renderer.resize(container.innerWidth(), container.innerHeight());
+        app.view.resizeTo(container.innerWidth(), container.innerHeight());
     })
 
     let grid = createGrid(50);
 
-    app.stage.addChild(grid);
-
+    // app.stage.addChild(grid);
+    
     app.view.addEventListener('mousedown', (event) => {
         isSceneDragging = true;
         prevX = event.clientX;
         prevY = event.clientY;
+        document.body.classList.add('pointer');
     });
 
     app.view.addEventListener('mouseup', () => {
         isSceneDragging = false;
+        document.body.classList.remove('pointer');
     });
 
     app.view.addEventListener('mousemove', (event) => dragScene(event));
@@ -487,16 +489,3 @@ async function compressImage(file, maxSizeInBytes, callback) {
         reader.readAsDataURL(file);
     });
 }
-
-const replacerFunc = () => {
-    const visited = new WeakSet();
-    return (key, value) => {
-        if (typeof value === "object" && value !== null) {
-            if (visited.has(value)) {
-                return;
-            }
-            visited.add(value);
-        }
-        return value;
-    };
-};
