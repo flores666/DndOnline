@@ -30,22 +30,20 @@ function createObjectsContainer() {
 }
 
 function processGame() {
-    /*container.on('resize', function () {
-        app.renderer.resize(container.innerWidth(), container.innerHeight());
-        app.view.resizeTo(container.innerWidth(), container.innerHeight());
-    });*/
+    const border = new PIXI.Graphics();
+    border.lineStyle(1, 0xFFFFFF); // Задаем цвет и толщину линии
+    border.drawRect(0, 0, app.renderer.width, app.renderer.height); // Рисуем прямоугольник
+    border.endFill();
 
-    let grid = createGrid(50);
+    app.stage.addChild(border);
 
-    // app.stage.addChild(grid);
-    
     window.addEventListener('keydown', function (event) {
         if (event.key === 'Control') {
             ctrlPressed = true;
             document.body.classList.add('pointer');
         }
     });
-    
+
     window.addEventListener('keyup', function (event) {
         if (event.key === 'Control') {
             ctrlPressed = false;
@@ -84,20 +82,13 @@ function processGame() {
         }
     });
 
-    app.renderer.view.addEventListener('wheel', function (event) {
-        if (ctrlPressed) {
-            event.preventDefault();
-            // 1 для приближения, -1 для отдаления
-            const zoomDirection = event.deltaY > 0 ? -1 : 1;
-            const scaleFactor = 1.1;
-
-            if (zoomDirection === 1) {
-                app.stage.scale.x *= scaleFactor;
-                app.stage.scale.y *= scaleFactor;
-            } else {
-                app.stage.scale.x /= scaleFactor;
-                app.stage.scale.y /= scaleFactor;
-            }
+    // Событие прокрутки колеса мыши
+    app.renderer.view.addEventListener('wheel', function (e) {
+        if (ctrlPressed) { // Проверяем, что нажата клавиша Ctrl
+            e.preventDefault();
+            let s = app.stage.scale.x, tx = (e.x - app.stage.x) / s, ty = (e.y - app.stage.y) / s;
+            s += -1 * Math.max(-1, Math.min(1, e.deltaY)) * 0.1 * s;
+            app.stage.setTransform(-tx * s + e.x, -ty * s + e.y, s, s);
         }
     });
 
@@ -147,9 +138,10 @@ function processGame() {
     // Функция для создания спрайта на сцене PIXI.js
     function createSprite(x, y, src) {
         const sprite = PIXI.Sprite.from("/" + src);
+        sprite.anchor.set(0.5);
         sprite.position.set(x, y);
         sceneObjectsContainer.addChild(sprite);
-        
+
         return sprite;
     }
 }
