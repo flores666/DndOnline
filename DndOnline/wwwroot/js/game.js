@@ -1,20 +1,21 @@
 let globalDraggingItem;
 let sceneObjectsContainer;
+const maxFPS = 30;
+
+let app = new PIXI.Application({
+    antialias: true,
+    maxFPS: maxFPS,
+    resizeTo: window
+});
 
 $(document).ready(function () {
     let game = $('.game');
-    const maxFPS = 30;
-    let app = new PIXI.Application({
-        antialias: true,
-        maxFPS: maxFPS,
-        resizeTo: window
-    });
 
     sceneObjectsContainer = createObjectsContainer();
     game.append(app.view);
 
-    processInterface(game, app);
-    processGame(game, app);
+    processInterface(game);
+    processGame(game);
     app.renderer.render(app.stage);
 });
 
@@ -23,7 +24,7 @@ function createObjectsContainer() {
     return container;
 }
 
-function processGame(container, app) {
+function processGame() {
     // Задаем начальный масштаб
     let startScale = {x: 1, y: 1};
 
@@ -32,10 +33,10 @@ function processGame(container, app) {
     let prevX = 0;
     let prevY = 0;
 
-    container.on('resize', function () {
+    /*container.on('resize', function () {
         app.renderer.resize(container.innerWidth(), container.innerHeight());
         app.view.resizeTo(container.innerWidth(), container.innerHeight());
-    })
+    });*/
 
     let grid = createGrid(50);
 
@@ -148,11 +149,29 @@ function processGame(container, app) {
         const sprite = PIXI.Sprite.from("/" + src);
         sprite.position.set(x, y);
         sceneObjectsContainer.addChild(sprite);
+
+        sprite.texture.baseTexture.once('loaded', () => {
+            // Расширение сцены, если спрайт не помещается
+            if (sprite.width > app.renderer.screen.width) {
+                let newX = sprite.width + app.renderer.screen.width;
+
+                app.stage.width = newX;
+                app.renderer.resize(newX, app.renderer.screen.height);
+            }
+
+            if (sprite.height > app.renderer.screen.height) {
+                let newY = sprite.height + app.renderer.screen.height;
+
+                app.stage.height = newY;
+                app.renderer.resize(app.renderer.screen.width, newY);
+            }
+        });
+        
         return sprite;
     }
 }
 
-function processInterface(container, app) {
+function processInterface() {
     //Переключение между сценами
     $(document).on('click', '.nav-scene', async function (event) {
         if ($(this).hasClass('selected') || !$(this).hasClass('nav-scene')) return;
@@ -411,39 +430,6 @@ function removeFilesItem(target) {
         }
     }
     input[0].files = dt.files;
-}
-
-// method - POST/GET
-// url - адрес до точки
-// data - отправляемые данные. Объект либо FormData
-async function sendRequestAsync(method, url, data) {
-    return new Promise((resolve, reject) => {
-        let ajaxOptions = {
-            url: url,
-            method: method,
-            async: true,
-            success: function (response) {
-                resolve(response);
-            },
-            error: function (error) {
-                reject(error);
-            }
-        };
-
-        // Проверяем, есть ли данные в formData
-        if (data) {
-            if (data.getAll && data.getAll.length > 0) {
-                ajaxOptions.processData = false;
-                ajaxOptions.contentType = false;
-            } else {
-                ajaxOptions.contentType = "application/json";
-            }
-
-            ajaxOptions.data = data;
-        }
-
-        $.ajax(ajaxOptions);
-    });
 }
 
 // Функция для сжатия размера изображения
