@@ -30,13 +30,6 @@ function createObjectsContainer() {
 }
 
 function processGame() {
-    const border = new PIXI.Graphics();
-    border.lineStyle(1, 0xFFFFFF); // Задаем цвет и толщину линии
-    border.drawRect(0, 0, app.renderer.width, app.renderer.height); // Рисуем прямоугольник
-    border.endFill();
-
-    app.stage.addChild(border);
-
     window.addEventListener('keydown', function (event) {
         if (event.key === 'Control') {
             ctrlPressed = true;
@@ -86,7 +79,9 @@ function processGame() {
     app.renderer.view.addEventListener('wheel', function (e) {
         if (ctrlPressed) { // Проверяем, что нажата клавиша Ctrl
             e.preventDefault();
-            let s = app.stage.scale.x, tx = (e.x - app.stage.x) / s, ty = (e.y - app.stage.y) / s;
+            let s = app.stage.scale.x;
+            let tx = (e.x - app.stage.x) / s;
+            let ty = (e.y - app.stage.y) / s;
             s += -1 * Math.max(-1, Math.min(1, e.deltaY)) * 0.1 * s;
             app.stage.setTransform(-tx * s + e.x, -ty * s + e.y, s, s);
         }
@@ -106,10 +101,10 @@ function processGame() {
     function handlePasting(event) {
         event.preventDefault();
 
-        // Получаем координаты события
-        const x = event.clientX - app.view.getBoundingClientRect().left;
-        const y = event.clientY - app.view.getBoundingClientRect().top;
-
+        let s = app.stage.scale.x;
+        let x = (event.x - app.stage.x) / s;
+        let y = (event.y - app.stage.y) / s;
+        
         switch (typeof globalDraggingItem) {
             case "undefined" :
                 // Получаем информацию о перетаскиваемых элементах
