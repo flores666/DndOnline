@@ -17,10 +17,10 @@ public class LobbyHub : Hub
     
     public async Task JoinLobby()
     {
-        var lobbyId = _httpContext.Session.GetString("lobbyId");
+        _httpContext.Request.Cookies.TryGetValue("cur_lobby", out var lobbyId);
         var userName = _httpContext.User.Identity.Name;
-        Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
-        Clients.Group(lobbyId).SendAsync("JoinLobby", userName);
+        await Groups.AddToGroupAsync(Context.ConnectionId, lobbyId);
+        await Clients.Group(lobbyId).SendAsync("JoinLobby", userName);
     }
 
     public async Task LeaveLobby()
@@ -31,7 +31,7 @@ public class LobbyHub : Hub
         var lobbyId = new Guid(lobbyIdString);
         
         var response = _lobbyService.DisconnectUser(new Guid(playerId), lobbyId);
-        Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyIdString);
+        // Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyIdString);
         Clients.Group(lobbyIdString).SendAsync("LeaveLobby", userName);
     }
 

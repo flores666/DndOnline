@@ -169,6 +169,12 @@ function processInterface(container, app) {
         loader.hide();
     });
 
+    document.querySelectorAll('.nav-scene').forEach(async (item) => {
+        if ($(item).hasClass('selected')) {
+            await changeScene(null, item.dataset.id);
+        }
+    });
+    
     //Сохранение сцены
     $('.export-scene').on('click', async () => await saveScene($('.selected')[0].dataset.id));
 

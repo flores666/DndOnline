@@ -88,14 +88,7 @@ namespace DndOnline.Migrations
                     END;
                     $$;
 
-                    alter function update_scene_sort_order() owner to postgres;
-
-                    -- auto-generated definition
-                    create trigger update_scene_sort_order_trigger
-                        after UPDATE
-                        on scenes
-                        for each row
-                        execute procedure update_scene_sort_order();";
+                    alter function update_scene_sort_order() owner to postgres;";
 
             migrationBuilder.Sql(sql);
 

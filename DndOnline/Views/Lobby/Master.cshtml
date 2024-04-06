@@ -8,7 +8,9 @@
     <div class="left tabs">
         @foreach (var item in Model.Scenes)
         {
-            <div class="tab nav-scene" data-id="@item.Id">
+            var selected = item.Id == ViewBag.LastPlayed ? "selected" : "";
+
+            <div class="tab nav-scene @selected" data-id="@item.Id">
                 <p>
                     @(item.Name.Length > 20 ? item.Name.Substring(0, 20) : item.Name)
                 </p>
