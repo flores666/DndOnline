@@ -1,11 +1,16 @@
 let globalDraggingItem;
 let sceneObjectsContainer;
+let ctrlPressed;
+
 const maxFPS = 30;
 
 let app = new PIXI.Application({
     antialias: true,
     maxFPS: maxFPS,
-    resizeTo: window
+    height: 5000,
+    width: 5000,
+    transparent: false,
+    resolution: 1
 });
 
 $(document).ready(function () {
@@ -25,14 +30,6 @@ function createObjectsContainer() {
 }
 
 function processGame() {
-    // Задаем начальный масштаб
-    let startScale = {x: 1, y: 1};
-
-    let isSceneDragging = false;
-    let isSpriteDragging = false;
-    let prevX = 0;
-    let prevY = 0;
-
     /*container.on('resize', function () {
         app.renderer.resize(container.innerWidth(), container.innerHeight());
         app.view.resizeTo(container.innerWidth(), container.innerHeight());
@@ -42,22 +39,67 @@ function processGame() {
 
     // app.stage.addChild(grid);
     
-    app.view.addEventListener('mousedown', (event) => {
-        isSceneDragging = true;
-        prevX = event.clientX;
-        prevY = event.clientY;
-        document.body.classList.add('pointer');
+    window.addEventListener('keydown', function (event) {
+        if (event.key === 'Control') {
+            ctrlPressed = true;
+            document.body.classList.add('pointer');
+        }
+    });
+    
+    window.addEventListener('keyup', function (event) {
+        if (event.key === 'Control') {
+            ctrlPressed = false;
+            document.body.classList.remove('pointer');
+        }
     });
 
-    app.view.addEventListener('mouseup', () => {
-        isSceneDragging = false;
-        document.body.classList.remove('pointer');
+    app.renderer.view.addEventListener('mousedown', function (event) {
+        if (ctrlPressed && event.button === 0) { // Ctrl и левая кнопка мыши
+            let startX = event.clientX;
+            let startY = event.clientY;
+
+            let isDragging = true;
+
+            const mouseMoveHandler = function (event) {
+                if (isDragging) {
+                    const dx = event.clientX - startX;
+                    const dy = event.clientY - startY;
+
+                    app.stage.x += dx;
+                    app.stage.y += dy;
+
+                    startX = event.clientX;
+                    startY = event.clientY;
+                }
+            };
+
+            const mouseUpHandler = function () {
+                isDragging = false;
+                window.removeEventListener('mousemove', mouseMoveHandler);
+                window.removeEventListener('mouseup', mouseUpHandler);
+            };
+
+            window.addEventListener('mousemove', mouseMoveHandler);
+            window.addEventListener('mouseup', mouseUpHandler);
+        }
     });
 
-    app.view.addEventListener('mousemove', (event) => dragScene(event));
+    app.renderer.view.addEventListener('wheel', function (event) {
+        if (ctrlPressed) {
+            event.preventDefault();
+            // 1 для приближения, -1 для отдаления
+            const zoomDirection = event.deltaY > 0 ? -1 : 1;
+            const scaleFactor = 1.1;
 
-    // Добавляем обработчик события колеса мыши для зума
-    app.view.addEventListener('wheel', (event) => zoomScene(event));
+            if (zoomDirection === 1) {
+                app.stage.scale.x *= scaleFactor;
+                app.stage.scale.y *= scaleFactor;
+            } else {
+                app.stage.scale.x /= scaleFactor;
+                app.stage.scale.y /= scaleFactor;
+            }
+        }
+    });
 
     // Создаем контейнер для хранения изображений
     app.stage.addChild(sceneObjectsContainer);
@@ -68,48 +110,6 @@ function processGame() {
     });
 
     app.view.addEventListener('drop', (event) => handlePasting(event));
-
-    //перемещение по сцене курсором
-    function dragScene(event) {
-        if (isSceneDragging) {
-            const deltaX = event.clientX - prevX;
-            const deltaY = event.clientY - prevY;
-
-            // Изменяем позицию сцены на основе движения мыши
-            // Ограничиваем перемещение по X
-            app.stage.x = Math.min(0, Math.max(app.stage.x + deltaX, app.renderer.width - app.stage.width));
-            // Ограничиваем перемещение по Y
-            app.stage.y = Math.min(0, Math.max(app.stage.y + deltaY, app.renderer.height - app.stage.height));
-
-            // Обновляем предыдущие координаты
-            prevX = event.clientX;
-            prevY = event.clientY;
-        }
-    }
-
-    // обработка зума
-    function zoomScene(event) {
-        // Определяем направление вращения колеса мыши (вверх или вниз)
-        const delta = event.deltaY > 0 ? -0.1 : 0.1;
-
-        // Увеличиваем или уменьшаем масштаб
-        startScale.x += delta;
-        startScale.y += delta;
-
-        // Ограничиваем масштаб, чтобы избежать слишком большого или маленького значения
-        startScale.x = Math.max(0.1, Math.min(3, startScale.x));
-        startScale.y = Math.max(0.1, Math.min(3, startScale.y));
-
-        // Проверяем, чтобы не отдалить сцену за пределы исходных размеров
-        if (app.stage.width * startScale.x >= app.renderer.width) {
-            app.stage.scale.x = startScale.x;
-        }
-
-        if (app.stage.height * startScale.y >= app.renderer.height) {
-            app.stage.scale.y = startScale.y;
-        }
-
-    }
 
     // вставка спрайта извне путем drag and drop
     function handlePasting(event) {
@@ -149,23 +149,6 @@ function processGame() {
         const sprite = PIXI.Sprite.from("/" + src);
         sprite.position.set(x, y);
         sceneObjectsContainer.addChild(sprite);
-
-        sprite.texture.baseTexture.once('loaded', () => {
-            // Расширение сцены, если спрайт не помещается
-            if (sprite.width > app.renderer.screen.width) {
-                let newX = sprite.width + app.renderer.screen.width;
-
-                app.stage.width = newX;
-                app.renderer.resize(newX, app.renderer.screen.height);
-            }
-
-            if (sprite.height > app.renderer.screen.height) {
-                let newY = sprite.height + app.renderer.screen.height;
-
-                app.stage.height = newY;
-                app.renderer.resize(app.renderer.screen.width, newY);
-            }
-        });
         
         return sprite;
     }
@@ -193,7 +176,7 @@ function processInterface() {
             await changeScene(null, item.dataset.id);
         }
     });
-    
+
     //Сохранение сцены
     $('.export-scene').on('click', async () => await saveScene($('.selected')[0].dataset.id));
 
