@@ -109,19 +109,60 @@ function processGame() {
             case "undefined" :
                 // Получаем информацию о перетаскиваемых элементах
                 const file = event.dataTransfer.files[0];
-                let modal = createBaseModal();
+                let fileType = file.type.split('/')[0];
+                if (fileType !== "image") return;
 
-                $(modal).on('click', '.btn', function () {
-                    // Добавляем изображения на сцену
-                    if (file.type.startsWith('image/')) {
-                        // Создаем спрайт для изображения
-                        const imageSprite = PIXI.Sprite.from(file.path);
-                        // Устанавливаем позицию спрайта в место, где был сделан drop
-                        imageSprite.position.set(x, y);
-                        // Добавляем спрайт в контейнер
-                        sceneObjectsContainer.addChild(imageSprite);
-                    }
-                })
+                let reader = new FileReader();
+
+                reader.onload = function(event) {
+                    let img = new Image();
+                    img.src = event.target.result;
+
+                    let modal = createBaseModal(70, 30);
+                    modal.style.display = 'flex';
+
+                    modal.innerHTML += '<div class="modal-main-pic"><img src="' + img.src + '"></div>';
+                    modal.innerHTML += '<div class="modal-main"></div>';
+                    let modalMain = $('.modal-main')[0];
+                    
+                    modalMain.innerHTML += '<input class="input-field modal-header-input" placeholder="Нажмите для ввода названия"/>';
+                    
+                    modalMain.innerHTML += '<div class="select-wrapper"></div>';
+                    let selectWrapper = $('.select-wrapper')[0];
+                    selectWrapper.innerHTML += '<span>Тип импортируемого элемента</span>';
+                    selectWrapper.innerHTML += '<select id="type">' + 
+                        '<option value="none">Выберите тип</option>' +
+                        '<option value="token">Токен</option>' +
+                        '<option value="map">Локация</option>' +
+                        '</select>';
+
+                    $('.select-wrapper').on('change', '#type', function () {
+                        if (this.value === 'none') {
+                            modal.querySelector('.btn').remove();
+                            return;
+                        }
+                        
+                        if (modal.querySelector('.btn') == null) {
+                            let btn = '<button class="btn">Готово</button>';
+                            modalMain.append($(btn)[0]);
+                        }
+                    });
+                    
+                    $(modal).on('click', '.btn', function () {
+                        // Добавляем изображения на сцену
+                        if (file.type.startsWith('image/')) {
+                            // Создаем спрайт для изображения
+                            const imageSprite = PIXI.Sprite.from(file.path);
+                            // Устанавливаем позицию спрайта в место, где был сделан drop
+                            imageSprite.position.set(x, y);
+                            imageSprite.anchor.set(0.5);
+                            // Добавляем спрайт в контейнер
+                            sceneObjectsContainer.addChild(imageSprite);
+                        }
+                    })
+                };
+
+                reader.readAsDataURL(file);
                 break;
             default:
                 createSprite(x, y, globalDraggingItem.dataset.src);
@@ -250,24 +291,6 @@ function processInterface() {
                 sceneData.graphics.push(sprite);
             }
         }
-
-        return sceneData;
-    }
-
-    // Собирает и возвращает все объекты сцены а затем уничтожает сцену.
-    function getSceneDataAndDestroy() {
-        let sceneData = {};
-
-        sceneData.graphics = [];
-        app.stage.children.forEach(child => {
-            if (child instanceof PIXI.Sprite) {
-                let sprite = {};
-                sprite.texture = child.texture.baseTexture.cacheId;
-                sprite.position = {x: child.x, y: child.y};
-                sceneData.graphics.push(sprite);
-                child.destroy();
-            }
-        });
 
         return sceneData;
     }
@@ -443,7 +466,7 @@ async function compressImage(file, maxSizeInBytes, callback) {
 
                     // Вызываем callback с сжатым файлом
                     resolve(callback(compressedFile));
-                }, 'image/jpeg', 0.8);
+                }, 'image/png', 0.8);
             };
 
             img.src = event.target.result;

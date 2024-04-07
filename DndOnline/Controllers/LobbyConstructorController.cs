@@ -109,11 +109,10 @@ public class LobbyConstructorController : Controller
     public async Task<ResponseModel> NewEntity(EntityViewModel model)
     {
         var response = new ResponseModel();
-        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-
+        
         if (!string.IsNullOrEmpty(model.Name))
         {
-            response = await _lobbyService.AddEntityAsync(new Guid(lobbyId), model);
+            response = await _lobbyService.AddEntityAsync(model);
         }
 
         return response;
@@ -162,11 +161,10 @@ public class LobbyConstructorController : Controller
     public async Task<ResponseModel> NewMap(MapViewModel model)
     {
         var response = new ResponseModel();
-        var lobbyId = HttpContext.Session.GetString("DraftLobbyId");
-
+        
         if (!string.IsNullOrEmpty(model.Name))
         {
-            response = await _lobbyService.AddMapAsync(new Guid(lobbyId), model);
+            response = await _lobbyService.AddMapAsync(model);
         }
 
         return response;

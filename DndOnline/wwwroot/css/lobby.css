@@ -383,4 +383,57 @@ ul, li {
     100% {
         transform: rotate(360deg);
     }
-} 
+}
+
+.modal-main-pic {
+    width: 55em;
+    height: 90%;
+    margin: 1.4em 1em 1em 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: clip;
+    border-radius: 12px;
+    
+    img {
+        border-radius: 12px;
+        max-height: 100%;
+    }
+}
+
+.modal-header-input {
+    max-width: 100%;
+    margin-top: .5em;
+    background-color: var(--darker);
+    font-size: 46px;
+    border: none;
+}
+
+.modal-header-input:focus {
+    background-color: var(--darker);
+    box-shadow: none;
+}
+
+.modal-main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    
+    * {
+        padding-left: 0;
+    }
+    
+    .modal-header-input {
+        margin-bottom: 2rem;
+    }
+    
+    .select-wrapper {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn {
+        width: 5rem;
+        padding: 0.8rem;
+        font-size: 16px;
+    }
+}

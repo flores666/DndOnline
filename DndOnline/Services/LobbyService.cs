@@ -182,7 +182,7 @@ public class LobbyService : ILobbyService
         return response;
     }
 
-    public async Task<ResponseModel> AddEntityAsync(Guid lobbyId, EntityViewModel model)
+    public async Task<ResponseModel> AddEntityAsync(EntityViewModel model)
     {
         var response = new ResponseModel();
         var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);
@@ -211,12 +211,7 @@ public class LobbyService : ILobbyService
         };
 
         _db.Entities.Add(entity);
-        /*var lobby = _db.Lobbies
-            .Include(lobby => lobby.Entities)
-            .FirstOrDefault(w => w.Id == lobbyId);
-        lobby?.Entities.Add(entity);*/
 
-        // _db.Lobbies.Update(lobby);
         var res = await _db.SaveChangesAsync();
         if (res > 0)
         {
@@ -227,7 +222,7 @@ public class LobbyService : ILobbyService
         return response;
     }
 
-    public async Task<ResponseModel> AddMapAsync(Guid lobbyId, MapViewModel model)
+    public async Task<ResponseModel> AddMapAsync(MapViewModel model)
     {
         var response = new ResponseModel();
         var userId = new Guid(_httpContext.User.Claims.FirstOrDefault(f => f.Type == "id").Value);

@@ -1,0 +1,24 @@
+﻿.select-wrapper {
+    select {
+        padding: 0.5rem 1rem 0.5rem 0.5rem;
+        margin-top: 0.5rem;
+        width: 100%;
+        font-size: 1rem;
+        border: 1px solid var(--grey);
+        border-radius: 8px;
+        background-color: var(--dark);
+        color: var(--white);
+    }
+
+    select:focus {
+        border-color: var(--grey);
+        outline: #ffffff thin;
+        box-shadow: 0 0 0 1px var(--grey);
+        background-color: var(--dark);
+    }
+
+    select:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+}
