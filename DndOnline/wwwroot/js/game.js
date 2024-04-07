@@ -33,14 +33,14 @@ function processGame() {
     window.addEventListener('keydown', function (event) {
         if (event.key === 'Control') {
             ctrlPressed = true;
-            document.body.classList.add('pointer');
+            $('.game').addClass('pointer');
         }
     });
 
     window.addEventListener('keyup', function (event) {
         if (event.key === 'Control') {
             ctrlPressed = false;
-            document.body.classList.remove('pointer');
+            $('.game').removeClass('pointer');
         }
     });
 
@@ -289,10 +289,11 @@ function processInterface() {
                 let texture = PIXI.Texture.from(sceneData.graphics[i].texture);
                 let sprite = new PIXI.Sprite(texture);
                 sprite.position.set(sceneData.graphics[i].position.x, sceneData.graphics[i].position.y);
+                sprite.anchor.set(0.5);
                 sceneObjectsContainer.addChild(sprite);
             }
         }
-
+        
         console.log('Scene restored');
     }
 

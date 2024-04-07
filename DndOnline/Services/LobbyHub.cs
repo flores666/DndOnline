@@ -1,5 +1,4 @@
-﻿using DndOnline.DataAccess.Objects;
-using DndOnline.Services.Interfaces;
+﻿using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace DndOnline.Services;
@@ -27,12 +26,11 @@ public class LobbyHub : Hub
     {
         var playerId = _httpContext.User.Claims.FirstOrDefault(w => w.Type == "id").Value;
         var userName = _httpContext.User.Identity.Name;
-        var lobbyIdString = _httpContext.Session.GetString("lobbyId");
-        var lobbyId = new Guid(lobbyIdString);
+        _httpContext.Request.Cookies.TryGetValue("cur_lobby", out var lobbyId);
         
-        var response = _lobbyService.DisconnectUser(new Guid(playerId), lobbyId);
+        var response = _lobbyService.DisconnectUser(new Guid(playerId), Guid.Parse(lobbyId));
         // Groups.RemoveFromGroupAsync(Context.ConnectionId, lobbyIdString);
-        Clients.Group(lobbyIdString).SendAsync("LeaveLobby", userName);
+        Clients.Group(lobbyId).SendAsync("LeaveLobby", userName);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
