@@ -113,8 +113,10 @@ function processGame() {
                 if (fileType !== "image") return;
 
                 let reader = new FileReader();
+                let loader = new Loader();
 
                 reader.onload = function(event) {
+                    loader.hide();
                     let img = new Image();
                     img.src = event.target.result;
 
@@ -161,7 +163,8 @@ function processGame() {
                         }
                     })
                 };
-
+            
+                loader.show();
                 reader.readAsDataURL(file);
                 break;
             default:
