@@ -21,6 +21,24 @@ $(document).ready(function () {
         if (elem) elem.remove();
     });
 
+    connection.on('TokenAdd', function (item) {
+        let child = document.createElement('li');
+        child.className = 'list-item-child list-item-child_transportable';
+        child.draggable = true;
+        child.dataset.src = item.filePath;
+        child.innerText = item.name;
+        document.querySelector('#tokens_list > .list-body').appendChild(child);
+    });
+
+    connection.on('MapAdd', function (item) {
+        let child = document.createElement('li');
+        child.className = 'list-item-child list-item-child_transportable';
+        child.draggable = true;
+        child.dataset.src = item.filePath;
+        child.innerText = item.name;
+        document.querySelector('#maps_list > .list-body').appendChild(child);
+    });
+    
     <!--Подключаемся-->
     connection.start().then(async function () {
         console.log("signalR connection started");

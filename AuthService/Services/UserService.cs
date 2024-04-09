@@ -73,6 +73,7 @@ public class UserService : IUserService
             return new Response(StatusCodes.Status400BadRequest, "Данные не верны или отсутствуют");
 
         var claims = new List<Claim>();
+        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
         claims.Add(new Claim("unique_name", user.Name));
         claims.Add(new Claim("id", user.Id.ToString()));
         

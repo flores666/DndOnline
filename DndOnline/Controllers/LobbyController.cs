@@ -95,6 +95,24 @@ public class LobbyController : Controller
         return response;
     }
 
+    [HttpPost]
+    public async Task<ResponseModel> SaveToken(EntityViewModel model)
+    {
+        var response = await _lobbyService.AddEntityAsync(model);
+        if (response.IsSuccess) _lobbyHubContext.Clients.User(User.Claims.FirstOrDefault(w => w.Type == "id").Value).SendAsync("TokenAdd", response.Data);
+        
+        return response;
+    }
+    
+    [HttpPost]
+    public async Task<ResponseModel> SaveMap(MapViewModel model)
+    {
+        var response = await _lobbyService.AddMapAsync(model);
+        if (response.IsSuccess) _lobbyHubContext.Clients.User(User.Claims.FirstOrDefault(w => w.Type == "id").Value).SendAsync("MapAdd", response.Data);
+
+        return response;
+    }
+    
     /// <summary>
     /// Сортирует сцены по полю sort и возвращает id последней игр
     /// </summary>

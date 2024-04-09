@@ -123,25 +123,40 @@ function processGame() {
                     let modal = createBaseModal(70, 30);
                     modal.style.display = 'flex';
 
-                    modal.innerHTML += '<div class="modal-main-pic"><img src="' + img.src + '"></div>';
+                    modal.innerHTML += '<div class="modal-main-pic" style="overflow: hidden"><img src="' + img.src + '"></div>';
                     modal.innerHTML += '<div class="modal-main"></div>';
                     let modalMain = $('.modal-main')[0];
                     
-                    modalMain.innerHTML += '<input class="input-field modal-header-input" placeholder="Нажмите для ввода названия"/>';
+                    modalMain.innerHTML += '<input id="importing_name" class="input-field modal-header-input" placeholder="Нажмите для ввода названия"/>';
                     
                     modalMain.innerHTML += '<div class="select-wrapper"></div>';
                     let selectWrapper = $('.select-wrapper')[0];
                     selectWrapper.innerHTML += '<span>Тип импортируемого элемента</span>';
-                    selectWrapper.innerHTML += '<select id="type">' + 
+                    selectWrapper.innerHTML += '<select id="importing_type">' + 
                         '<option value="none">Выберите тип</option>' +
                         '<option value="token">Токен</option>' +
                         '<option value="map">Локация</option>' +
                         '</select>';
 
-                    $('.select-wrapper').on('change', '#type', function () {
+                    $('.select-wrapper').on('change', '#importing_type', function () {
+                        let picWrapper = $('.modal-main-pic')[0];
+                        // let picker = $('<div class="picker">')[0];
+                        
                         if (this.value === 'none') {
+                            picWrapper.style.overflow = 'hidden';
                             modal.querySelector('.btn').remove();
+                            // $('.picker')?.remove();
                             return;
+                        }
+                        
+                        if (this.value === 'token') {
+                            picWrapper.style.overflow = 'scroll';
+                            // picWrapper.appendChild(picker);
+                        }
+
+                        if (this.value === 'map') {
+                            picWrapper.style.overflow = 'hidden';
+                            // $('.picker')?.remove();
                         }
                         
                         if (modal.querySelector('.btn') == null) {
@@ -150,16 +165,24 @@ function processGame() {
                         }
                     });
                     
-                    $(modal).on('click', '.btn', function () {
-                        // Добавляем изображения на сцену
-                        if (file.type.startsWith('image/')) {
-                            // Создаем спрайт для изображения
-                            const imageSprite = PIXI.Sprite.from(file.path);
-                            // Устанавливаем позицию спрайта в место, где был сделан drop
-                            imageSprite.position.set(x, y);
-                            imageSprite.anchor.set(0.5);
-                            // Добавляем спрайт в контейнер
-                            sceneObjectsContainer.addChild(imageSprite);
+                    $(modal).on('click', '.btn', async function () {
+                        let name = $('#importing_name').val();
+                        let type = $('#importing_type').val();
+                        let url = '/lobby';
+                        
+                        let fd = new FormData();
+                        fd.append('file', file);
+                        fd.append('name', name);
+                        
+                        if (type === 'token') url += '/saveToken';
+                        if (type === 'map') url += '/saveMap';
+                        
+                        let response = await fetch(url, {method:'POST', body: fd})
+                        let result = await response.json();
+                        
+                        if (response.ok && result.isSuccess) {
+                            createSprite(x, y, result.data.filePath);
+                            $('.modal').remove();
                         }
                     })
                 };
@@ -169,9 +192,10 @@ function processGame() {
                 break;
             default:
                 createSprite(x, y, globalDraggingItem.dataset.src);
-                globalDraggingItem = undefined;
                 break;
         }
+        
+        globalDraggingItem = undefined;
     }
 
     // Функция для создания спрайта на сцене PIXI.js

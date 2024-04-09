@@ -44,7 +44,7 @@
                     }
                 </div>
             </ul>
-            <ul class="list-item">
+            <ul id="tokens_list" class="list-item">
                 <div class="list-header"><span class="minus"></span> Токены </div>
                 <div class="list-body">
                     @foreach (var token in ViewBag.Tokens as List<EntityViewModel> ?? new List<EntityViewModel>())
@@ -53,7 +53,7 @@
                     }
                 </div>
             </ul>
-            <ul class="list-item">
+            <ul id="maps_list" class="list-item">
                 <div class="list-header"><span class="minus"></span> Карты </div>
                 <div class="list-body">
                     @foreach (var map in ViewBag.Maps as List<MapViewModel> ?? new List<MapViewModel>())
