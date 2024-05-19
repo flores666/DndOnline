@@ -60,6 +60,13 @@ $(document).on('click', '.list-header', function () {
     else span.attr('class', 'plus');
 });
 
+$(document).on('change input', '[required]', function (e) {
+    let span = $(this).siblings('.error-span');
+    if (span.length === 0) span = $(this).parent().siblings('.error-span');
+    
+    span.remove();
+});
+
 function getElementFromUl(ulId, targetValue) {
     let myList = document.getElementById(ulId);
     let listItems = myList.getElementsByTagName("li");

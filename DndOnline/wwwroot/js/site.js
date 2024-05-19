@@ -19,6 +19,33 @@
     $('#new_lobby').on('click', function () {
         window.location.href = '/lobby-constructor';
     });
+
+    processRequiredLabels($('input'));
+
+    let observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                $(mutation.addedNodes).each(function () {
+                    if ($(this).is('input') || $(this).is('select') || $(this).is('textarea')) {
+                        processRequiredLabels($(this));
+                    }
+                });
+            }
+        });
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+
+//удаляем ближайший .error-span вводе в обязательные поля
+$(document).on('change input', '[required]', function (e) {
+    let span = $(this).siblings('.error-span');
+    if (span.length === 0) span = $(this).parent().siblings('.error-span');
+
+    span.remove();
 });
 
 $(document).on('click', '.lobby-list-item', function () {
@@ -26,6 +53,7 @@ $(document).on('click', '.lobby-list-item', function () {
     window.location.href = '/lobby/' + id;
 });
 
+//увеличение размера textarea при вводе если не хватает места
 $(document).on('input', 'textarea', function () {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight + 2) + 'px';
@@ -115,7 +143,7 @@ $(document).on('change', '.input-file input[type=file]', function () {
             $files_list.append(new_file_input);
         }
     }
-    ;
+
     this.files = dt.files;
 });
 
@@ -214,5 +242,26 @@ async function compressImage(file, maxSizeInBytes, callback) {
         };
 
         reader.readAsDataURL(file);
+    });
+}
+
+// Добавление * к метке для элементов с атрибутом required
+function processRequiredLabels(elements) {
+    elements.each(function () {
+        let $input = $(this);
+
+        if ($input.is('[required]')) {
+            let $label = $input.siblings('label');
+            if ($label.length === 0) {
+                $label = $input.prev('label');
+            }
+
+            if ($label.length === 0) {
+                let name = $input.attr('name');
+                if (typeof name !== 'undefined') $label = $(`label[for="${name}"]`);
+            }
+            
+            if ($label.length) $label.append('<span style="margin-left: 4px;">*</span>');
+        }
     });
 }

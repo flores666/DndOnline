@@ -36,7 +36,6 @@ public class LobbyController : Controller
             return RedirectToAction("Index", "Home");
         }
 
-        // lobby.Scenes = lobby.Scenes.OrderBy(o => o.Sort).ToList();
         var sortResult = SortScenesAndFindLastPlayed(lobby.Scenes);
 
         lobby.Scenes = sortResult.Item1;

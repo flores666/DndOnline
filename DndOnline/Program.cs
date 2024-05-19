@@ -5,6 +5,7 @@ using AuthService.Services.Interfaces;
 using DndOnline.DataAccess;
 using DndOnline.Middlewares;
 using DndOnline.Services;
+using DndOnline.Services.FileService;
 using DndOnline.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

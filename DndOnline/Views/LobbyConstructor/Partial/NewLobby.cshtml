@@ -23,13 +23,13 @@
 
         <div class="row">
             <div class="form-group col-9">
-                <input autocomplete="off" class="input-field form-control" asp-for="Name"/>
+                <input autocomplete="off" class="input-field form-control" required asp-for="Name"/>
                 <small>Будет отображаться в поиске</small>
                 <span asp-validation-for="Name" hidden="hidden"></span>
             </div>
 
             <div class="form-group col-2">
-                <input autocomplete="off" class="input-field form-control text-center" asp-for="MaxPlayers"/>
+                <input autocomplete="off" class="input-field form-control text-center" required asp-for="MaxPlayers"/>
                 <span asp-validation-for="MaxPlayers" hidden="hidden"></span>
             </div>
         </div>

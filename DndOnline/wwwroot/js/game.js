@@ -121,42 +121,43 @@ function processGame() {
                     img.src = event.target.result;
 
                     let modal = createBaseModal(70, 30);
-                    modal.style.display = 'flex';
+                    modal.id = 'file-uploader';
 
-                    modal.innerHTML += '<div class="modal-main-pic" style="overflow: hidden"><img src="' + img.src + '"></div>';
-                    modal.innerHTML += '<div class="modal-main"></div>';
-                    let modalMain = $('.modal-main')[0];
+                    modal.innerHTML += '<div class="pic-wrapper"><img src="' + img.src + '"></div>';
+                    modal.innerHTML += '<div class="form"></div>';
+                    let modalMain = $('.form')[0];
                     
-                    modalMain.innerHTML += '<input id="importing_name" class="input-field modal-header-input" placeholder="Нажмите для ввода названия"/>';
+                    modalMain.innerHTML += '<input id="importing_name" class="input-field header" autocomplete="off" required placeholder="Нажмите для ввода названия"/>';
                     
                     modalMain.innerHTML += '<div class="select-wrapper"></div>';
                     let selectWrapper = $('.select-wrapper')[0];
-                    selectWrapper.innerHTML += '<span>Тип импортируемого элемента</span>';
-                    selectWrapper.innerHTML += '<select id="importing_type">' + 
-                        '<option value="none">Выберите тип</option>' +
+                    selectWrapper.innerHTML += '<label>Тип импортируемого элемента</label>';
+                    selectWrapper.innerHTML += '<select required id="importing_type">' + 
+                        '<option value="">Выберите тип</option>' +
                         '<option value="token">Токен</option>' +
                         '<option value="map">Локация</option>' +
                         '</select>';
 
+                    let crop;
+                    
                     $('.select-wrapper').on('change', '#importing_type', function () {
-                        let picWrapper = $('.modal-main-pic')[0];
-                        // let picker = $('<div class="picker">')[0];
+                        let picWrapper = $('.pic-wrapper')[0];
                         
-                        if (this.value === 'none') {
-                            picWrapper.style.overflow = 'hidden';
+                        if (this.value === '') {
+                            picWrapper.querySelector('.overlay')?.remove();
                             modal.querySelector('.btn').remove();
-                            // $('.picker')?.remove();
                             return;
                         }
                         
                         if (this.value === 'token') {
-                            picWrapper.style.overflow = 'scroll';
-                            // picWrapper.appendChild(picker);
+                            $(picWrapper).imageCropper(function (cropData) {
+                                crop = cropData;
+                            });
                         }
 
                         if (this.value === 'map') {
                             picWrapper.style.overflow = 'hidden';
-                            // $('.picker')?.remove();
+                            picWrapper.querySelector('.overlay')?.remove();
                         }
                         
                         if (modal.querySelector('.btn') == null) {
@@ -168,20 +169,32 @@ function processGame() {
                     $(modal).on('click', '.btn', async function () {
                         let name = $('#importing_name').val();
                         let type = $('#importing_type').val();
-                        let url = '/lobby';
                         
+                        if (type === '' || name === '') {
+                            modal.querySelector('.error-span')?.remove();
+                            let error = document.createElement('span');
+                            error.classList.add('error-span');
+                            error.innerText = 'Ошибка. Не все поля заполнены';
+                            console.log(crop);
+                            $('.form').append(error);
+                            return;
+                        }
+                        
+                        let url = '/lobby';
                         let fd = new FormData();
                         fd.append('file', file);
                         fd.append('name', name);
                         
-                        if (type === 'token') url += '/saveToken';
+                        if (type === 'token') {
+                            url += '/saveToken';
+                        }
                         if (type === 'map') url += '/saveMap';
                         
                         let response = await fetch(url, {method:'POST', body: fd})
                         let result = await response.json();
                         
                         if (response.ok && result.isSuccess) {
-                            createSprite(x, y, result.data.filePath);
+                            createSprite(x, y, result.data.filePath, type);
                             $('.modal').remove();
                         }
                     })
@@ -191,7 +204,7 @@ function processGame() {
                 reader.readAsDataURL(file);
                 break;
             default:
-                createSprite(x, y, globalDraggingItem.dataset.src);
+                createSprite(x, y, globalDraggingItem.dataset.src, globalDraggingItem.dataset.type);
                 break;
         }
         
@@ -199,10 +212,25 @@ function processGame() {
     }
 
     // Функция для создания спрайта на сцене PIXI.js
-    function createSprite(x, y, src) {
+    function createSprite(x, y, src, type) {
         const sprite = PIXI.Sprite.from("/" + src);
         sprite.anchor.set(0.5);
         sprite.position.set(x, y);
+
+        const mask = new PIXI.Graphics();
+        if (type === 'token') {
+            sprite.on('loaded', function () {
+                const centerX = sprite.width / 2;
+                const centerY = sprite.height / 2;
+                const radius = Math.max(sprite.width, sprite.height) / 2;
+                mask.beginFill(0xffffff);
+                mask.drawCircle(centerX, centerY, radius);
+                mask.endFill();
+                sprite.mask = mask;
+                sceneObjectsContainer.addChild(mask);
+            });
+        }
+
         sceneObjectsContainer.addChild(sprite);
 
         return sprite;

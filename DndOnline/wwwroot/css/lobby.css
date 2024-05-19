@@ -109,7 +109,7 @@ main {
             vertical-align: middle;
             width: 5em;
             cursor: pointer;
-            
+
             .plus {
                 font-size: 26px;
             }
@@ -385,65 +385,57 @@ ul, li {
     }
 }
 
-.modal-main-pic {
-    width: 55em;
-    height: 90%;
-    margin: 1.4em 1em 1em 1.5em;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    
-    img {
-        border-radius: 12px;
-        max-height: 100%;
+#file-uploader {
+    display: grid;
+    grid-template-columns: 32em auto;
+    gap: 1em;
+
+    .pic-wrapper {
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: .5em .2em;
+        
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+        }
     }
     
-/*    .picker {
-        height: 100%;
-        width: 100%;
-        position: fixed;
-        pointer-events: none;
-        top: 0;
-        left: 0;
-        z-index: 1;
-        background-color: rgba(128, 128, 128, 0.82);
-    }*/
-}
+    .form {
+        display: flex;
+        flex-direction: column;
+        padding: .5em .2em;
 
-.modal-header-input {
-    max-width: 100%;
-    margin-top: .5em;
-    background-color: var(--darker);
-    font-size: 46px;
-    border: none;
-}
+        .header {
+            max-width: 100%;
+            background-color: var(--darker);
+            font-size: 46px;
+            border: none;
+            padding: 0;
+            margin-bottom: 1.5em;
+        }
 
-.modal-header-input:focus {
-    background-color: var(--darker);
-    box-shadow: none;
-}
+        .header:focus {
+            background-color: var(--darker);
+            box-shadow: none;
+        }
+        
+        .select-wrapper {
+            margin-bottom: 1.5rem;
+        }
 
-.modal-main {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding-right: 1rem;
-    
-    * {
-        padding-left: 0;
-    }
-    
-    .modal-header-input {
-        margin-bottom: 2rem;
-    }
-    
-    .select-wrapper {
-        margin-bottom: 1.5rem;
-    }
+        .btn {
+            width: 5rem;
+            padding: 0.8rem;
+            font-size: 16px;
+        }
 
-    .btn {
-        width: 5rem;
-        padding: 0.8rem;
-        font-size: 16px;
+        .error-span {
+            margin-top: 1em;
+        }
     }
 }

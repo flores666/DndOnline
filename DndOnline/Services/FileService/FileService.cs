@@ -1,8 +1,7 @@
 ﻿using DndOnline.Models;
-using DndOnline.Services.Interfaces;
 using Results = DndOnline.Models.Results;
 
-namespace DndOnline.Services;
+namespace DndOnline.Services.FileService;
 
 public class FileService : IFileService
 {
@@ -27,7 +26,7 @@ public class FileService : IFileService
         _logger = logger;
     }
 
-    public async Task<ResponseModel> SaveAsync(IFormFile file, string type)
+    public async Task<ResponseModel> SaveAsync(IFormFile file, string type, Crop? crop = null)
     {
         var result = new ResponseModel();
         var allowedToSave = true;

@@ -49,7 +49,7 @@
                 <div class="list-body">
                     @foreach (var token in ViewBag.Tokens as List<EntityViewModel> ?? new List<EntityViewModel>())
                     {
-                        <li class="list-item-child list-item-child_transportable" draggable="true" data-src="@token.FilePath">@token.Name</li>
+                        <li class="list-item-child list-item-child_transportable" draggable="true" data-src="@token.FilePath" data-type="token">@token.Name</li>
                     }
                 </div>
             </ul>
@@ -58,7 +58,7 @@
                 <div class="list-body">
                     @foreach (var map in ViewBag.Maps as List<MapViewModel> ?? new List<MapViewModel>())
                     {
-                        <li class="list-item-child list-item-child_transportable" draggable="true" data-src="@map.FilePath">@map.Name</li>
+                        <li class="list-item-child list-item-child_transportable" draggable="true" data-src="@map.FilePath" data-type="map">@map.Name</li>
                     }
                 </div>
             </ul>
